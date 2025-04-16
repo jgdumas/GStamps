@@ -1,0 +1,38 @@
+// ==========================================================================
+// GStamps: C++ routines for the Global Postage Stamp Problem
+// Authors: J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
+// ==========================================================================
+
+/************************************************************************
+ * GStamps: Bruteforces an extremal basis with k elements and s positions
+ ************************************************************************/
+
+#include <gstamps.h>
+
+int main(int argc, char **argv) {
+        // =========================================
+
+    if (argc<=2) {
+        std::cerr << "usage: " << argv[0]
+                  << " #k(dim.) #s(stamps) [#](verbosity).\n";
+        exit(1);
+    }
+
+    const size_t k(atoi(argv[1])), s(atoi(argv[2]));
+    const int verbose(argc>3?atoi(argv[3]):0);
+
+        // =========================================
+
+    std::vector<bint> points;
+    StTimer chrono; chrono.start();
+    const bint mbf = BruteForce(points, k, s, verbose);
+    chrono.stop();
+
+        // =========================================
+
+    std::clog << "#[Brute] nmax: " << mbf << ' ' << chrono << std::endl;
+    for(const auto& it: points) std::cout << it << ' '; std::cout << std::endl;
+
+
+    return 0;
+}
