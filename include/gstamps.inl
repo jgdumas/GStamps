@@ -17,27 +17,27 @@ inline std::ostream& rangeprint(std::ostream& out, const Cont& v) {
     typename Cont::value_type prev(0), curr(0);
     bool ft(true); size_t pt(0);
     for(const auto& it: v) {
-        if (ft) {
-            prev = it;
-            out << prev;
-            ft = false;
-        } else {
-            curr = it;
-            if (prev+1 == curr) {
-                ++pt;
-                if (pt == 2) {
-                    out << "..";
-                }
-            } else {
-                if (pt >= 1) {
-                    if (pt == 1) out << ' ';
-                    pt = 0;
-                    out << prev;
-                }
-                out << ' ' << curr;
-            }
-            prev = curr;
-        }
+	if (ft) {
+	    prev = it;
+	    out << prev;
+	    ft = false;
+	} else {
+	    curr = it;
+	    if (prev+1 == curr) {
+		++pt;
+		if (pt == 2) {
+		    out << "..";
+		}
+	    } else {
+		if (pt >= 1) {
+		    if (pt == 1) out << ' ';
+		    pt = 0;
+		    out << prev;
+		}
+		out << ' ' << curr;
+	    }
+	    prev = curr;
+	}
     }
     if (pt) return out << curr;
     return out;
@@ -48,14 +48,14 @@ template<typename Cont>
 inline typename Cont::value_type firstrange(const Cont& v) {
     typename Cont::value_type max(0);
     for(const auto& it: v)
-        if (++max != it) break;
+	if (++max != it) break;
     if (v.count(max) == 0) --max;
     return max;
 }
 
 template<typename Cont>
 inline std::ostream& firstrangeprint(std::ostream& out,
-                              const Cont& v, const bint& max) {
+			      const Cont& v, const bint& max) {
     if (max > 1) out << "1..";
     out << max;
     if (v.size() > max) out << " ...";
@@ -68,38 +68,38 @@ inline std::ostream& firstrangeprint(std::ostream& out,
 
 template<typename List>
 inline bint ICover(const List& points, const size_t s, const int verbose) {
-        // Incremental cover
+	// Incremental cover
     StTimer chrono; chrono.start();
 
     std::set<bint> reached;
     for(const auto& it: points)
-        reached.insert(it);
+	reached.insert(it);
     if (verbose>1) rangeprint(std::clog << "# Basis: ", reached) << std::endl;
 
     for(size_t d(1); d<s; ++d) {
-        if (verbose>1)
-            firstrangeprint(std::clog << "#[ICover] s=" << d << ": ",
-                            reached, firstrange(reached)) << std::endl;
-        std::vector<bint> v(reached.begin(), reached.end());
-        for(const auto& right: points) {
-            for(const auto& left: v) {
-                reached.insert(left+right);
-            }
-        }
+	if (verbose>1)
+	    firstrangeprint(std::clog << "#[ICover] s=" << d << ": ",
+			    reached, firstrange(reached)) << std::endl;
+	std::vector<bint> v(reached.begin(), reached.end());
+	for(const auto& right: points) {
+	    for(const auto& left: v) {
+		reached.insert(left+right);
+	    }
+	}
     }
     chrono.stop();
 
     const bint max(firstrange(reached));
     if (verbose>1) firstrangeprint(std::clog << "#[ICover] s=" << s
-                                   << ": ", reached, max) << std::endl;
+				   << ": ", reached, max) << std::endl;
     if (verbose>0)
-        std::clog << "#[ICover(" << s << ")]: " << chrono <<std::endl;
+	std::clog << "#[ICover(" << s << ")]: " << chrono <<std::endl;
     return max;
 }
 
 template<typename Iterator>
 inline bint _Cover(const Iterator& start, const Iterator& end, const size_t s) {
-        // Binary cover
+	// Binary cover
     const bint& back(*std::prev(end));				// k>=1
     if (back == __St_One) return s;
     const bint& penult(*std::prev(std::prev(end))); // back>1 => k>=2
@@ -110,38 +110,38 @@ inline bint _Cover(const Iterator& start, const Iterator& end, const size_t s) {
     for(auto it=start; it!=end; ++it) reached[*it]=true;   // points reached
 
     for(size_t d(1); d<s; ++d) {
-        bint notin(vs+1);
-        for(size_t i=vs; i>0; --i) {
-            if(reached[i]) {
-                for(auto right=start; right!=end; ++right) {
-                    reached[i+(*right)]=true;
-                }
-            } else {
-                notin=i;
-            }
-        }
+	bint notin(vs+1);
+	for(size_t i=vs; i>0; --i) {
+	    if(reached[i]) {
+		for(auto right=start; right!=end; ++right) {
+		    reached[i+(*right)]=true;
+		}
+	    } else {
+		notin=i;
+	    }
+	}
 
-        vs += back;
+	vs += back;
 
-            // Test Selmer's Lemma for early termination
-        lb += penult;
-        if (notin>back) {
-                // c is larger than ak, try early termination
-            if (notin >= (lb-back) ) {
-                // Cover will now surely attain c+(s-d)ak
+	    // Test Selmer's Lemma for early termination
+	lb += penult;
+	if (notin>back) {
+		// c is larger than ak, try early termination
+	    if (notin >= (lb-back) ) {
+		// Cover will now surely attain c+(s-d)ak
 //                 std::clog << "#[_C(" << s << ")|" << d << "] "
 //                           << (notin-1+(s-d)*back) << std::endl;
-                return --notin += (s-d)*back;
-            }
-        }
+		return --notin += (s-d)*back;
+	    }
+	}
     }
 
     size_t max(reached.size()-1);
     for(size_t jr(1); jr<reached.size(); ++jr){
-        if (! reached[jr]) {
-            max = jr-1;
-            break;
-        }
+	if (! reached[jr]) {
+	    max = jr-1;
+	    break;
+	}
     }
 
     return max;
@@ -152,10 +152,10 @@ inline bint Cover(const List& points, const size_t s, const int verbose) {
     bint vs(points.back());
     const bint upper(s*vs+1);
     if ((vs > __GSTAMPS_MAXCOVER) || (upper > __GSTAMPS_MAXCOVER)) {
-        std::clog << "#\033[1;33m[Warning] memory exceeded ("
-                  << upper << ")\033[0m: trying recursive compuation ..."
-                  << std::endl;
-        return ICover(points,s,verbose);
+	std::clog << "#\033[1;33m[Warning] memory exceeded ("
+		  << upper << ")\033[0m: trying recursive compuation ..."
+		  << std::endl;
+	return ICover(points,s,verbose);
     }
     if (verbose>1) rangeprint(std::clog << "#[Cover] Basis: ", points) << std::endl;
 
@@ -164,8 +164,8 @@ inline bint Cover(const List& points, const size_t s, const int verbose) {
     chrono.stop();
 
     if (verbose>1) {
-        std::clog << "#[Cover(" << s << ")]: " << s << ": 1.." << max
-                  << " ..." << std::endl;
+	std::clog << "#[Cover(" << s << ")]: " << s << ": 1.." << max
+		  << " ..." << std::endl;
     }
 
     if (verbose>0) std::clog << "#[Cover(" << s << ")]: " << chrono <<std::endl;
@@ -177,10 +177,10 @@ inline bint Cover(const List& points, const size_t s, const int verbose) {
 
 template<typename List>
 inline bint FixedPoints(List& pmax,
-                        const List& points, const size_t s, const size_t i) {
+			const List& points, const size_t s, const size_t i) {
     pmax.resize(i); pmax.reserve(points.size());
     for(auto it=points.begin()+i; it!=points.end(); ++it) {
-        pmax.push_back( _Cover(points.begin(), std::next(it), s) );
+	pmax.push_back( _Cover(points.begin(), std::next(it), s) );
     }
     return pmax.back();
 }
@@ -191,8 +191,8 @@ template<typename List>
 inline bint BruteForce(List& points, size_t k, size_t s, const int verbose) {
     assert(k>0);
     if (k == 1) {
-        points = {1};
-        return s;
+	points = {1};
+	return s;
     }
     points.resize(k); std::iota(points.begin(), points.end(), 1);
     List pointsmax(points);
@@ -200,35 +200,35 @@ inline bint BruteForce(List& points, size_t k, size_t s, const int verbose) {
     List covsmax;
     bint max( FixedPoints(covsmax, points, s) );
 
-        // Next set of points
+	// Next set of points
     while (true){
-            // Find where next increment is needed
-        size_t i=points.size()-1;
-        while ((i > 0) && (points[i] == (covsmax[i-1]+1))) { --i; }
+	    // Find where next increment is needed
+	size_t i=points.size()-1;
+	while ((i > 0) && (points[i] == (covsmax[i-1]+1))) { --i; }
 
-            // Nothing left
-        if (i == 0) {
-            points.assign(pointsmax.begin(), pointsmax.end());
-            return max;
-        }
+	    // Nothing left
+	if (i == 0) {
+	    points.assign(pointsmax.begin(), pointsmax.end());
+	    return max;
+	}
 
-            // Increment is needed points[i] and reset all higher denominations
-        std::iota(points.begin()+i,points.end(),points[i]+1);
+	    // Increment is needed points[i] and reset all higher denominations
+	std::iota(points.begin()+i,points.end(),points[i]+1);
 
-            // Compute new maxima for the denominations after i
-        const bint max2 = FixedPoints(covsmax, points, s, i-1);
+	    // Compute new maxima for the denominations after i
+	const bint max2 = FixedPoints(covsmax, points, s, i-1);
 
-            // Save new points if better
-        if (max2 > max) {
-            if (verbose>0) {
-                std::clog << "#[Brute] " << max2 << ": ";
-                for(const auto& it: points) std::clog << it << ' ';
-                std::clog << std::endl;
-            }
+	    // Save new points if better
+	if (max2 > max) {
+	    if (verbose>0) {
+		std::clog << "#[Brute] " << max2 << ": ";
+		for(const auto& it: points) std::clog << it << ' ';
+		std::clog << std::endl;
+	    }
 
-            max = max2;
-            pointsmax.assign(points.begin(), points.end());
-        }
+	    max = max2;
+	    pointsmax.assign(points.begin(), points.end());
+	}
    }
 }
 
@@ -240,28 +240,28 @@ inline bint Reach(List& points, const size_t h, const int verbose) {
 
     std::set<bint> reached;
     for(const auto& it: points)
-        reached.insert(it);
+	reached.insert(it);
     if (verbose>2)
-        rangeprint(std::clog << "#[Reach] Basis: ", reached) << std::endl;
+	rangeprint(std::clog << "#[Reach] Basis: ", reached) << std::endl;
 
     for(size_t d(0); d<h; ++d) {
-        std::vector<bint> v(reached.begin(), reached.end());
-        if (verbose>2) rangeprint(std::clog << "#[Reach] h=" << d
-                                  << ": ", reached) << std::endl;
-        else if (verbose>1)
-            firstrangeprint(std::clog << "#[Reach] h=" << d << ": ",
-                            reached, firstrange(reached)) << std::endl;
-        for(const auto& left: v) {
-            for(const auto& right: v) {
-                reached.insert(left+right);
-            }
-        }
+	std::vector<bint> v(reached.begin(), reached.end());
+	if (verbose>2) rangeprint(std::clog << "#[Reach] h=" << d
+				  << ": ", reached) << std::endl;
+	else if (verbose>1)
+	    firstrangeprint(std::clog << "#[Reach] h=" << d << ": ",
+			    reached, firstrange(reached)) << std::endl;
+	for(const auto& left: v) {
+	    for(const auto& right: v) {
+		reached.insert(left+right);
+	    }
+	}
     }
     chrono.stop();
 
     const bint max(firstrange(reached));
     if (verbose>1) firstrangeprint(std::clog << "#[Reach] h=" << h
-                                   << ": ", reached, max) << std::endl;
+				   << ": ", reached, max) << std::endl;
     if (verbose>0) std::clog << "#[Reach<" << h << ">]: " << chrono <<std::endl;
     return max;
 }
@@ -270,17 +270,17 @@ inline bint Reach(List& points, const size_t h, const int verbose) {
 // Special cases
 
 inline bint Fibonacci(std::vector<bint>& points, const size_t k,
-               const int verbose) {
+	       const int verbose) {
     points.resize(0); points.reserve(k);
     bint f1(1), f2(1); points.push_back(f2);
     for(size_t i=1; i<k; ++i) {
-        f1 += f2;
-        f2 += f1;
-        points.push_back(f2);
+	f1 += f2;
+	f2 += f1;
+	points.push_back(f2);
     }
     f1 += f2; --f1;
     if (verbose>0) rangeprint(std::clog << "#[Fibonacci] max: " << f1
-                              << ", points: ", points) << std::endl;
+			      << ", points: ", points) << std::endl;
     return f1;
 }
 
@@ -292,7 +292,7 @@ inline bint KloveMossige(List& points, const size_t k, const int verbose) {
     const bint xy(bint(x)*bint(y));
 
     if (verbose>0) std::clog << "#[KM] Precomp. : " << k
-                             << ", x: " << x << ", y: " << y << std::endl;
+			     << ", x: " << x << ", y: " << y << std::endl;
 
     points.push_back(__St_One);
 
@@ -316,72 +316,72 @@ inline bint KloveMossige(List& points, const size_t k, const int verbose) {
 
 // AlterBernett range computation sub-routine
 inline std::vector<bint>& Range(std::vector<bint>& B,
-                         const size_t& q, const size_t& s, const size_t& r) {
+			 const size_t& q, const size_t& s, const size_t& r) {
     assert(B.size()>=2);
     auto B1 = B.back();
     auto B0 = B.end()[-2];
     for(size_t i=2;i<=s; ++i) {
-        B.push_back((q+2)*B1-B0+q);
-        B1 = B.back();
-        B0 = B.end()[-2];
+	B.push_back((q+2)*B1-B0+q);
+	B1 = B.back();
+	B0 = B.end()[-2];
     }
     if (r != 0) B.push_back(B1+r*(B0+1));
     return B;
 }
 
 inline bint AlterBernett(std::vector<bint>& points,
-                         const size_t k, const size_t s, const int verbose) {
+			 const size_t k, const size_t s, const int verbose) {
     points.resize(0); points.reserve(k);
     if (k<=s) {
-        const bint m1 ( Fibonacci(points,k,verbose-1) );
-        bint max(s-k); max *= points.back(); max += m1;
-        if (verbose>0) rangeprint(std::clog << "#[AB] max: " << max
-                                  << ", points: ", points) << std::endl;
-        return max;
+	const bint m1 ( Fibonacci(points,k,verbose-1) );
+	bint max(s-k); max *= points.back(); max += m1;
+	if (verbose>0) rangeprint(std::clog << "#[AB] max: " << max
+				  << ", points: ", points) << std::endl;
+	return max;
     }
 
     const size_t r(k%s), q( (k-r)/s );
 
     if (verbose>0) std::clog << "#[AlterBernett] Precomp. : " << k
-                             << ", Prof. : " << MSB(s)
-                             << ", Stamps: " << s
-                             << ", q: " << q << ", r: " << r << std::endl;
+			     << ", Prof. : " << MSB(s)
+			     << ", Stamps: " << s
+			     << ", q: " << q << ", r: " << r << std::endl;
 
     std::vector<bint> B(2); B[0]=__St_Zero; B[1]=q;
     Range(B,q,s,r) ;
 
     if (verbose>0) {
-        std::clog << "#[AlterBernett] B: ";
-        for(const auto& it:B) std::clog << it << ' ';
-        std::clog << std::endl;
+	std::clog << "#[AlterBernett] B: ";
+	for(const auto& it:B) std::clog << it << ' ';
+	std::clog << std::endl;
     }
 
     for(size_t j=1; j<=q; ++j) points.push_back(j);
 
     bint Fi(1), Di(1);
     for(size_t i=2; i<=s; ++i) {
-        Fi = (B[i-1]<<1)-B[i-2]+1;
-        Di = B[i-1]+1;
-        for(size_t j=0; j<q; ++j) points.push_back(Fi+Di*j);
-        if (verbose>0)
-            std::clog << "#[AB] F[" << i << "]: " << Fi << '\t'
-                      << "D[" << i << "]: " << Di << '\t'
-                      << "B[-1]: " << B[i-1] << '\t'
-                      << "B[-2]: " << B[i-2] << '\t'
-                      << std::endl;
+	Fi = (B[i-1]<<1)-B[i-2]+1;
+	Di = B[i-1]+1;
+	for(size_t j=0; j<q; ++j) points.push_back(Fi+Di*j);
+	if (verbose>0)
+	    std::clog << "#[AB] F[" << i << "]: " << Fi << '\t'
+		      << "D[" << i << "]: " << Di << '\t'
+		      << "B[-1]: " << B[i-1] << '\t'
+		      << "B[-2]: " << B[i-2] << '\t'
+		      << std::endl;
     }
 
     const bint Fs = Fi+Di*q;
     if (verbose>0)
-        std::clog << "#[AB] F[" << s << "]: " << Fs  << '\t'
-                  << "D[" << s << "]: " << Di << std::endl;
+	std::clog << "#[AB] F[" << s << "]: " << Fs  << '\t'
+		  << "D[" << s << "]: " << Di << std::endl;
     for(size_t j=0; j<r; ++j) points.push_back(Fs+Di*j);
 
     return B.back();
 }
 
 inline bint BalGreedy(std::vector<bint>& points,
-                      const size_t k, const size_t s, const int verbose) {
+		      const size_t k, const size_t s, const int verbose) {
     assert(k>=s);
     points.resize(0); points.reserve(k);
     const size_t s1(k%s), q0( (k-s1)/s ), s0(s-s1), q1(q0+1);
@@ -389,11 +389,11 @@ inline bint BalGreedy(std::vector<bint>& points,
     if (s1 == 0) return AlterBernett(points,k,s,verbose-1);
 
     if (verbose>0) std::clog << "#[BalGreedys] Precomp. : " << k
-                             << ", Prof. : " << MSB(s)
-                             << ", Stamps: " << s
-                             << ", q0: " << q0 << ", s0: " << s0
-                             << ", q1: " << q1 << ", s1: " << s1
-                             << std::endl;
+			     << ", Prof. : " << MSB(s)
+			     << ", Stamps: " << s
+			     << ", q0: " << q0 << ", s0: " << s0
+			     << ", q1: " << q1 << ", s1: " << s1
+			     << std::endl;
 
     std::vector<bint> B(2); B[0]=__St_Zero; B[1]=q0;
     Range(B,q0,s0,0) ;
@@ -403,9 +403,9 @@ inline bint BalGreedy(std::vector<bint>& points,
 
     bint Fi(1), Di(1);
     for(size_t i=2; i<=s0; ++i) {
-        Fi = (B[i-1]<<1)-B[i-2]+1;
-        Di = B[i-1]+1;
-        for(size_t j=0; j<q0; ++j) points.push_back(Fi+Di*j);
+	Fi = (B[i-1]<<1)-B[i-2]+1;
+	Di = B[i-1]+1;
+	for(size_t j=0; j<q0; ++j) points.push_back(Fi+Di*j);
 // std::clog << "F[" << i << "]: " << Fi << '\t'
 //           << "D[" << i << "]: " << Di << '\t'
 //           << ", B[-1]: " << B[i-1] << '\t'
@@ -421,9 +421,9 @@ inline bint BalGreedy(std::vector<bint>& points,
 //     std::clog << std::endl;
 
     for(size_t i=0; i<s1; ++i) {
-        Fi = (B[s0+i]<<1)-B[s0+i-1]+1;
-        Di = B[s0+i]+1;
-        for(size_t j=0; j<q1; ++j) points.push_back(Fi+Di*j);
+	Fi = (B[s0+i]<<1)-B[s0+i-1]+1;
+	Di = B[s0+i]+1;
+	for(size_t j=0; j<q1; ++j) points.push_back(Fi+Di*j);
 // std::clog << "F[" << i << "]: " << Fi << '\t'
 //           << "D[" << i << "]: " << Di  << '\t'
 //           << ", B[" << (s0+i) << "]: " << B[s0+i] << '\t'
@@ -444,155 +444,155 @@ inline bint BalGreedy(std::vector<bint>& points,
 // Known extremal cases
 
 inline bint kThree(std::vector<bint>& points, const size_t s,
-                   const int verbose) {
+		   const int verbose) {
     assert(s>0);
     points.resize(0); points.reserve(3);
     bint max(0);
     if (s<23) {
-        const static size_t kThreeLow[22][4]={
-            {3,1,2,3},
-            {8,1,3,4},
-            {15,1,4,5},
-            {26,1,5,8},
-            {35,1,6,7},
-            {52,1,7,12},
-            {69,1,8,13},
-            {89,1,9,14},
-            {112,1,9,20},
-            {146,1,10,26},
-            {172,1,10,26},
-            {212,1,11,37},
-            {259,1,13,34},
-            {302,1,12,52},
-            {354,1,12,52},
-            {418,1,15,54},
-            {476,1,14,61},
-            {548,1,15,80},
-            {633,1,18,65},
-            {714,1,17,91},
-            {805,1,17,91},
-            {902,1,20,92}};
-        points.push_back(kThreeLow[s-1][1]);
-        points.push_back(kThreeLow[s-1][2]);
-        points.push_back(kThreeLow[s-1][3]);
-        max=kThreeLow[s-1][0];
+	const static size_t kThreeLow[22][4]={
+	    {3,1,2,3},
+	    {8,1,3,4},
+	    {15,1,4,5},
+	    {26,1,5,8},
+	    {35,1,6,7},
+	    {52,1,7,12},
+	    {69,1,8,13},
+	    {89,1,9,14},
+	    {112,1,9,20},
+	    {146,1,10,26},
+	    {172,1,10,26},
+	    {212,1,11,37},
+	    {259,1,13,34},
+	    {302,1,12,52},
+	    {354,1,12,52},
+	    {418,1,15,54},
+	    {476,1,14,61},
+	    {548,1,15,80},
+	    {633,1,18,65},
+	    {714,1,17,91},
+	    {805,1,17,91},
+	    {902,1,20,92}};
+	points.push_back(kThreeLow[s-1][1]);
+	points.push_back(kThreeLow[s-1][2]);
+	points.push_back(kThreeLow[s-1][3]);
+	max=kThreeLow[s-1][0];
     } else {
-        const static size_t kThreeTab[9][6]={
-            {3,1,1,0,0,0},
-            {3,1,1,0,0,1},
-            {5,2,1,1,0,1},
-            {5,2,1,1,0,2},
-            {7,3,1,2,0,2},
-            {6,2,2,2,1,2},
-            {8,3,2,3,1,2},
-            {8,3,2,3,1,3},
-            {10,4,2,4,1,3}};
+	const static size_t kThreeTab[9][6]={
+	    {3,1,1,0,0,0},
+	    {3,1,1,0,0,1},
+	    {5,2,1,1,0,1},
+	    {5,2,1,1,0,2},
+	    {7,3,1,2,0,2},
+	    {6,2,2,2,1,2},
+	    {8,3,2,3,1,2},
+	    {8,3,2,3,1,3},
+	    {10,4,2,4,1,3}};
 
-        const size_t t(s/9);
-        const size_t r(s-9*t);
-        bint a2(t); a2 *= 6; a2+=kThreeTab[r][0];
-        bint a3(t); a3 <<=1; a3+=kThreeTab[r][1];
-        bint a32(t); a32 <<=1; a32+=kThreeTab[r][2];
-        a32 *= a2; a3 += a32;
-        max = t; max <<=2; max+=kThreeTab[r][3];
-        bint a42(t); a42 <<=1; a42+=kThreeTab[r][4];
-        a42 *= a2; max += a42;
-        bint a43(t); a43 *= 3; a43+=kThreeTab[r][5];
-        a43 *= a3; max += a43;
-        points.push_back(__St_One);
-        points.push_back(std::move(a2));
-        points.push_back(std::move(a3));
+	const size_t t(s/9);
+	const size_t r(s-9*t);
+	bint a2(t); a2 *= 6; a2+=kThreeTab[r][0];
+	bint a3(t); a3 <<=1; a3+=kThreeTab[r][1];
+	bint a32(t); a32 <<=1; a32+=kThreeTab[r][2];
+	a32 *= a2; a3 += a32;
+	max = t; max <<=2; max+=kThreeTab[r][3];
+	bint a42(t); a42 <<=1; a42+=kThreeTab[r][4];
+	a42 *= a2; max += a42;
+	bint a43(t); a43 *= 3; a43+=kThreeTab[r][5];
+	a43 *= a3; max += a43;
+	points.push_back(__St_One);
+	points.push_back(std::move(a2));
+	points.push_back(std::move(a3));
     }
     return max;
 }
 
 #define __GSTAMPS_kFour_sKNOWN_ 54
 inline bint kFour(std::vector<bint>& points, const size_t s,
-                  const int verbose) {
+		  const int verbose) {
     assert(s>0);
     points.resize(0); points.reserve(4);
     const static size_t kFourLow[54][5]={
-        {4,1,2,3,4},
-        {12,1,3,5,6},
-        {24,1,4,7,8},
-        {44,1,3,11,18},
-        {71,1,4,12,21},
-        {114,1,4,19,33},
-        {165,1,5,24,37},
-        {234,1,6,25,65},
-        {326,1,5,34,60},
-        {427,1,6,41,67},
-        {547,1,7,48,85},
-        {708,1,7,48,126},
-        {873,1,9,56,155},
-        {1094,1,8,61,164},
-        {1383,1,12,65,240},
-        {1650,1,11,78,216},
-        {1935,1,11,90,252},
-        {2304,1,16,73,338},
-        {2782,1,10,99,360},
-        {3324,1,16,103,488},
-        {3812,1,16,103,488},
-        {4368,1,12,121,561},
-        {5130,1,14,142,659},
-        {5892,1,16,163,757},
-        {6745,1,20,149,860},
-        {7880,1,16,194,734},
-        {8913,1,21,177,1006},
-        {9919,1,21,177,1006},
-        {11081,1,19,230,870},
-        {12376,1,18,254,969},
-        {13932,1,25,211,1410},
-        {15657,1,25,236,1585},
-        {17242,1,25,236,1585},
-        {18892,1,24,225,1734},
-        {21061,1,28,264,1773},
-        {23445,1,22,355,1700},
-        {25553,1,29,303,2346},
-        {27978,1,22,355,2361},
-        {31347,1,30,343,2634},
-        {33981,1,30,343,2634},
-        {36806,1,31,353,3092},
-        {39914,1,27,465,2692},
-        {43592,1,34,389,3376},
-        {47536,1,34,423,3682},
-        {51218,1,34,423,3682},
-        {54900,1,28,564,3261},
-        {59702,1,37,460,4004},
-        {63891,1,38,473,4590},
-        {69362,1,38,509,4986},
-        {74348,1,38,509,4986},
-        {81303,1,39,563,5448},
-        {86751,1,39,563,5448},
-        {92199,1,39,563,5448},
-        {97836,1,41,630,6147}};
+	{4,1,2,3,4},
+	{12,1,3,5,6},
+	{24,1,4,7,8},
+	{44,1,3,11,18},
+	{71,1,4,12,21},
+	{114,1,4,19,33},
+	{165,1,5,24,37},
+	{234,1,6,25,65},
+	{326,1,5,34,60},
+	{427,1,6,41,67},
+	{547,1,7,48,85},
+	{708,1,7,48,126},
+	{873,1,9,56,155},
+	{1094,1,8,61,164},
+	{1383,1,12,65,240},
+	{1650,1,11,78,216},
+	{1935,1,11,90,252},
+	{2304,1,16,73,338},
+	{2782,1,10,99,360},
+	{3324,1,16,103,488},
+	{3812,1,16,103,488},
+	{4368,1,12,121,561},
+	{5130,1,14,142,659},
+	{5892,1,16,163,757},
+	{6745,1,20,149,860},
+	{7880,1,16,194,734},
+	{8913,1,21,177,1006},
+	{9919,1,21,177,1006},
+	{11081,1,19,230,870},
+	{12376,1,18,254,969},
+	{13932,1,25,211,1410},
+	{15657,1,25,236,1585},
+	{17242,1,25,236,1585},
+	{18892,1,24,225,1734},
+	{21061,1,28,264,1773},
+	{23445,1,22,355,1700},
+	{25553,1,29,303,2346},
+	{27978,1,22,355,2361},
+	{31347,1,30,343,2634},
+	{33981,1,30,343,2634},
+	{36806,1,31,353,3092},
+	{39914,1,27,465,2692},
+	{43592,1,34,389,3376},
+	{47536,1,34,423,3682},
+	{51218,1,34,423,3682},
+	{54900,1,28,564,3261},
+	{59702,1,37,460,4004},
+	{63891,1,38,473,4590},
+	{69362,1,38,509,4986},
+	{74348,1,38,509,4986},
+	{81303,1,39,563,5448},
+	{86751,1,39,563,5448},
+	{92199,1,39,563,5448},
+	{97836,1,41,630,6147}};
 
     if (s<=54) {
-        points.push_back(kFourLow[s-1][1]);
-        points.push_back(kFourLow[s-1][2]);
-        points.push_back(kFourLow[s-1][3]);
-        points.push_back(kFourLow[s-1][4]);
-        return kFourLow[s-1][0];
+	points.push_back(kFourLow[s-1][1]);
+	points.push_back(kFourLow[s-1][2]);
+	points.push_back(kFourLow[s-1][3]);
+	points.push_back(kFourLow[s-1][4]);
+	return kFourLow[s-1][0];
     }
 
-        // ON EXTREMAL h-BASES A4
-        // S Mossige
-        // Mathematica Scandinavica, 1987
+	// ON EXTREMAL h-BASES A4
+	// S Mossige
+	// Mathematica Scandinavica, 1987
     points.push_back(__St_One);
     bint a(s); a/=12;
     bint a2(a); a2*=9;
     bint a3(a); a3*=27; a3+=22; a3*=a;               // 27a^2 + 22a
     bint a4(a); a4*=54; a4+=62; a4*=a; a4+=7; a4*=a; // 54a^3 + 62a^2 + 7a
-        // 162a^4+186a^3+30a^2+8a-2
+	// 162a^4+186a^3+30a^2+8a-2
     bint N(a); N*=162; N+=186; N*=a; N+=30; N*=a; N+=8; N*=a; N-=2;
     bint max(s%12); max*=a4; max+= N;
     points.push_back(std::move(a2));
     points.push_back(std::move(a3));
     points.push_back(std::move(a4));
     if (verbose>0) {
-        std::clog << "#[k4] est.: " << max << ", points: ";
-        for(const auto& it: points) std::clog << it << ' ';
-        std::clog << std::endl;
+	std::clog << "#[k4] est.: " << max << ", points: ";
+	for(const auto& it: points) std::clog << it << ' ';
+	std::clog << std::endl;
     }
     const bint cov(Cover(points, s,verbose)); // If unable return estimation
     return (cov == __St_Zero ? max : cov);
@@ -601,7 +601,7 @@ inline bint kFour(std::vector<bint>& points, const size_t s,
 
 #define __GSTAMPS_kFive_sMAX_ 90
 inline bint kFive(std::vector<bint>& points, const size_t s,
-                  const int verbose) {
+		  const int verbose) {
     assert(s>0); points.resize(0); points.reserve(5);
     assert(s<=__GSTAMPS_kFive_sMAX_);
     const static size_t kFiveLow[__GSTAMPS_kFive_sMAX_][6]={
@@ -702,7 +702,7 @@ inline bint kFive(std::vector<bint>& points, const size_t s,
 
 #define __GSTAMPS_kSix_sMAX_ 26
 inline bint kSix(std::vector<bint>& points, const size_t s,
-                 const int verbose) {
+		 const int verbose) {
     assert(s>0); points.resize(0); points.reserve(6);
     assert(s<=__GSTAMPS_kSix_sMAX_);
     const static size_t kSixLow[__GSTAMPS_kSix_sMAX_][7]={
@@ -739,7 +739,7 @@ inline bint kSix(std::vector<bint>& points, const size_t s,
 
 #define __GSTAMPS_kSeven_sMAX_ 14
 inline bint kSeven(std::vector<bint>& points, const size_t s,
-                   const int verbose) {
+		   const int verbose) {
     assert(s>0); points.resize(0); points.reserve(7);
     assert(s<=__GSTAMPS_kSeven_sMAX_);
     const static size_t kSevenLow[__GSTAMPS_kSeven_sMAX_][8]={
@@ -764,7 +764,7 @@ inline bint kSeven(std::vector<bint>& points, const size_t s,
 
 #define __GSTAMPS_kEight_sMAX_ 8
 inline bint kEight(std::vector<bint>& points, const size_t s,
-                   const int verbose) {
+		   const int verbose) {
     assert(s>0); points.resize(0); points.reserve(8);
     assert(s<=__GSTAMPS_kEight_sMAX_);
     const static size_t kEightLow[__GSTAMPS_kEight_sMAX_][9]={
@@ -783,7 +783,7 @@ inline bint kEight(std::vector<bint>& points, const size_t s,
 
 #define __GSTAMPS_sTwo_kMAX_ 24
 inline bint sTwo(std::vector<bint>& points, const size_t k,
-                 const int verbose) {
+		 const int verbose) {
     assert(k>0); points.resize(0); points.reserve(k);
     assert(k<=__GSTAMPS_sTwo_kMAX_);
     const static std::vector<bint> sTwoLow[__GSTAMPS_sTwo_kMAX_]={
@@ -819,7 +819,7 @@ inline bint sTwo(std::vector<bint>& points, const size_t k,
 
 #define __GSTAMPS_sThree_kMAX_ 15
 inline bint sThree(std::vector<bint>& points, const size_t k,
-                   const int verbose) {
+		   const int verbose) {
     assert(k>0); points.resize(0); points.reserve(k);
     assert(k<=__GSTAMPS_sThree_kMAX_);
     const static std::vector<bint> sThreeLow[__GSTAMPS_sThree_kMAX_]={
@@ -845,7 +845,7 @@ inline bint sThree(std::vector<bint>& points, const size_t k,
 
 #define __GSTAMPS_sFour_kMAX_ 12
 inline bint sFour(std::vector<bint>& points, const size_t k,
-                  const int verbose) {
+		  const int verbose) {
     assert(k>0); points.resize(0); points.reserve(k);
     assert(k<=__GSTAMPS_sFour_kMAX_);
     const static std::vector<bint> sFourLow[__GSTAMPS_sFour_kMAX_]={
@@ -868,7 +868,7 @@ inline bint sFour(std::vector<bint>& points, const size_t k,
 
 #define __GSTAMPS_sFive_kMAX_ 10
 inline bint sFive(std::vector<bint>& points, const size_t k,
-                  const int verbose) {
+		  const int verbose) {
     assert(k>0); points.resize(0); points.reserve(k);
     assert(k<=__GSTAMPS_sFive_kMAX_);
     const static std::vector<bint> sFiveLow[__GSTAMPS_sFive_kMAX_]={
@@ -889,7 +889,7 @@ inline bint sFive(std::vector<bint>& points, const size_t k,
 
 #define __GSTAMPS_sSix_kMAX_ 9
 inline bint sSix(std::vector<bint>& points, const size_t k,
-                 const int verbose) {
+		 const int verbose) {
     assert(k>0); points.resize(0); points.reserve(k);
     assert(k<=__GSTAMPS_sSix_kMAX_);
     const static std::vector<bint> sSixLow[__GSTAMPS_sSix_kMAX_]={
@@ -913,8 +913,8 @@ inline bint sSix(std::vector<bint>& points, const size_t k,
 // Mrose Divide & Conquer
 template<typename List>
 inline bint CutSelect(List& points, const size_t k, const size_t kotwo,
-                      const size_t s, const size_t sotwo,
-                      const int rlevel, const int verbose) {
+		      const size_t s, const size_t sotwo,
+		      const int rlevel, const int verbose) {
 
     assert(kotwo>0); assert(sotwo>0);
     const size_t smh(s-sotwo); const size_t kmo(k-kotwo);
@@ -922,25 +922,25 @@ inline bint CutSelect(List& points, const size_t k, const size_t kotwo,
 
     bint m1 = FSelect(points, kmo, smh, rlevel, verbose-1);
     if (verbose>0) rangeprint(std::clog << "#[CS] (" << k << ',' << s << ")m1["
-                              << kmo << ',' << smh << "]:" << m1
-                              << ", n: ", points)<<std::endl;
+			      << kmo << ',' << smh << "]:" << m1
+			      << ", n: ", points)<<std::endl;
     std::vector<bint> p2;
     bint m2(m1);
     if ( (kmo!=kotwo) || (sotwo!=smh) ) {
-        m2 = FSelect(p2, kotwo, sotwo, rlevel, verbose-1);
+	m2 = FSelect(p2, kotwo, sotwo, rlevel, verbose-1);
     } else {
-        p2.assign(points.begin(),points.end());
+	p2.assign(points.begin(),points.end());
     }
     ++m1;
     const bint max(m1*(m2+1)-1);
     for( auto& it : p2 )
-        points.emplace_back( std::move( it *= m1 ) );
+	points.emplace_back( std::move( it *= m1 ) );
 
     if (verbose>0) {
-        rangeprint(std::clog << "#[CS] (" << k << ',' << s << ")m2["
-                   << kotwo << ',' << sotwo << "]:" << m2
-                   << ", n: ", p2)<<std::endl;
-        std::clog << "#[CS] >= " << max <<std::endl;
+	rangeprint(std::clog << "#[CS] (" << k << ',' << s << ")m2["
+		   << kotwo << ',' << sotwo << "]:" << m2
+		   << ", n: ", p2)<<std::endl;
+	std::clog << "#[CS] >= " << max <<std::endl;
     }
 
     const bint cov(Cover(points, s, verbose)); // If unable return estimation
@@ -951,39 +951,39 @@ inline bint CutSelect(List& points, const size_t k, const size_t kotwo,
 // Recursive (rlevel) Quadratic exploration, or midpoints only
 template<typename List>
 inline bint RecSelect(List& points, const size_t k, const size_t s,
-                      const int rlevel, const int verbose) {
+		      const int rlevel, const int verbose) {
     assert(k>1); assert(s>1);
 
     bint max(0);
     if (rlevel>0) {
-        for(size_t klow(1); klow<k; ++klow) {
-            for(size_t slow(1); slow<s; ++slow) {
-                std::vector<bint> p2;
-                const bint cm = CutSelect(p2, k, klow, s, slow,
-                                          rlevel-1, verbose-1);
-                if (verbose>0)
-                    std::clog << "#[RS] (" << k << '|' << klow << ','
-                              << s << '|' << slow << "): " << cm << std::endl;
-                if (cm>max) {
-                    points.swap(p2);
-                    max = cm;
-                }
-            }
-        }
-            // Just try the previous one also
-        std::vector<bint> pm;
-        bint mpm = FSelect(pm,k-1,s,rlevel-1,verbose-1);
-        pm.push_back(mpm+1);
-        mpm = _Cover(pm.begin(), pm.end(), s);
-        if (verbose>0) std::clog << "#[FPM] (" << k-1 << ',' << s << "): "
-                                 << mpm << std::endl;
-        if (mpm>max) {
-            points.swap(pm);
-            max = mpm;
-        }
+	for(size_t klow(1); klow<k; ++klow) {
+	    for(size_t slow(1); slow<s; ++slow) {
+		std::vector<bint> p2;
+		const bint cm = CutSelect(p2, k, klow, s, slow,
+					  rlevel-1, verbose-1);
+		if (verbose>0)
+		    std::clog << "#[RS] (" << k << '|' << klow << ','
+			      << s << '|' << slow << "): " << cm << std::endl;
+		if (cm>max) {
+		    points.swap(p2);
+		    max = cm;
+		}
+	    }
+	}
+	    // Just try the previous one also
+	std::vector<bint> pm;
+	bint mpm = FSelect(pm,k-1,s,rlevel-1,verbose-1);
+	pm.push_back(mpm+1);
+	mpm = _Cover(pm.begin(), pm.end(), s);
+	if (verbose>0) std::clog << "#[FPM] (" << k-1 << ',' << s << "): "
+				 << mpm << std::endl;
+	if (mpm>max) {
+	    points.swap(pm);
+	    max = mpm;
+	}
     } else {
-            // Chossing midpoints only
-        max = CutSelect(points, k, k>>1, s, s>>1, 0, verbose-1);
+	    // Chossing midpoints only
+	max = CutSelect(points, k, k>>1, s, s>>1, 0, verbose-1);
     }
     return max;
 }
@@ -992,163 +992,163 @@ inline bint RecSelect(List& points, const size_t k, const size_t s,
 
 // Switching among different solutions, known extremal first
 inline bint DSelect(std::vector<bint>& points, const size_t k, const size_t s,
-                    const int rlevel, const int verbose) {
+		    const int rlevel, const int verbose) {
     points.resize(0); points.reserve(k);
 
     if (k == 1) {
-        points.push_back(__St_One);
-        return bint(s);
+	points.push_back(__St_One);
+	return bint(s);
     }
 
     if (s == 1) {
-        for(size_t e(1); e<=k; ++e) {
-            points.emplace_back(e);
-        }
-        return bint(k);
+	for(size_t e(1); e<=k; ++e) {
+	    points.emplace_back(e);
+	}
+	return bint(k);
     }
 
     if (k == 2) {
-        points.push_back(__St_One);
-        const bint t(s>>1);
-        if (s & 0x1) {
-            points.push_back(t+2);
-            return (t*(t+4)+2);
-        } else {
-            points.push_back(t+1); // t+2 could workd also ...
-            return t*(t+3);
-        }
+	points.push_back(__St_One);
+	const bint t(s>>1);
+	if (s & 0x1) {
+	    points.push_back(t+2);
+	    return (t*(t+4)+2);
+	} else {
+	    points.push_back(t+1); // t+2 could workd also ...
+	    return t*(t+3);
+	}
     }
 
     if (k == 3) {
-        const bint max = kThree(points,s,verbose-1);
-        if (verbose>0) rangeprint(std::clog << "#[Fk3] max: " << max
-                                  << ", points: ", points) << std::endl;
-        return max;
+	const bint max = kThree(points,s,verbose-1);
+	if (verbose>0) rangeprint(std::clog << "#[Fk3] max: " << max
+				  << ", points: ", points) << std::endl;
+	return max;
     }
 
     bint max(0);
     if (k == 4) {
-        max = kFour(points,s,verbose-1);
-        if (verbose>0) rangeprint(std::clog << "#[Fk4] max: " << max
-                                  << ", points: ", points) << std::endl;
-        if (s <= __GSTAMPS_kFour_sKNOWN_) return max;
+	max = kFour(points,s,verbose-1);
+	if (verbose>0) rangeprint(std::clog << "#[Fk4] max: " << max
+				  << ", points: ", points) << std::endl;
+	if (s <= __GSTAMPS_kFour_sKNOWN_) return max;
     }
 
     if ((s == 2) && (k>4)) {
-        if (k<=__GSTAMPS_sTwo_kMAX_) {
-            max = sTwo(points,k,verbose-1);
-            if (verbose>0) rangeprint(std::clog << "#[Fs2] max: " << max
-                                      << ", points: ", points) << std::endl;
-            return max;
-        }
-        std::vector<bint> p2;
-        const bint ctwo = KloveMossige(p2,k,verbose-1);
-        if (verbose>0) rangeprint(std::clog << "#[FKloveMossige] max: "
-                                  << ctwo << ", points: ", p2) << std::endl;
-        if (ctwo>max) {
-            points.swap(p2);
-            max = ctwo;
-        }
+	if (k<=__GSTAMPS_sTwo_kMAX_) {
+	    max = sTwo(points,k,verbose-1);
+	    if (verbose>0) rangeprint(std::clog << "#[Fs2] max: " << max
+				      << ", points: ", points) << std::endl;
+	    return max;
+	}
+	std::vector<bint> p2;
+	const bint ctwo = KloveMossige(p2,k,verbose-1);
+	if (verbose>0) rangeprint(std::clog << "#[FKloveMossige] max: "
+				  << ctwo << ", points: ", p2) << std::endl;
+	if (ctwo>max) {
+	    points.swap(p2);
+	    max = ctwo;
+	}
     }
 
     if ((s == 3) && (k>4) && (k<=__GSTAMPS_sThree_kMAX_)) {
-        max = sThree(points,k,verbose-1);
-        if (verbose>0) rangeprint(std::clog << "#[Fs3] max: " << max
-                                  << ", points: ", points) << std::endl;
-        return max;
+	max = sThree(points,k,verbose-1);
+	if (verbose>0) rangeprint(std::clog << "#[Fs3] max: " << max
+				  << ", points: ", points) << std::endl;
+	return max;
     }
 
     if ((s == 4) && (k>4) && (k<=__GSTAMPS_sFour_kMAX_)) {
-        max = sFour(points,k,verbose-1);
-        if (verbose>0) rangeprint(std::clog << "#[Fs4] max: " << max
-                                  << ", points: ", points) << std::endl;
-        return max;
+	max = sFour(points,k,verbose-1);
+	if (verbose>0) rangeprint(std::clog << "#[Fs4] max: " << max
+				  << ", points: ", points) << std::endl;
+	return max;
     }
 
     if ((s == 5) && (k>4) && (k<=__GSTAMPS_sFive_kMAX_)) {
-        max = sFive(points,k,verbose-1);
-        if (verbose>0) rangeprint(std::clog << "#[Fs5] max: " << max
-                                  << ", points: ", points) << std::endl;
-        return max;
+	max = sFive(points,k,verbose-1);
+	if (verbose>0) rangeprint(std::clog << "#[Fs5] max: " << max
+				  << ", points: ", points) << std::endl;
+	return max;
     }
 
     if ((s == 6) && (k>4) && (k<=__GSTAMPS_sSix_kMAX_)) {
-        max = sSix(points,k,verbose-1);
-        if (verbose>0) rangeprint(std::clog << "#[Fs6] max: " << max
-                                  << ", points: ", points) << std::endl;
-        return max;
+	max = sSix(points,k,verbose-1);
+	if (verbose>0) rangeprint(std::clog << "#[Fs6] max: " << max
+				  << ", points: ", points) << std::endl;
+	return max;
     }
 
     if ((k == 5) && (s>6) && (s<=__GSTAMPS_kFive_sMAX_)) {
-        max = kFive(points,s,verbose-1);
-        if (verbose>0) rangeprint(std::clog << "#[Fk5] max: " << max
-                                  << ", points: ", points) << std::endl;
-        return max;
+	max = kFive(points,s,verbose-1);
+	if (verbose>0) rangeprint(std::clog << "#[Fk5] max: " << max
+				  << ", points: ", points) << std::endl;
+	return max;
     }
 
     if ((k == 6) && (s>6) && (s<=__GSTAMPS_kSix_sMAX_)) {
-        max = kSix(points,s,verbose-1);
-        if (verbose>0) rangeprint(std::clog << "#[Fk6] max: " << max
-                                  << ", points: ", points) << std::endl;
-        return max;
+	max = kSix(points,s,verbose-1);
+	if (verbose>0) rangeprint(std::clog << "#[Fk6] max: " << max
+				  << ", points: ", points) << std::endl;
+	return max;
     }
 
     if ((k == 7) && (s>6) && (s<=__GSTAMPS_kSeven_sMAX_)) {
-        max = kSeven(points,s,verbose-1);
-        if (verbose>0) rangeprint(std::clog << "#[Fk7] max: " << max
-                                  << ", points: ", points) << std::endl;
-        return max;
+	max = kSeven(points,s,verbose-1);
+	if (verbose>0) rangeprint(std::clog << "#[Fk7] max: " << max
+				  << ", points: ", points) << std::endl;
+	return max;
     }
 
     if ((k == 8) && (s>6) && (s<=__GSTAMPS_kEight_sMAX_)) {
-        max = kEight(points,s,verbose-1);
-        if (verbose>0) rangeprint(std::clog << "#[Fk8] max: " << max
-                                  << ", points: ", points) << std::endl;
-        return max;
+	max = kEight(points,s,verbose-1);
+	if (verbose>0) rangeprint(std::clog << "#[Fk8] max: " << max
+				  << ", points: ", points) << std::endl;
+	return max;
     }
 
     const size_t sot(s>>1);
     if ((k<s) && (k>sot)) {
-        std::vector<bint> p2;
-        const bint mab = AlterBernett(p2,k,s,verbose-1);
-        if (verbose>0) rangeprint(std::clog << "#[FAlterBernett] max: " << mab
-                                  << ", points: ", p2) << std::endl;
-        if (mab>max) {
-            points.swap(p2);
-            max = mab;
-        }
+	std::vector<bint> p2;
+	const bint mab = AlterBernett(p2,k,s,verbose-1);
+	if (verbose>0) rangeprint(std::clog << "#[FAlterBernett] max: " << mab
+				  << ", points: ", p2) << std::endl;
+	if (mab>max) {
+	    points.swap(p2);
+	    max = mab;
+	}
     }
 
     if (k>=s) {
-        std::vector<bint> p2;
-        const bint mdp = BalGreedy(p2,k,s,verbose-1);
-        if (verbose>0) rangeprint(std::clog << "#[FBalGreedy] max: " << mdp
-                                  << ", points: ", p2) << std::endl;
-        if (mdp>max) {
-            points.swap(p2);
-            max = mdp;
-        }
+	std::vector<bint> p2;
+	const bint mdp = BalGreedy(p2,k,s,verbose-1);
+	if (verbose>0) rangeprint(std::clog << "#[FBalGreedy] max: " << mdp
+				  << ", points: ", p2) << std::endl;
+	if (mdp>max) {
+	    points.swap(p2);
+	    max = mdp;
+	}
     }
 
     std::vector<bint> p2;
     const bint mrs = RecSelect(p2,k,s,rlevel,verbose-1);
     if (verbose>0) rangeprint(std::clog << "#[FSRec] max: " << mrs
-                              << ", points: ", p2) << std::endl;
+			      << ", points: ", p2) << std::endl;
     if (mrs>max) {
-        points.swap(p2);
-        max = mrs;
+	points.swap(p2);
+	max = mrs;
     }
 
 
     const static StampDB _stampDB;
     std::vector<bint> pDB;
     if (_stampDB(std::pair<size_t,size_t>(k,s),pDB)) {
-        if (verbose>0) rangeprint(std::clog << "#[GoodBasis] : "
-                                  , pDB) << std::endl;
-        if (pDB.front()>max) {
-            max = pDB.front();
-            points.assign(std::next(pDB.begin()), pDB.end());
-        }
+	if (verbose>0) rangeprint(std::clog << "#[GoodBasis] : "
+				  , pDB) << std::endl;
+	if (pDB.front()>max) {
+	    max = pDB.front();
+	    points.assign(std::next(pDB.begin()), pDB.end());
+	}
     }
 
 
@@ -1159,23 +1159,23 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const size_t s,
 
 // Memoization of solutions
 inline bint FSelect(std::vector<bint>& points, const size_t k, const size_t s,
-             const int rlevel, const int verbose) {
+	     const int rlevel, const int verbose) {
     points.resize(0); points.reserve(k);
     bint max(0);
     static std::map<std::pair<size_t,size_t>,
-        std::pair<bint,std::vector<bint>>> memoize;
+	std::pair<bint,std::vector<bint>>> memoize;
     std::pair<size_t,size_t> p(k,s);
     if (memoize.count(p)>0) {
-        max = memoize[p].first;
-        auto& vec(memoize[p].second);
-        points.assign(vec.begin(),vec.end());
-        if (verbose>0) {
-            rangeprint(std::clog << "#[FMM] (" << k << ',' << s << "):"
-                       << max << ", n: ", points)<<std::endl;
-        }
+	max = memoize[p].first;
+	auto& vec(memoize[p].second);
+	points.assign(vec.begin(),vec.end());
+	if (verbose>0) {
+	    rangeprint(std::clog << "#[FMM] (" << k << ',' << s << "):"
+		       << max << ", n: ", points)<<std::endl;
+	}
     } else {
-        max = DSelect(points, k, s, rlevel, verbose);
-        memoize[p]=std::pair<size_t,std::vector<bint>>(max,points);
+	max = DSelect(points, k, s, rlevel, verbose);
+	memoize[p]=std::pair<size_t,std::vector<bint>>(max,points);
     }
 
     return max;
@@ -1184,17 +1184,17 @@ inline bint FSelect(std::vector<bint>& points, const size_t k, const size_t s,
 
 // Exhaust additional denominations ...
 inline bint complement(std::vector<bint>& prescribed,
-                       const size_t k, const size_t s, const int verbose) {
+		       const size_t k, const size_t s, const int verbose) {
 
     const bint pcmu( _Cover(prescribed.begin(),prescribed.end(),s)), pc(pcmu+__St_One);
     if (verbose>0) std::clog << "#[Cpmt(" << prescribed.size() << ")] "
-                             << "pc: " << pcmu << std::endl;
+			     << "pc: " << pcmu << std::endl;
 
     if (prescribed.size()>=k) return pcmu;
 
     const bint amx(prescribed.back()+__St_One);
     if (verbose>0) std::clog << "#[Cpmt(" << prescribed.size() << ")] "
-                             << "amx: " << amx << std::endl;
+			     << "amx: " << amx << std::endl;
 
     std::vector<bint> points; points.reserve(k);
     points.assign(prescribed.begin(), prescribed.end());
@@ -1205,23 +1205,23 @@ inline bint complement(std::vector<bint>& prescribed,
 
 //     for(bint u(amx); u<=(pc+1); ++u) {
     for(bint u(pc); u>=amx; --u) {
-        points.push_back(u);
-        const bint bu = complement(points, k, s, verbose-1);
-        if (bu > bmax) {
-            bfound.resize(0);
-            bfound.assign(points.begin(), points.end());
-            bmax = bu;
-            if (verbose>0) {
-                std::clog << "#[Cpmt(" << prescribed.size() << ")] max: "
-                          << bmax << " with basis: ";
-                for(const auto& it: points) std::clog << it << ' ';
-                std::clog << std::endl;
-            }
-        }
-        points.resize(prescribed.size());
-        if (verbose>0) std::clog << "#[Cpmt(" << prescribed.size() << ")] "
-                                 << amx << " <= " << u << " <= " << pc
-                                 << " : " << bu << " <= " << bmax << std::endl;
+	points.push_back(u);
+	const bint bu = complement(points, k, s, verbose-1);
+	if (bu > bmax) {
+	    bfound.resize(0);
+	    bfound.assign(points.begin(), points.end());
+	    bmax = bu;
+	    if (verbose>0) {
+		std::clog << "#[Cpmt(" << prescribed.size() << ")] max: "
+			  << bmax << " with basis: ";
+		for(const auto& it: points) std::clog << it << ' ';
+		std::clog << std::endl;
+	    }
+	}
+	points.resize(prescribed.size());
+	if (verbose>0) std::clog << "#[Cpmt(" << prescribed.size() << ")] "
+				 << amx << " <= " << u << " <= " << pc
+				 << " : " << bu << " <= " << bmax << std::endl;
     }
 
     prescribed.resize(0);
@@ -1233,7 +1233,7 @@ inline bint complement(std::vector<bint>& prescribed,
 
 // Exhaust additional denominations ...
 inline bint par_complement(std::vector<bint>& prescribed,
-                           const size_t k, const size_t s, const int verbose) {
+			   const size_t k, const size_t s, const int verbose) {
 
     assert(prescribed.size()<k);
 
@@ -1241,32 +1241,36 @@ inline bint par_complement(std::vector<bint>& prescribed,
     const bint amx(prescribed.back()+__St_One);
     const bint pc( _Cover(prescribed.begin(),prescribed.end(),s)+__St_One );
 
+    std::clog << "#[PCmt(" << prescribed.size() << ")]"
+			     << " pc: " << pc
+			     << " amx: " << amx << std::endl;
+
     std::vector<bint> bfound; bfound.reserve(k);
-    bint bmax(0);
+    bint bmax(pc);
 
 #pragma omp parallel for shared(prescribed,bfound,bmax,amx,pc,k,s,verbose) schedule(dynamic)
     for(bint u = amx; u<=pc; ++u) {
-        std::vector<bint> points; points.reserve(k);
-        points.assign(prescribed.begin(), prescribed.end());
-        points.push_back(u);
-        const bint bu = complement(points, k, s, verbose-1);
+	std::vector<bint> points; points.reserve(k);
+	points.assign(prescribed.begin(), prescribed.end());
+	points.push_back(u);
+	const bint bu = complement(points, k, s, verbose-1);
 #pragma omp critical
-        {
-            if (bu > bmax) {
-                bfound.resize(0);
-                bfound.assign(points.begin(), points.end());
-                bmax = bu;
-                if (verbose>0) {
-                    std::clog << "#[Cpmt(" << prescribed.size() << ")] max: "
-                              << bmax << " with basis: ";
-                    for(const auto& it: points) std::clog << it << ' ';
-                    std::clog << std::endl;
-                }
-            }
-            if (verbose>0) std::clog << "#[Cpmt(" << prescribed.size() << ")] "
-                                     << amx << " <= " << u << " <= " << pc
-                                     << " : " << bu << " <= " << bmax << std::endl;
-        }
+	{
+	    if (bu > bmax) {
+		bfound.resize(0);
+		bfound.assign(points.begin(), points.end());
+		bmax = bu;
+		if (verbose>0) {
+		    std::clog << "#[Cpmt(" << prescribed.size() << ")] max: "
+			      << bmax << " with basis: ";
+		    for(const auto& it: points) std::clog << it << ' ';
+		    std::clog << std::endl;
+		}
+	    }
+	    if (verbose>0) std::clog << "#[Cpmt(" << prescribed.size() << ")] "
+				     << amx << " <= " << u << " <= " << pc
+				     << " : " << bu << " <= " << bmax << std::endl;
+	}
     }
 
     prescribed.resize(0);

@@ -3,9 +3,15 @@
 # Authors: J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
 ####################################################################
 
+
 OPTFLAGS = -O3 -ffast-math
 
 #######
+# g++ options
+OPTFLAGS += -fopenmp -march=native -funroll-all-loops
+
+#######
+
 
 CXXFLAGS += ${OPTFLAGS} -I`pwd`/include/ `pkg-config givaro --cflags`
 LOADLIBES+= `pkg-config givaro --libs`
@@ -13,10 +19,10 @@ LOADLIBES+= `pkg-config givaro --libs`
 #######
 
 EXE  = cover basis
+EXE += dynprg supplement complement
 EXE += brute
 EXE += search
 EXE += fibo ab geom
-EXE += dynprg supplement complement
 
 
 SRC=${EXE:%=src/%.cpp}
@@ -32,3 +38,6 @@ bin/%: src/%.cpp
 
 clean:
 	- \rm ${BIN}
+
+check: ${BIN}
+	./bin/FDT.sh 17

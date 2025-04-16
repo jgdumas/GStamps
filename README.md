@@ -56,4 +56,5 @@ Daniel S. Roche
 
 **Examples**:
 - `./bin/basis 4 2`: produces the basis "1 3 5 6" attaining all integers 1..12
-- `./bin/`: the 
+- `echo '1 3 5 6' | ./bin/cover 2`: the basis can cover all integers up to 12 with 2 stamps
+- `./bin/search 3 1024 1`: number of denominations to cover 1024 with 3 stamps
