@@ -27,7 +27,7 @@ Daniel S. Roche
 **Installation**:
 - Requires some distribution packages like:
            `sudo apt install make g++`
-           (and optionally `sudo apt install  pkg-config libgivaro-dev).
+           (and optionally `sudo apt install pkg-config libgivaro-dev).
 - Then just run `make`, in order to produce the following executable programs
 - See also [`bin/auto-docker.run`](https://github.com/jgdumas/gstamps/blob/main/bin/auto-docker.run)
 

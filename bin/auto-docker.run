@@ -1,0 +1,20 @@
+####################################################################
+# GStamps: C++ routines for the Global Postage Stamp Problem
+# Authors: J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
+####################################################################
+
+#####################################################
+### Requirements: we suppose an existing environment,
+###           with git, make, c++, GMP, Givaro, etc.
+### For instance via a virtual machine (here docker):
+# > sudo docker run -it debian:12 bash
+
+#####################################################
+### Install & run benchmarks, within the environment:
+
+apt update
+apt install git make g++ libboost-dev
+apt install pkg-config libgmp-dev libgivaro-dev
+cd; git clone https://github.com/jgdumas/GStamps.git
+cd GStamps; make -j 4
+make check
