@@ -35,7 +35,7 @@ for j in $(seq 1 $MAXKpS)
   for k in $(seq $MINK $(( $j - 1 )))
     do
     s=$(( $j - $k ))
-    if [[ $s -gt $MINS ]]
+    if [[ $s -ge $MINS ]]
 	then
 	echo -n "$k $s"
 	for prg in ${PRGS}
