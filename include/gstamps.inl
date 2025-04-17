@@ -1186,6 +1186,8 @@ inline bint FSelect(std::vector<bint>& points, const size_t k, const size_t s,
 inline bint complement(std::vector<bint>& prescribed,
 		       const size_t k, const size_t s, const int verbose) {
 
+    assert(prescribed.size()<k);
+
     const bint pcmu( _Cover(prescribed.begin(),prescribed.end(),s)), pc(pcmu+__St_One);
     if (verbose>0) std::clog << "#[Cpmt(" << prescribed.size() << ")] "
 			     << "pc: " << pcmu << std::endl;

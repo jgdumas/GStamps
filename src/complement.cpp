@@ -41,24 +41,29 @@ int main(int argc, char **argv) {
     if (prescb.size()<1) {
         prescb.push_back(1);
     }
-    if (prescb.size()>k) {
-		prescb.resize(k);
-	}
+
 
 
     int64_t numthreads(1);
 #if defined(_OPENMP)
 #pragma omp parallel
 #pragma omp single
-    {
-    numthreads = omp_get_num_threads();
-    }
+        {
+            numthreads = omp_get_num_threads();
+        }
 #endif
 
 
+    bint max;
+
     StTimer chrono; chrono.start();
-    const bint max = par_complement(prescb, k, s, verbose);
+    if (prescb.size()>=k) {
+        max = Cover(prescb, s, verbose);
+	} else {
+        max = par_complement(prescb, k, s, verbose);
+    }
     chrono.stop();
+
 
     std::clog << "#[Cpmt " << numthreads << "t] nmax: " << max
               << ' ' << chrono << std::endl;
