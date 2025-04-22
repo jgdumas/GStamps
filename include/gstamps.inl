@@ -956,34 +956,37 @@ inline bint RecSelect(List& points, const size_t k, const size_t s,
 
     bint max(0);
     if (rlevel>0) {
-	for(size_t klow(1); klow<k; ++klow) {
-	    for(size_t slow(1); slow<s; ++slow) {
-		std::vector<bint> p2;
-		const bint cm = CutSelect(p2, k, klow, s, slow,
-					  rlevel-1, verbose-1);
-		if (verbose>0)
-		    std::clog << "#[RS] (" << k << '|' << klow << ','
-			      << s << '|' << slow << "): " << cm << std::endl;
-		if (cm>max) {
-		    points.swap(p2);
-		    max = cm;
-		}
-	    }
-	}
-	    // Just try the previous one also
-	std::vector<bint> pm;
-	bint mpm = FSelect(pm,k-1,s,rlevel-1,verbose-1);
-	pm.push_back(mpm+1);
-	mpm = _Cover(pm.begin(), pm.end(), s);
-	if (verbose>0) std::clog << "#[FPM] (" << k-1 << ',' << s << "): "
-				 << mpm << std::endl;
-	if (mpm>max) {
-	    points.swap(pm);
-	    max = mpm;
-	}
+        for(size_t klow(1); klow<k; ++klow) {
+            for(size_t slow(1); slow<s; ++slow) {
+                std::vector<bint> p2;
+                const bint cm = CutSelect(p2, k, klow, s, slow,
+                                          rlevel-1, verbose-1);
+                if (verbose>0)
+                    std::clog << "#[RS] (" << k << '|' << klow << ','
+                              << s << '|' << slow << "): " << cm << std::endl;
+                if (cm>max) {
+                    points.swap(p2);
+                    max = cm;
+                }
+            }
+        }
+        if (verbose>0) rangeprint(std::clog << "#[RS] max: " << max
+                                  << ", points: ", points) << std::endl;
+
+            // Just try the previous one also
+        std::vector<bint> pm;
+        bint mpm = FSelect(pm,k-1,s,rlevel-1,verbose-1);
+        pm.push_back(mpm+1);
+        mpm = _Cover(pm.begin(), pm.end(), s);
+        if (verbose>0) std::clog << "#[FPM] (" << k-1 << ',' << s << "): "
+                                 << mpm << std::endl;
+        if (mpm>max) {
+            points.swap(pm);
+            max = mpm;
+        }
     } else {
-	    // Chossing midpoints only
-	max = CutSelect(points, k, k>>1, s, s>>1, 0, verbose-1);
+            // Chossing midpoints only
+        max = CutSelect(points, k, k>>1, s, s>>1, 0, verbose-1);
     }
     return max;
 }
