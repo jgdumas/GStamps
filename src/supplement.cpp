@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
     while (j<k) {
         j += g;
         const size_t jk(j>k?k:j);
-        max = complement(prescb, jk, s, verbose-1);
+        max = par_complement(prescb, jk, s, verbose-1);
         if (verbose>0)
             std::clog << "#[Spmt(" << jk << ")] max: " << max << std::endl;
     }
