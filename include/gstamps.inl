@@ -1206,7 +1206,6 @@ inline bint complement(std::vector<bint>& prescribed,
     std::vector<bint> bfound; bfound.reserve(k);
     bint bmax(0);
 
-//     for(bint u(amx); u<=(pc+1); ++u) {
     for(bint u(pc); u>=amx; --u) {
 	points.push_back(u);
 	const bint bu = complement(points, k, s, verbose-1);
@@ -1252,7 +1251,8 @@ inline bint par_complement(std::vector<bint>& prescribed,
     bint bmax(pc);
 
 #pragma omp parallel for shared(prescribed,bfound,bmax,amx,pc,k,s,verbose) schedule(dynamic)
-    for(bint u = amx; u<=pc; ++u) {
+    for(bint u=pc; u>=amx; --u) {
+//     for(bint u = amx; u<=pc; ++u) {
 	std::vector<bint> points; points.reserve(k);
 	points.assign(prescribed.begin(), prescribed.end());
 	points.push_back(u);
