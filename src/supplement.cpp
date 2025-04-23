@@ -23,7 +23,9 @@ int main(int argc, char **argv) {
 
 
     std::vector<bint> prescb;
-    if (argc <= 4) {
+    int g(argc>4?atoi(argv[4]):1); if (g<=0) g=2;
+
+    if (argc <= 5) {
         bint tmp;
         std::clog << "# Enter prescribed denominations (end by non-digit) ... "
                   << std::endl;
@@ -31,7 +33,6 @@ int main(int argc, char **argv) {
             prescb.push_back(tmp);
         };
     } else {
-        int g(atoi(argv[4])); if (g<=0) g=2;
         const int r(argc>5?atoi(argv[5]):1);
         const size_t redk(k>g?k-g:1);
         FSelect(prescb, redk, s, r, verbose);
@@ -47,10 +48,14 @@ int main(int argc, char **argv) {
 
     StTimer chrono; chrono.start();
     bint max(_Cover(prescb.begin(),prescb.end(),s));
-    for(size_t j(prescb.size()+1); j<=k; ++j) {
-        max = complement(prescb, j, s, verbose-1);
+
+    size_t j(prescb.size());
+    while (j<k) {
+        j += g;
+        const size_t jk(j>k?k:j);
+        max = complement(prescb, jk, s, verbose-1);
         if (verbose>0)
-            std::clog << "#[Spmt(" << j << ")] max: " << max << std::endl;
+            std::clog << "#[Spmt(" << jk << ")] max: " << max << std::endl;
     }
     chrono.stop();
 
