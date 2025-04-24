@@ -13,7 +13,7 @@
 ### Install & run benchmarks, within the environment:
 
 apt update
-apt install git make g++ libboost-dev
+apt install make g++ libboost-dev git
 apt install pkg-config libgmp-dev libgivaro-dev
 cd; git clone https://github.com/jgdumas/GStamps.git
 cd GStamps; make -j 4

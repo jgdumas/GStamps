@@ -26,8 +26,8 @@ Daniel S. Roche
 
 **Installation**:
 - Requires some distribution packages like:
-           `sudo apt install make g++`
-           (and optionally `sudo apt install pkg-config libgivaro-dev).
+           `sudo apt install git make g++ libboost-dev`
+           (and optionally `sudo apt install pkg-config libgmp-dev libgivaro-dev`).
 - Then just run `make`, in order to produce the following executable programs
 - See also [`bin/auto-docker.run`](https://github.com/jgdumas/gstamps/blob/main/bin/auto-docker.run)
 
@@ -36,16 +36,21 @@ Daniel S. Roche
 |  |  |
 | :--------- | :------ |
 |`bin/cover`| LPSP: Computes the cover of a basis with s stamps |
-|`bin/basis`| GPSP: Direct basis computation of k denominations and s stamps |
+|`bin/basis`| GPSP: Divide & Conquer basis computation of k denominations and s stamps |
 |`bin/dynprg`| GPSP: Dynamic programming search of best Divide & Conquer cut |
+|  |  |
+
+
+**Search Tools**:
+|  |  |
+| :--------- | :------ |
 |`bin/search`| Smallest basis reaching N with s stamps |
 |`bin/supplement`  | Exhausts additional denominations one value at a time |
 |`bin/complement`| Exhausts all additional denominations in parallel |
 |`bin/brute`| Exhaustive search of an extremal basis |
 |  |  |
 
-
-**Tools**:
+**Other basis**:
 |  |  |
 | :--------- | :------ |
 |`bin/fibo`| Fibonacci basis |

@@ -40,4 +40,4 @@ clean:
 	- \rm ${BIN}
 
 check: ${BIN}
-	./bin/FDT.sh 17
+	./bin/FDT.sh 20

@@ -15,13 +15,13 @@ struct StampDB {
     using key_type=std::pair<size_t,size_t>;
     std::map<key_type,value_type> goodBasis;
     bool operator()(const std::pair<size_t,size_t> ks, std::vector<bint>& basis) const {
-        if (goodBasis.count(ks)>0) {
-            const auto& knownbasis(goodBasis.find(ks)->second);
-            basis.assign(knownbasis.begin(),knownbasis.end());
-            return true;
-        } else {
-            return false;
-        }
+	if (goodBasis.count(ks)>0) {
+	    const auto& knownbasis(goodBasis.find(ks)->second);
+	    basis.assign(knownbasis.begin(),knownbasis.end());
+	    return true;
+	} else {
+	    return false;
+	}
     }
 
 
