@@ -152,20 +152,21 @@ inline bint Cover(const List& points, const size_t s, const int verbose) {
     bint vs(points.back());
     const bint upper(s*vs+1);
     if ((vs > __GSTAMPS_MAXCOVER) || (upper > __GSTAMPS_MAXCOVER)) {
-	std::clog << "#\033[1;33m[Warning] memory exceeded ("
-		  << upper << ")\033[0m: trying recursive compuation ..."
-		  << std::endl;
-	return ICover(points,s,verbose);
+        std::clog << "#\033[1;33m[Warning] memory exceeded ("
+                  << upper << ")\033[0m: trying recursive compuation ..."
+                  << std::endl;
+        return ICover(points,s,verbose);
     }
-    if (verbose>1) rangeprint(std::clog << "#[Cover] Basis: ", points) << std::endl;
+    if (verbose>1)
+        rangeprint(std::clog << "#[Cover] Basis: ", points) << std::endl;
 
     StTimer chrono; chrono.start();
     const bint max( _Cover(points.begin(), points.end(), s) );
     chrono.stop();
 
     if (verbose>1) {
-	std::clog << "#[Cover(" << s << ")]: " << s << ": 1.." << max
-		  << " ..." << std::endl;
+        std::clog << "#[Cover(" << s << ")]: " << s << ": 1.." << max
+                  << " ..." << std::endl;
     }
 
     if (verbose>0) std::clog << "#[Cover(" << s << ")]: " << chrono <<std::endl;
@@ -508,7 +509,7 @@ inline bint kThree(std::vector<bint>& points, const size_t s,
 
 #define __GSTAMPS_kFour_sKNOWN_ 54
 inline bint kFour(std::vector<bint>& points, const size_t s,
-		  const int verbose) {
+                  const bool approx, const int verbose) {
     assert(s>0);
     points.resize(0); points.reserve(4);
     const static size_t kFourLow[54][5]={
@@ -590,12 +591,11 @@ inline bint kFour(std::vector<bint>& points, const size_t s,
     points.push_back(std::move(a3));
     points.push_back(std::move(a4));
     if (verbose>0) {
-	std::clog << "#[k4] est.: " << max << ", points: ";
-	for(const auto& it: points) std::clog << it << ' ';
-	std::clog << std::endl;
+        std::clog << "#[k4] est.: " << max << ", points: ";
+        for(const auto& it: points) std::clog << it << ' ';
+        std::clog << std::endl;
     }
-    const bint cov(Cover(points, s,verbose)); // If unable return estimation
-    return (cov == __St_Zero ? max : cov);
+    return (approx?max:Cover(points, s, verbose));
 }
 
 
@@ -914,44 +914,43 @@ inline bint sSix(std::vector<bint>& points, const size_t k,
 template<typename List>
 inline bint CutSelect(List& points, const size_t k, const size_t kotwo,
 		      const size_t s, const size_t sotwo,
-		      const int rlevel, const int verbose) {
+		      const int rlevel, const bool approx, const int verbose) {
 
     assert(kotwo>0); assert(sotwo>0);
     const size_t smh(s-sotwo); const size_t kmo(k-kotwo);
     assert(smh>0); assert(kmo>0);
 
-    bint m1 = FSelect(points, kmo, smh, rlevel, verbose-1);
+    bint m1 = FSelect(points, kmo, smh, rlevel, approx, verbose-1);
     if (verbose>0) rangeprint(std::clog << "#[CS] (" << k << ',' << s << ")m1["
 			      << kmo << ',' << smh << "]:" << m1
 			      << ", n: ", points)<<std::endl;
     std::vector<bint> p2;
     bint m2(m1);
     if ( (kmo!=kotwo) || (sotwo!=smh) ) {
-	m2 = FSelect(p2, kotwo, sotwo, rlevel, verbose-1);
+        m2 = FSelect(p2, kotwo, sotwo, rlevel, approx, verbose-1);
     } else {
-	p2.assign(points.begin(),points.end());
+        p2.assign(points.begin(),points.end());
     }
     ++m1;
     const bint max(m1*(m2+1)-1);
     for( auto& it : p2 )
-	points.emplace_back( std::move( it *= m1 ) );
+        points.emplace_back( std::move( it *= m1 ) );
 
     if (verbose>0) {
-	rangeprint(std::clog << "#[CS] (" << k << ',' << s << ")m2["
-		   << kotwo << ',' << sotwo << "]:" << m2
-		   << ", n: ", p2)<<std::endl;
-	std::clog << "#[CS] >= " << max <<std::endl;
+        rangeprint(std::clog << "#[CS] (" << k << ',' << s << ")m2["
+                   << kotwo << ',' << sotwo << "]:" << m2
+                   << ", n: ", p2)<<std::endl;
+        std::clog << "#[CS] >= " << max <<std::endl;
     }
 
-    const bint cov(Cover(points, s, verbose)); // If unable return estimation
-    return (cov == __St_Zero ? max : cov);
+    return (approx?max:Cover(points, s, verbose));
 }
 
 
 // Recursive (rlevel) Quadratic exploration, or midpoints only
 template<typename List>
 inline bint RecSelect(List& points, const size_t k, const size_t s,
-		      const int rlevel, const int verbose) {
+		      const int rlevel, const bool approx, const int verbose) {
     assert(k>1); assert(s>1);
 
     bint max(0);
@@ -960,7 +959,7 @@ inline bint RecSelect(List& points, const size_t k, const size_t s,
             for(size_t slow(1); slow<s; ++slow) {
                 std::vector<bint> p2;
                 const bint cm = CutSelect(p2, k, klow, s, slow,
-                                          rlevel-1, verbose-1);
+                                          rlevel-1, approx, verbose-1);
                 if (verbose>0)
                     std::clog << "#[RS] (" << k << '|' << klow << ','
                               << s << '|' << slow << "): " << cm << std::endl;
@@ -975,7 +974,7 @@ inline bint RecSelect(List& points, const size_t k, const size_t s,
 
             // Just try the previous one also
         std::vector<bint> pm;
-        bint mpm = FSelect(pm,k-1,s,rlevel-1,verbose-1);
+        bint mpm = FSelect(pm,k-1,s,rlevel-1,approx,verbose-1);
         pm.push_back(mpm+1);
         mpm = _Cover(pm.begin(), pm.end(), s);
         if (verbose>0) std::clog << "#[FPM] (" << k-1 << ',' << s << "): "
@@ -986,7 +985,7 @@ inline bint RecSelect(List& points, const size_t k, const size_t s,
         }
     } else {
             // Chossing midpoints only
-        max = CutSelect(points, k, k>>1, s, s>>1, 0, verbose-1);
+        max = CutSelect(points, k, k>>1, s, s>>1, 0, approx, verbose-1);
     }
     return max;
 }
@@ -995,7 +994,7 @@ inline bint RecSelect(List& points, const size_t k, const size_t s,
 
 // Switching among different solutions, known extremal first
 inline bint DSelect(std::vector<bint>& points, const size_t k, const size_t s,
-		    const int rlevel, const int verbose) {
+		    const int rlevel, const bool approx, const int verbose) {
     points.resize(0); points.reserve(k);
 
     if (k == 1) {
@@ -1031,7 +1030,7 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const size_t s,
 
     bint max(0);
     if (k == 4) {
-	max = kFour(points,s,verbose-1);
+	max = kFour(points,s,approx,verbose-1);
 	if (verbose>0) rangeprint(std::clog << "#[Fk4] max: " << max
 				  << ", points: ", points) << std::endl;
 	if (s <= __GSTAMPS_kFour_sKNOWN_) return max;
@@ -1134,7 +1133,7 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const size_t s,
     }
 
     std::vector<bint> p2;
-    const bint mrs = RecSelect(p2,k,s,rlevel,verbose-1);
+    const bint mrs = RecSelect(p2,k,s,rlevel,approx,verbose-1);
     if (verbose>0) rangeprint(std::clog << "#[FSRec] max: " << mrs
 			      << ", points: ", p2) << std::endl;
     if (mrs>max) {
@@ -1162,23 +1161,23 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const size_t s,
 
 // Memoization of solutions
 inline bint FSelect(std::vector<bint>& points, const size_t k, const size_t s,
-	     const int rlevel, const int verbose) {
+                    const int rlevel, const bool approx, const int verbose) {
     points.resize(0); points.reserve(k);
     bint max(0);
     static std::map<std::pair<size_t,size_t>,
-	std::pair<bint,std::vector<bint>>> memoize;
+        std::pair<bint,std::vector<bint>>> memoize;
     std::pair<size_t,size_t> p(k,s);
     if (memoize.count(p)>0) {
-	max = memoize[p].first;
-	auto& vec(memoize[p].second);
-	points.assign(vec.begin(),vec.end());
-	if (verbose>0) {
-	    rangeprint(std::clog << "#[FMM] (" << k << ',' << s << "):"
-		       << max << ", n: ", points)<<std::endl;
-	}
+        max = memoize[p].first;
+        auto& vec(memoize[p].second);
+        points.assign(vec.begin(),vec.end());
+        if (verbose>0) {
+            rangeprint(std::clog << "#[FMM] (" << k << ',' << s << "):"
+                       << max << ", n: ", points)<<std::endl;
+        }
     } else {
-	max = DSelect(points, k, s, rlevel, verbose);
-	memoize[p]=std::pair<size_t,std::vector<bint>>(max,points);
+        max = DSelect(points, k, s, rlevel, approx, verbose);
+        memoize[p]=std::pair<size_t,std::vector<bint>>(max,points);
     }
 
     return max;

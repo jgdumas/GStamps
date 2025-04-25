@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
     } else {
         const int r(argc>5?atoi(argv[5]):1);
         const size_t redk(k>g?k-g:1);
-        FSelect(prescb, redk, s, r, verbose);
+        FSelect(prescb, redk, s, r, false, verbose);
     }
 
     if (prescb.size()<1) {

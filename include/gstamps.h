@@ -134,7 +134,10 @@ bint BalGreedy(std::vector<bint>& points, const size_t k, const size_t s,
 
 bint kThree(std::vector<bint>& points, const size_t s, const int verbose = 0);
 
-bint kFour(std::vector<bint>& points, const size_t s, const int verbose = 0);
+//  approx:	if false the cover is computed (via an exponential algorithm)
+//			otherwise only a lower bound on the cover is returned
+bint kFour(std::vector<bint>& points, const size_t s, const bool approx,
+           const int verbose = 0);
 
 bint kFive(std::vector<bint>& points, const size_t s, const int verbose = 0);
 
@@ -163,26 +166,38 @@ bint sSix(std::vector<bint>& points, const size_t k, const int verbose = 0);
 
 
 // ============================================
-// Hybrid methods
+// Hybrid methods: produce a k-basis in points for s-stamps
+//	rlevel:	D&C splits (k,s) into (k1,s1) and (k-k1,s-s1) then
+//			for (rlevel) recursive levels: (k-1)*(s-1) possibilites explored
+//			then; midpoint (k1=k/2,s1=s/2) is chosen.
+//  approx:	if false the cover is computed (via an exponential algorithm)
+//			otherwise only a lower bound on the cover is returned
+//  verbose:controls the level of verbosity
 
-// Generic algorithm, calling all methods, with memoization of solutions
+
+// Tries memoization of solutions or calls DSelect
 bint FSelect(std::vector<bint>& points, const size_t k, const size_t s,
-             const int rlevel = 0, const int verbose = 0);
+             const int rlevel = 0, const bool approx=false,
+             const int verbose = 0);
 
-// Mrose Divide & Conquer
-template<typename List>
-bint CutSelect(List& points, const size_t k, const size_t kotwo,
-               const size_t s, const size_t sotwo,
-               const int rlevel = 0, const int verbose = 0);
+// Generic algorithm, calling all methods, known extremal first
+bint DSelect(std::vector<bint>& points, const size_t k, const size_t s,
+             const int rlevel = 0, const bool approx=false,
+             const int verbose = 0);
 
-// Recursive (rlevel) Quadratic exploration, or midpoints only
+// Mrose Recursive Divide & Conquer
+//   (rlevel) Quadratic exploration of CutSelect, or midpoints only
 template<typename List>
 bint RecSelect(List& points, const size_t k, const size_t s,
-               const int rlevel = 0, const int verbose = 0);
+               const int rlevel = 0, const bool approx=false,
+               const int verbose = 0);
 
-// Switching among different solutions, known extremal first
-bint DSelect(std::vector<bint>& points, const size_t k, const size_t s,
-             const int rlevel = 0, const int verbose = 0);
+// Divide & Conquer splitting (k,s) into (k1,s1) and (k-k1,s-s1)
+template<typename List>
+bint CutSelect(List& points, const size_t k, const size_t k1,
+               const size_t s, const size_t s1,
+               const int rlevel = 0, const bool approx=false,
+               const int verbose = 0);
 
 
 // ============================================
