@@ -45,8 +45,8 @@ Daniel S. Roche
 |  |  |
 | :--------- | :------ |
 |`bin/search`| Smallest basis reaching N with s stamps |
-|`bin/supplement`  | Exhausts additional denominations one value at a time |
 |`bin/complement`| Exhausts all additional denominations in parallel |
+|`bin/supplement`| Exhausts additional denominations several values at a time |
 |`bin/brute`| Exhaustive search of an extremal basis |
 |  |  |
 
@@ -60,6 +60,6 @@ Daniel S. Roche
 
 
 **Examples**:
-- `./bin/basis 4 2`: produces the basis "1 3 5 6" attaining all integers 1..12
-- `echo '1 3 5 6' | ./bin/cover 2`: the basis can cover all integers up to 12 with 2 stamps
-- `./bin/search 3 1024 1`: number of denominations to cover 1024 with 3 stamps
+- `./bin/basis 4 2`: produces a basis of 4 denominations for 2 stamps (1 3 5 6, attaining all integers 1..12)
+- `echo '1 3 5 6' | ./bin/cover 2`: the basis can cover (all integers up to 12) with 2 stamps
+- `./bin/search 4 1024 1`: produces a basis (with 14 denominations), that can cover at least all integers up to 1024 with 4 stamps

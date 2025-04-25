@@ -1186,6 +1186,13 @@ inline bint FSelect(std::vector<bint>& points, const size_t k, const size_t s,
 
 
 // Exhaust additional denominations ...
+#ifndef __GSTAMPS_Half_search__
+#  define __GSTAMPS_AMX(a,p) (a+__St_One)
+#else
+	// Search only within the largest half
+#  define __GSTAMPS_AMX(a,p) ( ((p+a)>>1) + __St_One )
+#endif
+
 inline bint complement(std::vector<bint>& prescribed,
 		       const size_t k, const size_t s, const int verbose) {
 
@@ -1195,7 +1202,7 @@ inline bint complement(std::vector<bint>& prescribed,
 
     if (prescribed.size()>=k) return pcmu;
 
-    const bint amx(prescribed.back()+__St_One);
+    const bint amx( __GSTAMPS_AMX(prescribed.back(), pcmu) );
     if (verbose>0) std::clog << "#[Cpmt(" << prescribed.size() << ")] "
 			     << "amx: " << amx << std::endl;
 
@@ -1240,8 +1247,8 @@ inline bint par_complement(std::vector<bint>& prescribed,
     assert(prescribed.size()<k);
 
 
-    const bint amx(prescribed.back()+__St_One);
     const bint pc( _Cover(prescribed.begin(),prescribed.end(),s)+__St_One );
+    const bint amx( __GSTAMPS_AMX(prescribed.back(), pc) );
 
     std::clog << "#[PCmt(" << prescribed.size() << ")]"
 			     << " pc: " << pc
