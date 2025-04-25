@@ -58,6 +58,12 @@ Daniel S. Roche
 |`bin/ab`| Alter & Barnett basis |
 |  |  |
 
+**Usage**:
+- #k: k denominations in the basis
+- #s: the basis is for s stamps
+- #v: verbosisty level
+- #r: after r recursive levels (rlevel), stops searching for the best cut, just use the midpoint
+- #a: if true provides only a lower bound on the cover of the basis (approximate), otherwise computes the cover exactly
 
 **Examples**:
 - `./bin/basis 4 2`: produces a basis of 4 denominations for 2 stamps (1 3 5 6, attaining all integers 1..12)
