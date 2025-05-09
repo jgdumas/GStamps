@@ -96,7 +96,7 @@ inline bint ICover(const List& points, const size_t s, const int verbose) {
     if (verbose>1) firstrangeprint(std::clog << "#[ICover] s=" << s
 				   << ": ", reached, max) << std::endl;
     if (verbose>0)
-	std::clog << "#[ICover(" << s << ")]: " << chrono <<std::endl;
+        std::clog << "#[ICover(" << s << ")]: " << max << ' ' << chrono <<std::endl;
     return max;
 }
 
@@ -172,7 +172,7 @@ inline bint Cover(const List& points, const size_t s, const int verbose) {
                   << " ..." << std::endl;
     }
 
-    if (verbose>0) std::clog << "#[Cover(" << s << ")]: " << chrono <<std::endl;
+    if (verbose>0) std::clog << "#[Cover(" << s << ")]: " << max << ' ' << chrono <<std::endl;
     return max;
 }
 
