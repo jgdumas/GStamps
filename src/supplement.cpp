@@ -49,13 +49,15 @@ int main(int argc, char **argv) {
     StTimer chrono; chrono.start();
     bint max(_Cover(prescb.begin(),prescb.end(),s));
 
-    size_t j(prescb.size());
-    while (j<k) {
-        j += g;
-        const size_t jk(j>k?k:j);
-        max = par_complement(prescb, jk, s, verbose-1);
+    std::vector<size_t> suppvec;
+    for(int j = k; j > prescb.size(); j -= g) {
+        suppvec.push_back(j);
+    }
+
+    for (auto it = suppvec.rbegin(); it != suppvec.rend(); ++it) {
+        max = par_complement(prescb, *it, s, verbose-1);
         if (verbose>0)
-            std::clog << "#[Spmt(" << jk << ")] max: " << max << std::endl;
+            std::clog << "#[Spmt(" << *it << ")] max: " << max << std::endl;
     }
     chrono.stop();
 

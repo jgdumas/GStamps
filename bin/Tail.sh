@@ -36,12 +36,6 @@ for j in $(seq 2 $MAXS)
   echo "## $0 $1 $2: `date`: 1 $j: $CMD" |& tee -a $RESF
   (echo "1 $j" | $CMD) &>> $RESF
 
-  if [[ $(( $K % $G )) != 0 ]]; then
-      SEQ=`tail -1 $RESF|awk -v mod=$G '{out=$1; for(i=2;i<=NF-mod;i++) {out=out" "$i}; print out}'`
-      echo "# $SEQ | $CMD" |& tee -a $RESF
-      echo "## $0 $1 $2: `date`: mod $G: $CMD" |& tee -a $RESF
-      (echo "$SEQ" | $CMD ) &>> $RESF
-  fi
 done
 
 
