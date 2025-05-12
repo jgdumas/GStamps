@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     const size_t k(atoi(argv[1]));
     const size_t s(atoi(argv[2]));
     const int verbose(argc>3?atoi(argv[3]):0);
-    const bool approx(argc>4?atoi(argv[4]):false);
+    const bool approx(argc>4?atoi(argv[4]):true);
 
     std::vector<bint> points;
     const bint max = FSelect(points, k, s, 0, approx, verbose);
