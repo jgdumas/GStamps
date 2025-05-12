@@ -38,13 +38,12 @@ int main(int argc, char **argv) {
         FSelect(prescb, redk, s, r, false, verbose);
     }
 
-    if (prescb.size()<1) {
-        prescb.push_back(1);
-    }
     if (prescb.size()>k) {
 		prescb.resize(k);
 	}
-
+    if (prescb.size()<1) {
+        prescb.push_back(1);
+    }
 
     StTimer chrono; chrono.start();
     bint max(_Cover(prescb.begin(),prescb.end(),s));

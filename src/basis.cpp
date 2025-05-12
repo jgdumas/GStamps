@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
 
     std::vector<bint> points;
     const bint max = FSelect(points, k, s, 0, approx, verbose);
-    std::clog << "#[FSelect] nmax" << (approx?" >= ":": ") << max << std::endl;
+    std::clog << "#[FSelect] nmax" << (approx?">= ":": ") << max << std::endl;
 
     for(const auto& it: points) std::cout << it << ' '; std::cout << std::endl;
 

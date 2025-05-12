@@ -1201,14 +1201,12 @@ inline bint complement(std::vector<bint>& prescribed,
 		       const size_t k, const size_t s, const int verbose) {
 
     const bint pcmu( _Cover(prescribed.begin(),prescribed.end(),s)), pc(pcmu+__St_One);
-    if (verbose>0) std::clog << "#[Cpmt(" << prescribed.size() << ")] "
-			     << "pc: " << pcmu << std::endl;
+    const bint amx( __GSTAMPS_AMX(prescribed.back(), pcmu) );
+    if (verbose>0)
+        std::clog << "#[Cpmt(" << prescribed.size() << ")] "
+                  << " amx: " << amx << " pc: " << pcmu << std::endl;
 
     if (prescribed.size()>=k) return pcmu;
-
-    const bint amx( __GSTAMPS_AMX(prescribed.back(), pcmu) );
-    if (verbose>0) std::clog << "#[Cpmt(" << prescribed.size() << ")] "
-			     << "amx: " << amx << std::endl;
 
     std::vector<bint> points; points.reserve(k);
     points.assign(prescribed.begin(), prescribed.end());
@@ -1248,47 +1246,51 @@ inline bint complement(std::vector<bint>& prescribed,
 inline bint par_complement(std::vector<bint>& prescribed,
 			   const size_t k, const size_t s, const int verbose) {
 
+    assert(prescribed.size()>=1);
     assert(prescribed.size()<k);
-
 
     const bint pc( _Cover(prescribed.begin(),prescribed.end(),s)+__St_One );
     const bint amx( __GSTAMPS_AMX(prescribed.back(), pc) );
 
     std::clog << "#[PCmt(" << prescribed.size() << ")]"
-			     << " pc: " << pc
-			     << " amx: " << amx << std::endl;
+              << " amx: " << amx << " pc: " << pc << std::endl;
 
     std::vector<bint> bfound; bfound.reserve(k);
     bint bmax(pc);
 
-#pragma omp parallel for shared(prescribed,bfound,bmax,amx,pc,k,s,verbose) schedule(dynamic)
-    for(bint u=pc; u>=amx; --u) {
-//     for(bint u = amx; u<=pc; ++u) {
-	std::vector<bint> points; points.reserve(k);
-	points.assign(prescribed.begin(), prescribed.end());
-	points.push_back(u);
-	const bint bu = complement(points, k, s, verbose-1);
-#pragma omp critical
-	{
-	    if (bu > bmax) {
-		bfound.resize(0);
-		bfound.assign(points.begin(), points.end());
-		bmax = bu;
-		if (verbose>0) {
-		    std::clog << "#[Cpmt(" << prescribed.size() << ")] max: "
-			      << bmax << " with basis: ";
-		    for(const auto& it: points) std::clog << it << ' ';
-		    std::clog << std::endl;
-		}
-	    }
-	    if (verbose>0) std::clog << "#[Cpmt(" << prescribed.size() << ")] "
-				     << amx << " <= " << u << " <= " << pc
-				     << " : " << bu << " <= " << bmax << std::endl;
-	}
-    }
+    const int64_t maxu(pc-amx); // Should not loop more than 2^63 anyway ...
 
-    prescribed.resize(0);
-    prescribed.assign(bfound.begin(),bfound.end());
+    if (maxu>=0) {
+
+#pragma omp parallel for shared(prescribed,bfound,bmax,amx,pc,k,s,verbose) schedule(dynamic)
+        for(int64_t iu=maxu; iu>=0; --iu) {
+            std::vector<bint> points; points.reserve(k);
+            points.assign(prescribed.begin(), prescribed.end());
+            points.push_back(pc+bint(iu));
+            const bint bu = complement(points, k, s, verbose-1);
+#pragma omp critical
+            {
+                if (bu > bmax) {
+                    bfound.resize(0);
+                    bfound.assign(points.begin(), points.end());
+                    bmax = bu;
+                    if (verbose>0) {
+                        std::clog << "#[Cpmt(" << prescribed.size() << ")] max: "
+                                  << bmax << " with basis: ";
+                        for(const auto& it: points) std::clog << it << ' ';
+                        std::clog << std::endl;
+                    }
+                }
+                if (verbose>0)
+                    std::clog << "#[Cpmt(" << prescribed.size() << ")] "
+                              << amx << " <= " << iu << " <= " << pc
+                              << " : " << bu << " <= " << bmax << std::endl;
+            }
+        }
+
+        prescribed.resize(0);
+        prescribed.assign(bfound.begin(),bfound.end());
+    }
 
     return bmax;
 }
