@@ -153,27 +153,32 @@ inline bint _SCover(const Iterator& start, const Iterator& end, const stype_t s)
 template<typename Iterator, typename stype_t>
 inline bint _Cover(const Iterator& start, const Iterator& end, const stype_t s) {
     assert(std::numeric_limits<stype_t>::max()>s);
+    assert(k>=1);
 
-    const bint& back(*std::prev(end));				// k>=1
+    const bint& back(*std::prev(end));					// k>=1
     if (back == __St_One) return s;
-    bint vs(back+1);
-    std::vector<stype_t> reached(vs,0u);
+
+    bint window(1u); for(; window<back; window <<=1);	// highest power of two gt
+    std::vector<stype_t> reached(window, 0u);
+    --window;											// Window mask
+
     for(auto it=start; it!=end; ++it) reached[*it]=1u;
 
     bint index(1);
-    for(++vs; reached[index]<=s; ++index,++vs) {
-        reached.resize(vs);
-        const stype_t slocal(reached[index]+1);
+    for(; reached[index & window]<=s; ++index) {
+        const stype_t slocal(reached[index & window]+1);
         for(auto right=start; right!=end; ++right) {
-            stype_t& starget(reached[index+(*right)]);
+            stype_t& starget(reached[ (index+(*right)) & window]);
             const stype_t vtarget(starget);
             if ( (vtarget == 0) || (vtarget>slocal) ) {
                 starget = slocal;
             }
         }
+        reached[index & window]=0u; // clean up sliding window
     }
 
     return --index;
+
 }
 
 template<typename List, typename stype_t>
