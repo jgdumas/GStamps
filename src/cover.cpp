@@ -11,13 +11,8 @@
 
 // Reads a basis from std::cin
 // Computes the cover of that basis with argv[1] stamps
-int main(int argc, char **argv) {
-    if (argc<=1) {
-        std::cerr << "usage: " << argv[0] << " #s(stamps) [#](verbosity).\n";
-        exit(1);
-    }
-
-    const size_t s(atoi(argv[1]));
+template<typename stype_t>
+int tmain(int argc, char **argv, stype_t s) {
     const int verbose(argc>2?atoi(argv[2]):0);
 
     std::vector<bint> points;
@@ -32,4 +27,22 @@ int main(int argc, char **argv) {
     std::cout << Cover(points, s, verbose) << std::endl;
 
     return 0;
+}
+
+int main(int argc, char **argv) {
+    if (argc<=1) {
+        std::cerr << "usage: " << argv[0] << " #s(stamps) [#](verbosity).\n";
+        exit(1);
+    }
+
+    const size_t s(atoi(argv[1]));
+
+    if (std::numeric_limits<uint8_t>::max()>s)
+        return tmain(argc,argv,uint8_t(s));
+    if (std::numeric_limits<uint16_t>::max()>s)
+        return tmain(argc,argv,uint16_t(s));
+    if (std::numeric_limits<uint32_t>::max()>s)
+        return tmain(argc,argv,uint32_t(s));
+
+    return tmain(argc,argv,s);
 }

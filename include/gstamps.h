@@ -69,16 +69,16 @@ std::ostream& firstrangeprint(std::ostream& out,
 // Cover: Local Postage Stamp Problem
 
         // Low memory
-template<typename List>
-bint ICover(const List& points, const size_t s, const int verbose = 0);
+template<typename List, typename stype_t>
+bint ICover(const List& points, const stype_t s, const int verbose = 0);
 
         // Fast
-template<typename Iterator>
-bint _Cover(const Iterator& start, const Iterator& end, const size_t s);
+template<typename Iterator, typename stype_t>
+bint _Cover(const Iterator& start, const Iterator& end, const stype_t s);
 
         // Fast with checks
-template<typename List>
-bint Cover(const List& points, const size_t s, const int verbose);
+template<typename List, typename stype_t>
+bint Cover(const List& points, const stype_t s, const int verbose);
 
         // Stores only reached values, not whole array
 template<typename List>
@@ -88,12 +88,12 @@ bint Reach(List& points, const size_t h, const int verbose = 0);
 // ============================================
 // Exhaustive search
 
-template<typename List>
+template<typename List, typename stype_t>
 bint FixedPoints(List& pmax,
-                 const List& points, const size_t s, const size_t i=0);
+                 const List& points, const stype_t s, const size_t i=0);
 
-template<typename List>
-bint BruteForce(List& points, size_t k, size_t s, const int verbose=0);
+template<typename List, typename stype_t>
+bint BruteForce(List& points, size_t k, stype_t s, const int verbose=0);
 
 
 // ============================================
@@ -117,12 +117,14 @@ bint KloveMossige(List& points, const size_t k, const int verbose = 0);
         // Remarks on the postage stamp problem with applications to computers.
         // University of Kentucky. Department of Computer Science.
         // https://notatt.com/lsu-stamp.pdf
-bint AlterBernett(std::vector<bint>& points, const size_t k, const size_t s,
+template<typename stype_t>
+bint AlterBernett(std::vector<bint>& points, const size_t k, const stype_t s,
                   const int verbose = 0);
 
 
         // AlterBarnett improvement with balanced ranges
-bint BalGreedy(std::vector<bint>& points, const size_t k, const size_t s,
+template<typename stype_t>
+bint BalGreedy(std::vector<bint>& points, const size_t k, const stype_t s,
                const int verbose = 0);
 
 
@@ -176,26 +178,28 @@ bint sSix(std::vector<bint>& points, const size_t k, const int verbose = 0);
 
 
 // Tries memoization of solutions or calls DSelect
-bint FSelect(std::vector<bint>& points, const size_t k, const size_t s,
+template<typename stype_t>
+bint FSelect(std::vector<bint>& points, const size_t k, const stype_t s,
              const int rlevel = 0, const bool approx=false,
              const int verbose = 0);
 
 // Generic algorithm, calling all methods, known extremal first
-bint DSelect(std::vector<bint>& points, const size_t k, const size_t s,
+template<typename stype_t>
+bint DSelect(std::vector<bint>& points, const size_t k, const stype_t s,
              const int rlevel = 0, const bool approx=false,
              const int verbose = 0);
 
 // Mrose Recursive Divide & Conquer
 //   (rlevel) Quadratic exploration of CutSelect, or midpoints only
-template<typename List>
-bint RecSelect(List& points, const size_t k, const size_t s,
+template<typename List, typename stype_t>
+bint RecSelect(List& points, const size_t k, const stype_t s,
                const int rlevel = 0, const bool approx=false,
                const int verbose = 0);
 
 // Divide & Conquer splitting (k,s) into (k1,s1) and (k-k1,s-s1)
-template<typename List>
+template<typename List, typename stype_t>
 bint CutSelect(List& points, const size_t k, const size_t k1,
-               const size_t s, const size_t s1,
+               const stype_t s, const stype_t s1,
                const int rlevel = 0, const bool approx=false,
                const int verbose = 0);
 
@@ -204,12 +208,14 @@ bint CutSelect(List& points, const size_t k, const size_t k1,
 // Exhausting from the end
 
 // Exhaust additional denominations between prescribed and (k-prescribed.size())
+template<typename stype_t>
 bint complement(std::vector<bint>& prescribed,
-                const size_t k, const size_t s, const int verbose = 0);
+                const size_t k, const stype_t s, const int verbose = 0);
 
 // Exhaust additional denominations, parallel version (first level)
+template<typename stype_t>
 bint par_complement(std::vector<bint>& prescribed,
-                    const size_t k, const size_t s, const int verbose = 0);
+                    const size_t k, const stype_t s, const int verbose = 0);
 
 
 // ============================================

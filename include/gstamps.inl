@@ -69,8 +69,8 @@ inline std::ostream& firstrangeprint(std::ostream& out,
 // ============================================
 // Cover: local postage start problem
 
-template<typename List>
-inline bint ICover(const List& points, const size_t s, const int verbose) {
+template<typename List, typename stype_t>
+inline bint ICover(const List& points, const stype_t s, const int verbose) {
 	// Incremental cover
     StTimer chrono; chrono.start();
 
@@ -93,15 +93,15 @@ inline bint ICover(const List& points, const size_t s, const int verbose) {
     chrono.stop();
 
     const bint max(firstrange(reached));
-    if (verbose>1) firstrangeprint(std::clog << "#[ICover] s=" << s
+    if (verbose>1) firstrangeprint(std::clog << "#[ICover] s=" << size_t(s)
 				   << ": ", reached, max) << std::endl;
     if (verbose>0)
-        std::clog << "#[ICover(" << s << ")]: " << max << ' ' << chrono <<std::endl;
+        std::clog << "#[ICover(" << size_t(s) << ")]: " << max << ' ' << chrono <<std::endl;
     return max;
 }
 
-template<typename Iterator>
-inline bint _Cover(const Iterator& start, const Iterator& end, const size_t s) {
+template<typename Iterator, typename stype_t>
+inline bint _SCover(const Iterator& start, const Iterator& end, const stype_t s) {
 	// Binary cover
     const bint& back(*std::prev(end));				// k>=1
     if (back == __St_One) return s;
@@ -112,51 +112,77 @@ inline bint _Cover(const Iterator& start, const Iterator& end, const size_t s) {
     reached[0]=true;                                // 0 reached
     for(auto it=start; it!=end; ++it) reached[*it]=true;   // points reached
 
-    for(size_t d(1); d<s; ++d) {
-	bint notin(vs+1);
-	for(size_t i=vs; i>0; --i) {
-	    if(reached[i]) {
-		for(auto right=start; right!=end; ++right) {
-		    reached[i+(*right)]=true;
-		}
-	    } else {
-		notin=i;
-	    }
-	}
+    for(stype_t d(1); d<s; ++d) {
+        bint notin(vs+1);
+        for(size_t i=vs; i>0; --i) {
+            if(reached[i]) {
+                for(auto right=start; right!=end; ++right) {
+                    reached[i+(*right)]=true;
+                }
+            } else {
+                notin=i;
+            }
+        }
 
-	vs += back;
+        vs += back;
 
-	    // Test Selmer's Lemma for early termination
-	lb += penult;
-	if (notin>back) {
-		// c is larger than ak, try early termination
-	    if (notin >= (lb-back) ) {
-		// Cover will now surely attain c+(s-d)ak
-//                 std::clog << "#[_C(" << s << ")|" << d << "] "
+            // Test Selmer's Lemma for early termination
+        lb += penult;
+        if (notin>back) {
+                // c is larger than ak, try early termination
+            if (notin >= (lb-back) ) {
+                    // Cover will now surely attain c+(s-d)ak
+//                 std::clog << "#[_C(" << size_t(s) << ")|" << d << "] "
 //                           << (notin-1+(s-d)*back) << std::endl;
-		return --notin += (s-d)*back;
-	    }
-	}
+                return --notin += (s-d)*back;
+            }
+        }
     }
 
     size_t max(reached.size()-1);
     for(size_t jr(1); jr<reached.size(); ++jr){
-	if (! reached[jr]) {
-	    max = jr-1;
-	    break;
-	}
+        if (! reached[jr]) {
+            max = jr-1;
+            break;
+        }
     }
 
     return max;
 }
 
-template<typename List>
-inline bint Cover(const List& points, const size_t s, const int verbose) {
+template<typename Iterator, typename stype_t>
+inline bint _Cover(const Iterator& start, const Iterator& end, const stype_t s) {
+    assert(std::numeric_limits<stype_t>::max()>s);
+
+    const bint& back(*std::prev(end));				// k>=1
+    if (back == __St_One) return s;
+    bint vs(back+1);
+    std::vector<stype_t> reached(vs,0u);
+    for(auto it=start; it!=end; ++it) reached[*it]=1u;
+
+    bint index(1);
+    for(++vs; reached[index]<=s; ++index,++vs) {
+        reached.resize(vs);
+        const stype_t slocal(reached[index]+1);
+        for(auto right=start; right!=end; ++right) {
+            stype_t& starget(reached[index+(*right)]);
+            const stype_t vtarget(starget);
+            if ( (vtarget == 0) || (vtarget>slocal) ) {
+                starget = slocal;
+            }
+        }
+    }
+
+    return --index;
+}
+
+template<typename List, typename stype_t>
+inline bint Cover(const List& points, const stype_t s, const int verbose) {
     bint vs(points.back());
     const bint upper(s*vs+1);
     if ((vs > __GSTAMPS_MAXCOVER) || (upper > __GSTAMPS_MAXCOVER)) {
         std::clog << "#\033[1;33m[Warning] memory exceeded ("
-                  << upper << ")\033[0m: trying recursive compuation ..."
+                  << upper << ")\033[0m: trying recursive computation ..."
                   << std::endl;
         return ICover(points,s,verbose);
     }
@@ -168,20 +194,21 @@ inline bint Cover(const List& points, const size_t s, const int verbose) {
     chrono.stop();
 
     if (verbose>1) {
-        std::clog << "#[Cover(" << s << ")]: " << s << ": 1.." << max
+        std::clog << "#[Cover(" << size_t(s) << ")]: 1.." << max
                   << " ..." << std::endl;
     }
 
-    if (verbose>0) std::clog << "#[Cover(" << s << ")]: " << max << ' ' << chrono <<std::endl;
+    if (verbose>0) std::clog << "#[Cover(" << size_t(s) << ")]: " << max
+                             << ' ' << chrono <<std::endl;
     return max;
 }
 
 // ============================================
 // Exhaustive search
 
-template<typename List>
+template<typename List, typename stype_t>
 inline bint FixedPoints(List& pmax,
-			const List& points, const size_t s, const size_t i) {
+			const List& points, const stype_t s, const size_t i) {
     pmax.resize(i); pmax.reserve(points.size());
     for(auto it=points.begin()+i; it!=points.end(); ++it) {
 	pmax.push_back( _Cover(points.begin(), std::next(it), s) );
@@ -191,12 +218,12 @@ inline bint FixedPoints(List& pmax,
 
 
 
-template<typename List>
-inline bint BruteForce(List& points, size_t k, size_t s, const int verbose) {
+template<typename List, typename stype_t>
+inline bint BruteForce(List& points, size_t k, stype_t s, const int verbose) {
     assert(k>0);
     if (k == 1) {
-	points = {1};
-	return s;
+        points = {1};
+        return s;
     }
     points.resize(k); std::iota(points.begin(), points.end(), 1);
     List pointsmax(points);
@@ -204,36 +231,36 @@ inline bint BruteForce(List& points, size_t k, size_t s, const int verbose) {
     List covsmax;
     bint max( FixedPoints(covsmax, points, s) );
 
-	// Next set of points
+        // Next set of points
     while (true){
-	    // Find where next increment is needed
-	size_t i=points.size()-1;
-	while ((i > 0) && (points[i] == (covsmax[i-1]+1))) { --i; }
+            // Find where next increment is needed
+        size_t i=points.size()-1;
+        while ((i > 0) && (points[i] == (covsmax[i-1]+1))) { --i; }
 
-	    // Nothing left
-	if (i == 0) {
-	    points.assign(pointsmax.begin(), pointsmax.end());
-	    return max;
-	}
+            // Nothing left
+        if (i == 0) {
+            points.assign(pointsmax.begin(), pointsmax.end());
+            return max;
+        }
 
-	    // Increment is needed points[i] and reset all higher denominations
-	std::iota(points.begin()+i,points.end(),points[i]+1);
+            // Increment is needed points[i] and reset all higher denominations
+        std::iota(points.begin()+i,points.end(),points[i]+1);
 
-	    // Compute new maxima for the denominations after i
-	const bint max2 = FixedPoints(covsmax, points, s, i-1);
+            // Compute new maxima for the denominations after i
+        const bint max2 = FixedPoints(covsmax, points, s, i-1);
 
-	    // Save new points if better
-	if (max2 > max) {
-	    if (verbose>0) {
-		std::clog << "#[Brute] " << max2 << ": ";
-		for(const auto& it: points) std::clog << it << ' ';
-		std::clog << std::endl;
-	    }
+            // Save new points if better
+        if (max2 > max) {
+            if (verbose>0) {
+                std::clog << "#[Brute] " << max2 << ": ";
+                for(const auto& it: points) std::clog << it << ' ';
+                std::clog << std::endl;
+            }
 
-	    max = max2;
-	    pointsmax.assign(points.begin(), points.end());
-	}
-   }
+            max = max2;
+            pointsmax.assign(points.begin(), points.end());
+        }
+    }
 }
 
 
@@ -319,22 +346,25 @@ inline bint KloveMossige(List& points, const size_t k, const int verbose) {
 
 
 // AlterBernett range computation sub-routine
+template<typename stype_t>
 inline std::vector<bint>& Range(std::vector<bint>& B,
-			 const size_t& q, const size_t& s, const size_t& r) {
+                                const size_t& q, const stype_t& s,
+                                const size_t& r) {
     assert(B.size()>=2);
     auto B1 = B.back();
     auto B0 = B.end()[-2];
-    for(size_t i=2;i<=s; ++i) {
-	B.push_back((q+2)*B1-B0+q);
-	B1 = B.back();
-	B0 = B.end()[-2];
+    for(stype_t i=2;i<=s; ++i) {
+        B.push_back((q+2)*B1-B0+q);
+        B1 = B.back();
+        B0 = B.end()[-2];
     }
     if (r != 0) B.push_back(B1+r*(B0+1));
     return B;
 }
 
+template<typename stype_t>
 inline bint AlterBernett(std::vector<bint>& points,
-			 const size_t k, const size_t s, const int verbose) {
+			 const size_t k, const stype_t s, const int verbose) {
     points.resize(0); points.reserve(k);
     if (k<=s) {
 	const bint m1 ( Fibonacci(points,k,verbose-1) );
@@ -347,57 +377,60 @@ inline bint AlterBernett(std::vector<bint>& points,
     const size_t r(k%s), q( (k-r)/s );
 
     if (verbose>0) std::clog << "#[AlterBernett] Precomp. : " << k
-			     << ", Prof. : " << MSB(s)
-			     << ", Stamps: " << s
-			     << ", q: " << q << ", r: " << r << std::endl;
+                             << ", Prof. : " << MSB(s)
+                             << ", Stamps: " << size_t(s)
+                             << ", q: " << q << ", r: " << r << std::endl;
 
     std::vector<bint> B(2); B[0]=__St_Zero; B[1]=q;
     Range(B,q,s,r) ;
 
     if (verbose>0) {
-	std::clog << "#[AlterBernett] B: ";
-	for(const auto& it:B) std::clog << it << ' ';
-	std::clog << std::endl;
+        std::clog << "#[AlterBernett] B: ";
+        for(const auto& it:B) std::clog << it << ' ';
+        std::clog << std::endl;
     }
 
     for(size_t j=1; j<=q; ++j) points.push_back(j);
 
     bint Fi(1), Di(1);
     for(size_t i=2; i<=s; ++i) {
-	Fi = (B[i-1]<<1)-B[i-2]+1;
-	Di = B[i-1]+1;
-	for(size_t j=0; j<q; ++j) points.push_back(Fi+Di*j);
-	if (verbose>0)
-	    std::clog << "#[AB] F[" << i << "]: " << Fi << '\t'
-		      << "D[" << i << "]: " << Di << '\t'
-		      << "B[-1]: " << B[i-1] << '\t'
-		      << "B[-2]: " << B[i-2] << '\t'
-		      << std::endl;
+        Fi = (B[i-1]<<1)-B[i-2]+1;
+        Di = B[i-1]+1;
+        for(size_t j=0; j<q; ++j) points.push_back(Fi+Di*j);
+        if (verbose>0)
+            std::clog << "#[AB] F[" << i << "]: " << Fi << '\t'
+                      << "D[" << i << "]: " << Di << '\t'
+                      << "B[-1]: " << B[i-1] << '\t'
+                      << "B[-2]: " << B[i-2] << '\t'
+                      << std::endl;
     }
 
     const bint Fs = Fi+Di*q;
     if (verbose>0)
-	std::clog << "#[AB] F[" << s << "]: " << Fs  << '\t'
-		  << "D[" << s << "]: " << Di << std::endl;
+        std::clog << "#[AB] F[" << size_t(s) << "]: " << Fs  << '\t'
+                  << "D[" << size_t(s) << "]: " << Di << std::endl;
+
     for(size_t j=0; j<r; ++j) points.push_back(Fs+Di*j);
 
     return B.back();
 }
 
+template<typename stype_t>
 inline bint BalGreedy(std::vector<bint>& points,
-		      const size_t k, const size_t s, const int verbose) {
+                      const size_t k, const stype_t s, const int verbose) {
     assert(k>=s);
     points.resize(0); points.reserve(k);
-    const size_t s1(k%s), q0( (k-s1)/s ), s0(s-s1), q1(q0+1);
+    const stype_t s1(k%s), s0(s-s1);
+    const size_t q0( (k-s1)/s ), q1(q0+1);
 
     if (s1 == 0) return AlterBernett(points,k,s,verbose-1);
 
     if (verbose>0) std::clog << "#[BalGreedys] Precomp. : " << k
-			     << ", Prof. : " << MSB(s)
-			     << ", Stamps: " << s
-			     << ", q0: " << q0 << ", s0: " << s0
-			     << ", q1: " << q1 << ", s1: " << s1
-			     << std::endl;
+                             << ", Prof. : " << MSB(s)
+                             << ", Stamps: " << size_t(s)
+                             << ", q0: " << q0 << ", s0: " << s0
+                             << ", q1: " << q1 << ", s1: " << s1
+                             << std::endl;
 
     std::vector<bint> B(2); B[0]=__St_Zero; B[1]=q0;
     Range(B,q0,s0,0) ;
@@ -406,10 +439,10 @@ inline bint BalGreedy(std::vector<bint>& points,
     for(size_t j=1; j<=q0; ++j) points.push_back(j);
 
     bint Fi(1), Di(1);
-    for(size_t i=2; i<=s0; ++i) {
-	Fi = (B[i-1]<<1)-B[i-2]+1;
-	Di = B[i-1]+1;
-	for(size_t j=0; j<q0; ++j) points.push_back(Fi+Di*j);
+    for(stype_t i=2; i<=s0; ++i) {
+        Fi = (B[i-1]<<1)-B[i-2]+1;
+        Di = B[i-1]+1;
+        for(size_t j=0; j<q0; ++j) points.push_back(Fi+Di*j);
 // std::clog << "F[" << i << "]: " << Fi << '\t'
 //           << "D[" << i << "]: " << Di << '\t'
 //           << ", B[-1]: " << B[i-1] << '\t'
@@ -424,10 +457,10 @@ inline bint BalGreedy(std::vector<bint>& points,
 //     std::clog << "B: "; for(const auto& it:B) std::clog << it << ' ';
 //     std::clog << std::endl;
 
-    for(size_t i=0; i<s1; ++i) {
-	Fi = (B[s0+i]<<1)-B[s0+i-1]+1;
-	Di = B[s0+i]+1;
-	for(size_t j=0; j<q1; ++j) points.push_back(Fi+Di*j);
+    for(stype_t i=0; i<s1; ++i) {
+        Fi = (B[s0+i]<<1)-B[s0+i-1]+1;
+        Di = B[s0+i]+1;
+        for(size_t j=0; j<q1; ++j) points.push_back(Fi+Di*j);
 // std::clog << "F[" << i << "]: " << Fi << '\t'
 //           << "D[" << i << "]: " << Di  << '\t'
 //           << ", B[" << (s0+i) << "]: " << B[s0+i] << '\t'
@@ -436,8 +469,8 @@ inline bint BalGreedy(std::vector<bint>& points,
     }
 
 //     const bint Fs = Fi+Di*q0;
-// // std::clog << "L[" << s << "]: " << Fs << std::endl;
-// // std::clog << "D[" << s << "]: " << Di << std::endl;
+// // std::clog << "L[" << size_t(s) << "]: " << Fs << std::endl;
+// // std::clog << "D[" << size_t(s) << "]: " << Di << std::endl;
 //     for(size_t j=0; j<r; ++j) points.push_back(Fs+Di*j);
 
     return B.back();
@@ -914,19 +947,21 @@ inline bint sSix(std::vector<bint>& points, const size_t k,
 // Hybrid methods
 
 // Mrose Divide & Conquer
-template<typename List>
+template<typename List, typename stype_t>
 inline bint CutSelect(List& points, const size_t k, const size_t kotwo,
-		      const size_t s, const size_t sotwo,
+		      const stype_t s, const stype_t sotwo,
 		      const int rlevel, const bool approx, const int verbose) {
 
     assert(kotwo>0); assert(sotwo>0);
-    const size_t smh(s-sotwo); const size_t kmo(k-kotwo);
+    const stype_t smh(s-sotwo); const size_t kmo(k-kotwo);
     assert(smh>0); assert(kmo>0);
 
     bint m1 = FSelect(points, kmo, smh, rlevel, approx, verbose-1);
-    if (verbose>0) rangeprint(std::clog << "#[CS] (" << k << ',' << s << ")m1["
-			      << kmo << ',' << smh << "]:" << m1
-			      << ", n: ", points)<<std::endl;
+    if (verbose>0)
+        rangeprint(std::clog << "#[CS] (" << k << ',' << size_t(s) << ")m1["
+                   << kmo << ',' << size_t(smh) << "]:" << m1
+                   << ", n: ", points) << std::endl;
+
     std::vector<bint> p2;
     bint m2(m1);
     if ( (kmo!=kotwo) || (sotwo!=smh) ) {
@@ -940,9 +975,9 @@ inline bint CutSelect(List& points, const size_t k, const size_t kotwo,
         points.emplace_back( std::move( it *= m1 ) );
 
     if (verbose>0) {
-        rangeprint(std::clog << "#[CS] (" << k << ',' << s << ")m2["
-                   << kotwo << ',' << sotwo << "]:" << m2
-                   << ", n: ", p2)<<std::endl;
+        rangeprint(std::clog << "#[CS] (" << k << ',' << size_t(s) << ")m2["
+                   << kotwo << ',' << size_t(sotwo) << "]:" << m2
+                   << ", n: ", p2) << std::endl;
         std::clog << "#[CS] >= " << max <<std::endl;
     }
 
@@ -951,21 +986,21 @@ inline bint CutSelect(List& points, const size_t k, const size_t kotwo,
 
 
 // Recursive (rlevel) Quadratic exploration, or midpoints only
-template<typename List>
-inline bint RecSelect(List& points, const size_t k, const size_t s,
+template<typename List, typename stype_t>
+inline bint RecSelect(List& points, const size_t k, const stype_t s,
 		      const int rlevel, const bool approx, const int verbose) {
     assert(k>1); assert(s>1);
 
     bint max(0);
     if (rlevel>0) {
         for(size_t klow(1); klow<k; ++klow) {
-            for(size_t slow(1); slow<s; ++slow) {
+            for(stype_t slow(1); slow<s; ++slow) {
                 std::vector<bint> p2;
                 const bint cm = CutSelect(p2, k, klow, s, slow,
                                           rlevel-1, approx, verbose-1);
-                if (verbose>0)
-                    std::clog << "#[RS] (" << k << '|' << klow << ','
-                              << s << '|' << slow << "): " << cm << std::endl;
+                if (verbose>0) std::clog << "#[RS] (" << k << '|' << klow << ','
+                                         << size_t(s) << '|' << size_t(slow)
+                                         << "): " << cm << std::endl;
                 if (cm>max) {
                     points.swap(p2);
                     max = cm;
@@ -981,8 +1016,9 @@ inline bint RecSelect(List& points, const size_t k, const size_t s,
             bint mpm = FSelect(pm,k-1,s,rlevel-1,approx,verbose-1);
             pm.push_back(mpm+1);
             mpm = _Cover(pm.begin(), pm.end(), s);
-            if (verbose>0) std::clog << "#[FPM] (" << k-1 << ',' << s << "): "
-                                     << mpm << std::endl;
+            if (verbose>0)
+                std::clog << "#[FPM] (" << k-1 << ',' << size_t(s) << "): "
+                          << mpm << std::endl;
             if (mpm>max) {
                 points.swap(pm);
                 max = mpm;
@@ -990,7 +1026,7 @@ inline bint RecSelect(List& points, const size_t k, const size_t s,
         }
     } else {
             // Chossing midpoints only
-        max = CutSelect(points, k, k>>1, s, s>>1, 0, approx, verbose-1);
+        max = CutSelect(points, k, k>>1, s, stype_t(s>>1), 0, approx, verbose-1);
     }
     return max;
 }
@@ -998,7 +1034,8 @@ inline bint RecSelect(List& points, const size_t k, const size_t s,
 #include <gstamps_basis.h>
 
 // Switching among different solutions, known extremal first
-inline bint DSelect(std::vector<bint>& points, const size_t k, const size_t s,
+template<typename stype_t>
+inline bint DSelect(std::vector<bint>& points, const size_t k, const stype_t s,
 		    const int rlevel, const bool approx, const int verbose) {
     points.resize(0); points.reserve(k);
 
@@ -1114,7 +1151,7 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const size_t s,
 	return max;
     }
 
-    const size_t sot(s>>1);
+    const stype_t sot(s>>1);
     if ((k<s) && (k>sot)) {
 	std::vector<bint> p2;
 	const bint mab = AlterBernett(p2,k,s,verbose-1);
@@ -1165,7 +1202,8 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const size_t s,
 
 
 // Memoization of solutions
-inline bint FSelect(std::vector<bint>& points, const size_t k, const size_t s,
+template<typename stype_t>
+inline bint FSelect(std::vector<bint>& points, const size_t k, const stype_t s,
                     const int rlevel, const bool approx, const int verbose) {
     points.resize(0); points.reserve(k);
     bint max(0);
@@ -1177,7 +1215,7 @@ inline bint FSelect(std::vector<bint>& points, const size_t k, const size_t s,
         auto& vec(memoize[p].second);
         points.assign(vec.begin(),vec.end());
         if (verbose>0) {
-            rangeprint(std::clog << "#[FMM] (" << k << ',' << s << "):"
+            rangeprint(std::clog << "#[FMM] (" << k << ',' << size_t(s) << "):"
                        << max << ", n: ", points)<<std::endl;
         }
     } else {
@@ -1197,8 +1235,9 @@ inline bint FSelect(std::vector<bint>& points, const size_t k, const size_t s,
 #  define __GSTAMPS_AMX(a,p) ( ((p+a)>>1) + __St_One )
 #endif
 
+template<typename stype_t>
 inline bint complement(std::vector<bint>& prescribed,
-		       const size_t k, const size_t s, const int verbose) {
+                       const size_t k, const stype_t s, const int verbose) {
 
     const bint pcmu( _Cover(prescribed.begin(),prescribed.end(),s)), pc(pcmu+__St_One);
     const bint amx( __GSTAMPS_AMX(prescribed.back(), pcmu) );
@@ -1243,8 +1282,9 @@ inline bint complement(std::vector<bint>& prescribed,
 
 
 // Exhaust additional denominations ...
+template<typename stype_t>
 inline bint par_complement(std::vector<bint>& prescribed,
-			   const size_t k, const size_t s, const int verbose) {
+                           const size_t k, const stype_t s, const int verbose) {
 
     assert(prescribed.size()>=1);
     assert(prescribed.size()<k);
