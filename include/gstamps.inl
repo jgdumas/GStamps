@@ -1241,9 +1241,13 @@ inline bint complement(std::vector<bint>& prescribed,
 
     const bint pcmu( _Cover(prescribed.begin(),prescribed.end(),s)), pc(pcmu+__St_One);
     const bint amx( __GSTAMPS_AMX(prescribed.back(), pcmu) );
-    if (verbose>0)
-        std::clog << "#[Cpmt(" << prescribed.size() << ")] "
-                  << " amx: " << amx << " pc: " << pcmu << std::endl;
+    if (verbose>0) {
+        std::clog << "#[Cpmt(" << prescribed.size() << ")] amx: "
+                  << amx << " pc: " << pcmu ;
+        std::clog << " with prescribed: ";
+        for(const auto& it: prescribed) std::clog << it << ' ';
+        std::clog << std::endl;
+    }
 
     if (prescribed.size()>=k) return pcmu;
 
@@ -1255,23 +1259,23 @@ inline bint complement(std::vector<bint>& prescribed,
     bint bmax(0);
 
     for(bint u(pc); u>=amx; --u) {
-	points.push_back(u);
-	const bint bu = complement(points, k, s, verbose-1);
-	if (bu > bmax) {
-	    bfound.resize(0);
-	    bfound.assign(points.begin(), points.end());
-	    bmax = bu;
-	    if (verbose>0) {
-		std::clog << "#[Cpmt(" << prescribed.size() << ")] max: "
-			  << bmax << " with basis: ";
-		for(const auto& it: points) std::clog << it << ' ';
-		std::clog << std::endl;
-	    }
-	}
-	points.resize(prescribed.size());
-	if (verbose>0) std::clog << "#[Cpmt(" << prescribed.size() << ")] "
-				 << amx << " <= " << u << " <= " << pc
-				 << " : " << bu << " <= " << bmax << std::endl;
+        points.push_back(u);
+        const bint bu = complement(points, k, s, verbose-1);
+        if (bu > bmax) {
+            bfound.resize(0);
+            bfound.assign(points.begin(), points.end());
+            bmax = bu;
+            if (verbose>0) {
+                std::clog << "#[Cpmt(" << prescribed.size() << ")] max: "
+                          << bmax << " with basis: ";
+                for(const auto& it: points) std::clog << it << ' ';
+                std::clog << std::endl;
+            }
+        }
+        points.resize(prescribed.size());
+        if (verbose>0) std::clog << "#[Cpmt(" << prescribed.size() << ")] "
+                                 << amx << " <= " << u << " <= " << pc
+                                 << " : " << bu << " <= " << bmax << std::endl;
     }
 
     prescribed.resize(0);
@@ -1289,14 +1293,14 @@ inline bint par_complement(std::vector<bint>& prescribed,
     assert(prescribed.size()>=1);
     assert(prescribed.size()<k);
 
-    const bint pc( _Cover(prescribed.begin(),prescribed.end(),s)+__St_One );
+    bint bmax(_Cover(prescribed.begin(),prescribed.end(),s));
+    const bint pc(bmax + __St_One);
     const bint amx( __GSTAMPS_AMX(prescribed.back(), pc) );
 
     std::clog << "#[PCmt(" << prescribed.size() << ")]"
               << " amx: " << amx << " pc: " << pc << std::endl;
 
     std::vector<bint> bfound; bfound.reserve(k);
-    bint bmax(pc);
 
     const int64_t maxu(pc-amx); // Should not loop more than 2^63 anyway ...
 
@@ -1306,7 +1310,7 @@ inline bint par_complement(std::vector<bint>& prescribed,
         for(int64_t iu=maxu; iu>=0; --iu) {
             std::vector<bint> points; points.reserve(k);
             points.assign(prescribed.begin(), prescribed.end());
-            points.push_back(pc+bint(iu));
+            points.push_back(amx+bint(iu));
             const bint bu = complement(points, k, s, verbose-1);
 #pragma omp critical
             {
@@ -1315,15 +1319,15 @@ inline bint par_complement(std::vector<bint>& prescribed,
                     bfound.assign(points.begin(), points.end());
                     bmax = bu;
                     if (verbose>0) {
-                        std::clog << "#[Cpmt(" << prescribed.size() << ")] max: "
-                                  << bmax << " with basis: ";
+                        std::clog << "#[Cpmt(" << prescribed.size()
+                                  << ")] max: " << bmax << " with basis: ";
                         for(const auto& it: points) std::clog << it << ' ';
                         std::clog << std::endl;
                     }
                 }
                 if (verbose>0)
                     std::clog << "#[Cpmt(" << prescribed.size() << ")] "
-                              << amx << " <= " << iu << " <= " << pc
+                              << amx << " <= " << (amx+bint(iu)) << " <= " << pc
                               << " : " << bu << " <= " << bmax << std::endl;
             }
         }
