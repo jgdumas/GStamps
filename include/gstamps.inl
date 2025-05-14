@@ -1239,24 +1239,23 @@ template<typename stype_t>
 inline bint complement(std::vector<bint>& prescribed,
                        const size_t k, const stype_t s, const int verbose) {
 
-    const bint pcmu( _Cover(prescribed.begin(),prescribed.end(),s)), pc(pcmu+__St_One);
-    const bint amx( __GSTAMPS_AMX(prescribed.back(), pcmu) );
+    bint bmax(_Cover(prescribed.begin(),prescribed.end(),s));
+    const bint pc(bmax+__St_One);
+    const bint amx( __GSTAMPS_AMX(prescribed.back(), bmax) );
     if (verbose>0) {
         std::clog << "#[Cpmt(" << prescribed.size() << ")] amx: "
-                  << amx << " pc: " << pcmu ;
+                  << amx << " pc: " << pc ;
         std::clog << " with prescribed: ";
         for(const auto& it: prescribed) std::clog << it << ' ';
         std::clog << std::endl;
     }
 
-    if (prescribed.size()>=k) return pcmu;
+    if (prescribed.size()>=k) return bmax;
 
     std::vector<bint> points; points.reserve(k);
     points.assign(prescribed.begin(), prescribed.end());
 
-
     std::vector<bint> bfound; bfound.reserve(k);
-    bint bmax(0);
 
     for(bint u(pc); u>=amx; --u) {
         points.push_back(u);
@@ -1297,7 +1296,7 @@ inline bint par_complement(std::vector<bint>& prescribed,
     const bint pc(bmax + __St_One);
     const bint amx( __GSTAMPS_AMX(prescribed.back(), pc) );
 
-    std::clog << "#[PCmt(" << prescribed.size() << ")]"
+    std::clog << "#[PCt(" << prescribed.size() << ")]"
               << " amx: " << amx << " pc: " << pc << std::endl;
 
     std::vector<bint> bfound; bfound.reserve(k);
@@ -1319,16 +1318,17 @@ inline bint par_complement(std::vector<bint>& prescribed,
                     bfound.assign(points.begin(), points.end());
                     bmax = bu;
                     if (verbose>0) {
-                        std::clog << "#[Cpmt(" << prescribed.size()
+                        std::clog << "#[PCt(" << prescribed.size()
                                   << ")] max: " << bmax << " with basis: ";
                         for(const auto& it: points) std::clog << it << ' ';
                         std::clog << std::endl;
                     }
                 }
                 if (verbose>0)
-                    std::clog << "#[Cpmt(" << prescribed.size() << ")] "
-                              << amx << " <= " << (amx+bint(iu)) << " <= " << pc
-                              << " : " << bu << " <= " << bmax << std::endl;
+                    std::clog << "#[PCt(" << prescribed.size() << ")] " << amx
+                              << " <= " << points[prescribed.size()] << " <= "
+                              << pc << " : " << bu << " <= " << bmax
+                              << std::endl;
             }
         }
 
