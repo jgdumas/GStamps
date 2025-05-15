@@ -1284,7 +1284,7 @@ inline bint complement(std::vector<bint>& prescribed,
         std::clog << std::endl;
     }
 
-    if ( (prescribed.size()>=k) || (amx>pc) ) return bmax;
+    if ( (prescribed.size()>=k) || (amx>pc) ) return bmax;
 
     std::vector<bint> points; points.reserve(k);
     points.assign(prescribed.begin(), prescribed.end());
