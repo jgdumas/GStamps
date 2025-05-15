@@ -9,6 +9,40 @@
 
 #include <gstamps.h>
 
+
+
+// ============================================
+// Masking Tools
+// upmask: Round up to the next (highest power of 2, minus 1) of (input+1)
+
+
+#ifdef __GSTAMPS_EXTENDED_PRECISION
+Givaro::Integer upmask(const Givaro::Integer& w) {
+    Givaro::Integer v(w);
+    uint32_t exp(1);
+    for(Givaro::Integer shi(1); shi>0; exp <<=1) {
+        shi = v >> exp;
+        v |= shi;
+    }
+    return std::move(v);
+}
+
+#else
+// See: https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+uint64_t upmask(const uint64_t& w) {
+    bint v(w);
+    v |= v >> 1;
+    v |= v >> 2;
+    v |= v >> 4;
+    v |= v >> 8;
+    v |= v >> 16;
+    v |= v >> 32;
+    return std::move(v);
+}
+#endif
+
+
+
 // ============================================
 // Printing Tools
 
@@ -152,15 +186,11 @@ inline bint _SCover(const Iterator& start, const Iterator& end, const stype_t s)
 
 template<typename Iterator, typename stype_t>
 inline bint _Cover(const Iterator& start, const Iterator& end, const stype_t s) {
-    assert(std::numeric_limits<stype_t>::max()>s);
-    assert(k>=1);
-
     const bint& back(*std::prev(end));					// k>=1
     if (back == __St_One) return s;
 
-    bint window(1u); for(; window<back; window <<=1);	// highest power of two gt
-    std::vector<stype_t> reached(window, 0u);
-    --window;											// Window mask
+    bint window(upmask(back));					// highest 1-full mask gt
+    std::vector<stype_t> reached(window+1, 0u);
 
     for(auto it=start; it!=end; ++it) reached[*it]=1u;
 
@@ -1248,14 +1278,13 @@ inline bint complement(std::vector<bint>& prescribed,
     const bint pc(bmax+__St_One);
     const bint amx( __GSTAMPS_AMX(prescribed.back(), bmax) );
     if (verbose>0) {
-        std::clog << "#[Cpmt(" << prescribed.size() << ")] amx: "
-                  << amx << " pc: " << pc ;
-        std::clog << " with prescribed: ";
+        std::clog << "#[Cpmt(" << prescribed.size() << ")] amx: " << amx
+                  << " bm: " << bmax << " pc: " << pc << " with prescribed: ";
         for(const auto& it: prescribed) std::clog << it << ' ';
         std::clog << std::endl;
     }
 
-    if (prescribed.size()>=k) return bmax;
+    if ( (prescribed.size()>=k) || (amx>pc) ) return bmax;
 
     std::vector<bint> points; points.reserve(k);
     points.assign(prescribed.begin(), prescribed.end());
