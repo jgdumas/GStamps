@@ -18,11 +18,16 @@
 #include <set>
 #include <map>
 #include <numeric>
+
 #include <boost/dynamic_bitset.hpp>
+#include <boost/align/aligned_allocator.hpp>
+
+template <typename T>
+using aligned_vector = std::vector<T,
+                                   boost::alignment::aligned_allocator<T, 64>>;
 
 
-// // Using Givaro::Integer arbitrary precision, or int64_t on 64 bits
-
+// Using Givaro::Integer arbitrary precision, or int64_t on 64 bits
 #ifdef __GSTAMPS_EXTENDED_PRECISION
 
 #  include <givaro/givtimer.h>
@@ -42,17 +47,8 @@ using bint=int64_t;
 
 #endif
 
-// Maximal RAM usage
-#ifndef __GSTAMPS_MAXCOVER
-#define __GSTAMPS_MAXCOVER 137438953472
-#endif
-
-
 // ============================================
 // Printing Tools
-
-// log[2](v)
-uint64_t MSB(uint64_t v) { uint64_t r(0); for( ; v>>=1; ++r); return r; }
 
 template<typename Cont>
 std::ostream& rangeprint(std::ostream& out, const Cont& v);

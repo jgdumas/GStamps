@@ -8,7 +8,7 @@ OPTFLAGS = -O3 -ffast-math
 
 #######
 # g++ options
-OPTFLAGS += -fopenmp -march=native -funroll-all-loops
+OPTFLAGS += -fopenmp -funroll-all-loops
 OPTFLAGS += -UDEBUG -DNDEBUG
 #######
 

@@ -15,6 +15,9 @@
 // Masking Tools
 // upmask: Round up to the next (highest power of 2, minus 1) of (input+1)
 
+// log[2](v)
+uint64_t MSB(uint64_t v) { uint64_t r(0); for( ; v>>=1; ++r) {}; return r; }
+
 
 #ifdef __GSTAMPS_EXTENDED_PRECISION
 Givaro::Integer upmask(const Givaro::Integer& w) {
@@ -103,37 +106,6 @@ inline std::ostream& firstrangeprint(std::ostream& out,
 // ============================================
 // Cover: local postage start problem
 
-template<typename List, typename stype_t>
-inline bint ICover(const List& points, const stype_t s, const int verbose) {
-	// Incremental cover
-    StTimer chrono; chrono.start();
-
-    std::set<bint> reached;
-    for(const auto& it: points)
-	reached.insert(it);
-    if (verbose>1) rangeprint(std::clog << "# Basis: ", reached) << std::endl;
-
-    for(size_t d(1); d<s; ++d) {
-	if (verbose>1)
-	    firstrangeprint(std::clog << "#[ICover] s=" << d << ": ",
-			    reached, firstrange(reached)) << std::endl;
-	std::vector<bint> v(reached.begin(), reached.end());
-	for(const auto& right: points) {
-	    for(const auto& left: v) {
-		reached.insert(left+right);
-	    }
-	}
-    }
-    chrono.stop();
-
-    const bint max(firstrange(reached));
-    if (verbose>1) firstrangeprint(std::clog << "#[ICover] s=" << size_t(s)
-				   << ": ", reached, max) << std::endl;
-    if (verbose>0)
-        std::clog << "#[ICover(" << size_t(s) << ")]: " << max << ' ' << chrono <<std::endl;
-    return max;
-}
-
 template<typename Iterator, typename stype_t>
 inline bint _SCover(const Iterator& start, const Iterator& end, const stype_t s) {
 	// Binary cover
@@ -184,13 +156,14 @@ inline bint _SCover(const Iterator& start, const Iterator& end, const stype_t s)
     return max;
 }
 
+
 template<typename Iterator, typename stype_t>
 inline bint _Cover(const Iterator& start, const Iterator& end, const stype_t s) {
-    const bint& back(*std::prev(end));					// k>=1
+    const bint& back(*std::prev(end));	// k>=1
     if (back == __St_One) return s;
 
-    bint window(upmask(back));					// highest 1-full mask gt
-    std::vector<stype_t> reached(window+1, 0u);
+    const bint window(upmask(back));	// highest 1-full mask gt
+    aligned_vector<stype_t> reached(window+1u, 0u);
 
     for(auto it=start; it!=end; ++it) reached[*it]=1u;
 
@@ -204,7 +177,7 @@ inline bint _Cover(const Iterator& start, const Iterator& end, const stype_t s) 
                 starget = slocal;
             }
         }
-        reached[index & window]=0u; // clean up sliding window
+        reached[index & window]=0u;		// clean up sliding window
     }
 
     return --index;
@@ -213,14 +186,6 @@ inline bint _Cover(const Iterator& start, const Iterator& end, const stype_t s) 
 
 template<typename List, typename stype_t>
 inline bint Cover(const List& points, const stype_t s, const int verbose) {
-    bint vs(points.back());
-    const bint upper(s*vs+1);
-    if ((vs > __GSTAMPS_MAXCOVER) || (upper > __GSTAMPS_MAXCOVER)) {
-        std::clog << "#\033[1;33m[Warning] memory exceeded ("
-                  << upper << ")\033[0m: trying recursive computation ..."
-                  << std::endl;
-        return ICover(points,s,verbose);
-    }
     if (verbose>1)
         rangeprint(std::clog << "#[Cover] Basis: ", points) << std::endl;
 
@@ -402,11 +367,11 @@ inline bint AlterBernett(std::vector<bint>& points,
 			 const size_t k, const stype_t s, const int verbose) {
     points.resize(0); points.reserve(k);
     if (k<=s) {
-	const bint m1 ( Fibonacci(points,k,verbose-1) );
-	bint max(s-k); max *= points.back(); max += m1;
-	if (verbose>0) rangeprint(std::clog << "#[AB] max: " << max
-				  << ", points: ", points) << std::endl;
-	return max;
+        const bint m1 ( Fibonacci(points,k,verbose-1) );
+        bint max(s-k); max *= points.back(); max += m1;
+        if (verbose>0) rangeprint(std::clog << "#[AB] max: " << max
+                                  << ", points: ", points) << std::endl;
+        return max;
     }
 
     const size_t r(k%s), q( (k-r)/s );
