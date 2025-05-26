@@ -21,8 +21,15 @@
 
 #include <boost/dynamic_bitset.hpp>
 
+// ============================================
+// By default, early terminate LPSP
+#ifndef __GSTAMPS_SELMER_LEMMA
+#define __GSTAMPS_SELMER_LEMMA 1
+#endif
 
-// Using Givaro::Integer arbitrary precision, or int64_t on 64 bits
+// ============================================
+// Choosing precision:
+//   using Givaro::Integer arbitrary precision, or int64_t on 64 bits
 #ifdef __GSTAMPS_EXTENDED_PRECISION
 
 #  include <givaro/givtimer.h>
@@ -59,22 +66,17 @@ std::ostream& firstrangeprint(std::ostream& out,
 // ============================================
 // Cover: Local Postage Stamp Problem
 
-        // Low memory
-template<typename List, typename stype_t>
-bint ICover(const List& points, const stype_t s, const int verbose = 0);
-
-        // Fast
+        // Fast small s
 template<typename Iterator, typename stype_t>
-bint _Cover(const Iterator& start, const Iterator& end, const stype_t s);
+bint _SCover(const Iterator& start, const Iterator& end, const stype_t s);
+
+        // Fast large s
+template<typename Iterator, typename stype_t>
+bint _KCover(const Iterator& start, const Iterator& end, const stype_t s);
 
         // Fast with checks
 template<typename List, typename stype_t>
 bint Cover(const List& points, const stype_t s, const int verbose);
-
-        // Stores only reached values, not whole array
-template<typename List>
-bint Reach(List& points, const size_t h, const int verbose = 0);
-
 
 // ============================================
 // Exhaustive search
@@ -213,6 +215,7 @@ bint par_complement(std::vector<bint>& prescribed,
 // Inline implementations
 
 #include <gstamps.inl>
+#include <gstamps_cover.inl>
 
 
 // ============================================
