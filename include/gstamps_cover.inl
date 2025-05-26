@@ -124,9 +124,9 @@ inline bint _KCover(const Iterator& start, const Iterator& end,
 //                       << std::endl;
             return --index += (s-maxs)*back;
         }
-#endif
-
+#else
         slocal=0u;		// clean up sliding window
+#endif
     }
 
     return --index;
