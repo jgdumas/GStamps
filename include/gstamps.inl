@@ -163,17 +163,17 @@ inline bint _Cover(const Iterator& start, const Iterator& end, const stype_t s) 
     if (back == __St_One) return s;
 
     const bint window(upmask(back));	// highest 1-full mask gt
-    aligned_vector<stype_t> reached(window+1u, 0u);
+    std::vector<stype_t> reached(window+1u, 0u);
 
     for(auto it=start; it!=end; ++it) reached[*it]=1u;
 
     bint index(1);
     for(; reached[index & window]<=s; ++index) {
-        const stype_t slocal(reached[index & window]+1);
-        for(auto right=start; right!=end; ++right) {
-            stype_t& starget(reached[ (index+(*right)) & window]);
+        const stype_t slocal(reached[index & window]+1u);
+        for(auto it=start; it!=end; ++it) {
+            stype_t& starget(reached[ (index+(*it)) & window]);
             const stype_t vtarget(starget);
-            if ( (vtarget == 0) || (vtarget>slocal) ) {
+            if ( (vtarget == 0u) || (vtarget>slocal) ) {
                 starget = slocal;
             }
         }
