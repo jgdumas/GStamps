@@ -37,7 +37,7 @@ int tmain(int argc, char **argv, stype_t s) {
     }
 
     StTimer chrono; chrono.start();
-    bint max(_Cover(prescb.begin(),prescb.end(),s));
+    bint max(_KCover(prescb.begin(),prescb.end(),s));
 
     std::vector<size_t> suppvec;
     for(int j = k; j > prescb.size(); j -= g) {

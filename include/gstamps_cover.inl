@@ -88,10 +88,10 @@ inline bint _KCover(const Iterator& start, const Iterator& end,
     stype_t maxs(0), mins(0);
     for(auto& is: selmer) {
         is *= penult;
+        is -= back;
         if (is <= back) {
             ++mins;
         }
-        is -= back;
     }
 #endif
 
