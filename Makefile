@@ -8,7 +8,8 @@ OPTFLAGS = -O3 -ffast-math
 
 #######
 # g++ options
-OPTFLAGS += -fopenmp -funroll-all-loops
+OPTFLAGS += -fopenmp
+OPTFLAGS += -fprefetch-loop-arrays -funroll-all-loops
 OPTFLAGS += -UDEBUG -DNDEBUG
 #######
 

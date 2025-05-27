@@ -102,107 +102,6 @@ inline std::ostream& firstrangeprint(std::ostream& out,
     return out;
 }
 
-
-// ============================================
-// Cover: local postage start problem
-
-template<typename Iterator, typename stype_t>
-inline bint _SCover(const Iterator& start, const Iterator& end, const stype_t s) {
-	// Binary cover
-    const bint& back(*std::prev(end));				// k>=1
-    if (back == __St_One) return s;
-    const bint& penult(*std::prev(std::prev(end))); // back>1 => k>=2
-    bint vs(back), lb(penult);
-    const bint upper(s*vs+1);
-    boost::dynamic_bitset<> reached(upper,false);
-    reached[0]=true;                                // 0 reached
-    for(auto it=start; it!=end; ++it) reached[*it]=true;   // points reached
-
-    for(stype_t d(1); d<s; ++d) {
-        bint notin(vs+1);
-        for(size_t i=vs; i>0; --i) {
-            if(reached[i]) {
-                for(auto right=start; right!=end; ++right) {
-                    reached[i+(*right)]=true;
-                }
-            } else {
-                notin=i;
-            }
-        }
-
-        vs += back;
-
-            // Test Selmer's Lemma for early termination
-        lb += penult;
-        if (notin>back) {
-                // c is larger than ak, try early termination
-            if (notin >= (lb-back) ) {
-                    // Cover will now surely attain c+(s-d)ak
-//                 std::clog << "#[_C(" << size_t(s) << ")|" << d << "] "
-//                           << (notin-1+(s-d)*back) << std::endl;
-                return --notin += (s-d)*back;
-            }
-        }
-    }
-
-    size_t max(reached.size()-1);
-    for(size_t jr(1); jr<reached.size(); ++jr){
-        if (! reached[jr]) {
-            max = jr-1;
-            break;
-        }
-    }
-
-    return max;
-}
-
-
-template<typename Iterator, typename stype_t>
-inline bint _Cover(const Iterator& start, const Iterator& end, const stype_t s) {
-    const bint& back(*std::prev(end));	// k>=1
-    if (back == __St_One) return s;
-
-    const bint window(upmask(back));	// highest 1-full mask gt
-    std::vector<stype_t> reached(window+1u, 0u);
-
-    for(auto it=start; it!=end; ++it) reached[*it]=1u;
-
-    bint index(1);
-    for(; reached[index & window]<=s; ++index) {
-        const stype_t slocal(reached[index & window]+1u);
-        for(auto it=start; it!=end; ++it) {
-            stype_t& starget(reached[ (index+(*it)) & window]);
-            const stype_t vtarget(starget);
-            if ( (vtarget == 0u) || (vtarget>slocal) ) {
-                starget = slocal;
-            }
-        }
-        reached[index & window]=0u;		// clean up sliding window
-    }
-
-    return --index;
-
-}
-
-template<typename List, typename stype_t>
-inline bint Cover(const List& points, const stype_t s, const int verbose) {
-    if (verbose>1)
-        rangeprint(std::clog << "#[Cover] Basis: ", points) << std::endl;
-
-    StTimer chrono; chrono.start();
-    const bint max( _Cover(points.begin(), points.end(), s) );
-    chrono.stop();
-
-    if (verbose>1) {
-        std::clog << "#[Cover(" << size_t(s) << ")]: 1.." << max
-                  << " ..." << std::endl;
-    }
-
-    if (verbose>0) std::clog << "#[Cover(" << size_t(s) << ")]: " << max
-                             << ' ' << chrono <<std::endl;
-    return max;
-}
-
 // ============================================
 // Exhaustive search
 
@@ -211,7 +110,7 @@ inline bint FixedPoints(List& pmax,
 			const List& points, const stype_t s, const size_t i) {
     pmax.resize(i); pmax.reserve(points.size());
     for(auto it=points.begin()+i; it!=points.end(); ++it) {
-	pmax.push_back( _Cover(points.begin(), std::next(it), s) );
+	pmax.push_back( _KCover(points.begin(), std::next(it), s) );
     }
     return pmax.back();
 }
@@ -263,39 +162,6 @@ inline bint BruteForce(List& points, size_t k, stype_t s, const int verbose) {
     }
 }
 
-
-// Stores only reached values, not whole array
-template<typename List>
-inline bint Reach(List& points, const size_t h, const int verbose) {
-    StTimer chrono; chrono.start();
-
-    std::set<bint> reached;
-    for(const auto& it: points)
-	reached.insert(it);
-    if (verbose>2)
-	rangeprint(std::clog << "#[Reach] Basis: ", reached) << std::endl;
-
-    for(size_t d(0); d<h; ++d) {
-	std::vector<bint> v(reached.begin(), reached.end());
-	if (verbose>2) rangeprint(std::clog << "#[Reach] h=" << d
-				  << ": ", reached) << std::endl;
-	else if (verbose>1)
-	    firstrangeprint(std::clog << "#[Reach] h=" << d << ": ",
-			    reached, firstrange(reached)) << std::endl;
-	for(const auto& left: v) {
-	    for(const auto& right: v) {
-		reached.insert(left+right);
-	    }
-	}
-    }
-    chrono.stop();
-
-    const bint max(firstrange(reached));
-    if (verbose>1) firstrangeprint(std::clog << "#[Reach] h=" << h
-				   << ": ", reached, max) << std::endl;
-    if (verbose>0) std::clog << "#[Reach<" << h << ">]: " << chrono <<std::endl;
-    return max;
-}
 
 // ============================================
 // Special cases
@@ -1015,7 +881,7 @@ inline bint RecSelect(List& points, const size_t k, const stype_t s,
             std::vector<bint> pm;
             bint mpm = FSelect(pm,k-1,s,rlevel-1,approx,verbose-1);
             pm.push_back(mpm+1);
-            mpm = _Cover(pm.begin(), pm.end(), s);
+            mpm = _KCover(pm.begin(), pm.end(), s);
             if (verbose>0)
                 std::clog << "#[FPM] (" << k-1 << ',' << size_t(s) << "): "
                           << mpm << std::endl;
@@ -1239,7 +1105,7 @@ template<typename stype_t>
 inline bint complement(std::vector<bint>& prescribed,
                        const size_t k, const stype_t s, const int verbose) {
 
-    bint bmax(_Cover(prescribed.begin(),prescribed.end(),s));
+    bint bmax(_KCover(prescribed.begin(),prescribed.end(),s));
     const bint pc(bmax+__St_One);
     const bint amx( __GSTAMPS_AMX(prescribed.back(), bmax) );
     if (verbose>0) {
@@ -1291,7 +1157,7 @@ inline bint par_complement(std::vector<bint>& prescribed,
     assert(prescribed.size()>=1);
     assert(prescribed.size()<k);
 
-    bint bmax(_Cover(prescribed.begin(),prescribed.end(),s));
+    bint bmax(_KCover(prescribed.begin(),prescribed.end(),s));
     const bint pc(bmax + __St_One);
     const bint amx( __GSTAMPS_AMX(prescribed.back(), pc) );
 
