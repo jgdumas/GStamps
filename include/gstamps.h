@@ -215,9 +215,12 @@ bint par_complement(std::vector<bint>& prescribed,
 // ============================================
 // Inline implementations
 
-#include <gstamps.inl>
-#include <gstamps_cover.inl>
-
+#include <gstamps_print.inl>
+#include <gstamps_cover.inl>   
+#include <gstamps_extreme.inl> 
+#include <gstamps_special.inl>
+#include <gstamps_exhaust.inl> 
+#include <gstamps_recursive.inl>
 
 // ============================================
 

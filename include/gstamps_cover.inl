@@ -9,6 +9,37 @@
  ****************************************************************/
 
 // ============================================
+// Masking Tools
+// upmask: Round up to the next (highest power of 2, minus 1) of (input+1)
+
+#ifdef __GSTAMPS_EXTENDED_PRECISION
+Givaro::Integer upmask(const Givaro::Integer& w) {
+    Givaro::Integer v(w);
+    uint32_t exp(1);
+    for(Givaro::Integer shi(1); shi>0; exp <<=1) {
+        shi = v >> exp;
+        v |= shi;
+    }
+    return std::move(v);
+}
+
+#else
+// See: https://graphics.stanford.edu/~seander/bithacks.html#RoundUpPowerOf2
+uint64_t upmask(const uint64_t& w) {
+    bint v(w);
+    v |= v >> 1;
+    v |= v >> 2;
+    v |= v >> 4;
+    v |= v >> 8;
+    v |= v >> 16;
+    v |= v >> 32;
+    return std::move(v);
+}
+#endif
+
+
+
+// ============================================
 // Cover: local postage stamp problem
 
 // Loop from 1 to s, with a binary vector
