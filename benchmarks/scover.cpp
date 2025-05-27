@@ -1,42 +1,51 @@
 // ==========================================================================
 // GStamps: C++ routines for the Global Postage Stamp Problem
-// Authors: 
+// Authors:
 //   L. Colisson, J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
 // ==========================================================================
 
 /**********************************************************************
- * GStamps: computes the Fibonacci basis and its associated cover
+ * GStamps: Local Postage Stamp Problem
  **********************************************************************/
 
 #include <gstamps.h>
 
+// Reads a basis from std::cin
+// Computes the cover of that basis with argv[1] stamps
+// Using _SCover algorithm
+
 template<typename stype_t>
 int tmain(int argc, char **argv, stype_t s) {
-    const size_t k(atoi(argv[1]));
-    const int verbose(argc>3?atoi(argv[3]):0);
+    const int verbose(argc>2?atoi(argv[2]):0);
 
     std::vector<bint> points;
-    const bint max = Fibonacci(points, k);
+    bint tmp;
+    std::clog << "# Enter a basis (end by non-digit) ... " << std::endl;
+    while(std::cin >> tmp) {
+        points.push_back(tmp);
+    };
 
-    if (verbose>0) std::clog << "#[Fibonacci(" << k << ',' << k << ")] nmax: "
-                             << max << std::endl;
+    rangeprint(std::clog << "# Basis: ", points) << std::endl;
 
-    std::clog << "#[Fibonacci(" << k << ',' << s << ")] nmax: "
-              << Cover(points,s, verbose-1) << std::endl;
+    StTimer chrono; chrono.start();
+    const bint max( _SCover(points.begin(), points.end(), s) );
+    chrono.stop();
 
-    for(const auto& it: points) std::cout << it << ' '; std::cout << std::endl;
+    if (verbose>0) std::clog << "#[SCover(" << size_t(s) << ")]: " << max
+                             << ' ' << chrono <<std::endl;
+
+    std::cout << max << std::endl;
 
     return 0;
 }
 
 int main(int argc, char **argv) {
-    if (argc<=2) {
-        std::cerr << "usage: " << argv[0]
-                  << " #k(dim.) #s(stamps) [#](verbosity).\n";
+    if (argc<=1) {
+        std::cerr << "usage: " << argv[0] << " #s(stamps) [#](verbosity).\n";
         exit(1);
     }
 
-    const size_t s(atoi(argv[2]));
+    const size_t s(atoi(argv[1]));
 
     if (std::numeric_limits<uint8_t>::max()>s)
         return tmain(argc,argv,uint8_t(s));

@@ -1,13 +1,21 @@
 // ==========================================================================
 // GStamps: C++ routines for the Global Postage Stamp Problem
-// Authors: J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
+// Authors: 
+//   L. Colisson, J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
 // ==========================================================================
 
 /****************************************************************
  * GStamps: Exhaust additional denominations one value at a time
  ****************************************************************/
 
+// ============================================
+// By default, direct LPSP (no early termination whith multiple cover calls)
+#ifndef __GSTAMPS_SELMER_LEMMA
+#define __GSTAMPS_SELMER_LEMMA 0
+#endif
+
 #include <gstamps.h>
+
 template<typename stype_t>
 int tmain(int argc, char **argv, stype_t s) {
     const size_t k(atoi(argv[1]));

@@ -1,6 +1,7 @@
 // ==========================================================================
 // GStamps: C++ routines for the Global Postage Stamp Problem
-// Authors: J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
+// Authors:
+//   L. Colisson, J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
 // ==========================================================================
 
 /**********************************************************************
@@ -11,6 +12,8 @@
 
 // Reads a basis from std::cin
 // Computes the cover of that basis with argv[1] stamps
+// Using and hybrid _SCover/_KCover algorithm
+
 template<typename stype_t>
 int tmain(int argc, char **argv, stype_t s) {
     const int verbose(argc>2?atoi(argv[2]):0);

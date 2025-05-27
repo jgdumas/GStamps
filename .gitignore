@@ -32,6 +32,9 @@
 *.app
 bin/*
 
+# Backup sources
+*~
+
 # Nix related files
 .direnv
 result

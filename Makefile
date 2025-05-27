@@ -1,7 +1,8 @@
-####################################################################
+#########################################################################
 # GStamps: C++ routines for the Global Postage Stamp Problem
-# Authors: J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
-####################################################################
+# Authors: 
+#   L. Colisson, J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
+#########################################################################
 
 
 OPTFLAGS = -O3 -ffast-math
@@ -19,26 +20,32 @@ LOADLIBES+= `pkg-config givaro --libs`
 
 #######
 
-EXE  = cover basis
-EXE += dynprg supplement complement
-EXE += brute
-EXE += search
-EXE += fibo ab geom
+PRG  = cover basis
+PRG += dynprg supplement complement
+PRG += brute
+PRG += search
 
-
-SRC=${EXE:%=src/%.cpp}
-
-BIN=${EXE:%=bin/%}
+BEN  = fibo albe geom
+BEN += kcover reach scover
 
 #######
 
+EXE = ${PRG} ${BEN}
+BIN = ${EXE:%=bin/%}
+
 all: ${BIN}
 
-bin/%: src/%.cpp
+prg: ${PRG:%=bin/%}
+
+bench: ${BEN:%=bin/%}
+
+VPATH = src:benchmarks
+
+bin/%: %.cpp
 	$(LINK.cpp) $^ $(LOADLIBES) $(LDLIBS) -o $@
 
 clean:
 	- \rm ${BIN}
 
-check: ${BIN}
-	./bin/FDT.sh 20
+check: FDT.sh ${BIN}
+	./$< 20

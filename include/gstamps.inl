@@ -1,15 +1,12 @@
 // ==========================================================================
 // GStamps: C++ routines for the Global Postage Stamp Problem
-// Authors: J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
+// Authors: 
+//   L. Colisson, J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
 // ==========================================================================
 
 /****************************************************************
  * GStamps Library, inline implementations
  ****************************************************************/
-
-#include <gstamps.h>
-
-
 
 // ============================================
 // Masking Tools
