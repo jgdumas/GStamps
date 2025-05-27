@@ -47,5 +47,11 @@ bin/%: %.cpp
 clean:
 	- \rm ${BIN}
 
-check: FDT.sh ${BIN}
-	./$< 20
+cover: FDTC.sh ${BIN}
+	./$< 50 8 1 7 45
+	./$< 5 50 0 7 45
+
+basis: FDTB.sh ${BIN}
+	./$< 15
+
+check: basis cover
