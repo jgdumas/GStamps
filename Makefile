@@ -1,6 +1,6 @@
 #########################################################################
 # GStamps: C++ routines for the Global Postage Stamp Problem
-# Authors: 
+# Authors:
 #   L. Colisson, J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
 #########################################################################
 
@@ -48,8 +48,8 @@ clean:
 	- \rm ${BIN}
 
 cover: FDTC.sh ${BIN}
-	./$< 50 8 1 7 45
-	./$< 5 50 0 7 45
+	./$< 50 8 1 7 45 3
+	./$< 5 50 0 7 45 3
 
 basis: FDTB.sh ${BIN}
 	./$< 15

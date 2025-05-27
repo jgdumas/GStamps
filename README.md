@@ -53,9 +53,9 @@ Daniel S. Roche
 **Other basis**:
 |  |  |
 | :--------- | :------ |
-|`bin/fibo`| Fibonacci basis |
-|`bin/geom`| Geometric progression basis |
-|`bin/ab`| Alter & Barnett basis |
+|`benchmarks/fibo`| Fibonacci basis |
+|`benchmarks/geom`| Geometric progression basis |
+|`benchmarks/albe`| Alter & Barnett basis |
 |  |  |
 
 **Usage**:
