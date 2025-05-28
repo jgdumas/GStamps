@@ -3,6 +3,7 @@
 --------------------------------------------------------------------------------
 
 **Authors**:
+- Léo Colisson Palais
 - Jean-Guillaume Dumas
 - Alexis Galan
 - Bruno Grenet

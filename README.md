@@ -12,6 +12,7 @@ smallest integer not attainable by a given basis with at most s stamps
 basis with the largest LPSP for given parameters k and s.
 
 **Authors**: 
+Léo Colisson Palais,
 Jean-Guillaume Dumas,
 Alexis Galan,
 Bruno Grenet,

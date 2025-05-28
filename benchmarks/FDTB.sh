@@ -1,8 +1,9 @@
 #!/bin/bash
-####################################################################
+#########################################################################
 # GStamps: C++ routines for the Global Postage Stamp Problem
-# Authors: J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
-####################################################################
+# Authors:
+#   L. Colisson, J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
+#########################################################################
 
 
 PRGS="./bin/albe ./bin/fibo ./bin/geom ./bin/basis ./bin/dynprg"
