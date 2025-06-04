@@ -85,6 +85,8 @@ inline bint BruteForce(List& points, size_t k, stype_t s, const int verbose) {
 template<typename stype_t>
 inline bint complement(std::vector<bint>& prescribed,
                        const size_t k, const stype_t s, const int verbose) {
+    assert(prescribed.size()>=1);
+    assert(prescribed.size()<=k);
 
     bint bmax(_KCover(prescribed.begin(),prescribed.end(),s));
     const bint pc(bmax+__St_One);

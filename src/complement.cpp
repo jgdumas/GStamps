@@ -1,6 +1,6 @@
 // ==========================================================================
 // GStamps: C++ routines for the Global Postage Stamp Problem
-// Authors: 
+// Authors:
 //   L. Colisson, J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
 // ==========================================================================
 
@@ -38,6 +38,9 @@ int tmain(int argc, char **argv, stype_t s) {
         FSelect(prescb, redk, s, r, false, verbose);
     }
 
+    if (prescb.size()>k) {
+		prescb.resize(k);
+	}
     if (prescb.size()<1) {
         prescb.push_back(1);
     }
