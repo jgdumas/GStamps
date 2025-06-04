@@ -45,8 +45,6 @@ int tmain(int argc, char **argv, stype_t s) {
         prescb.push_back(1);
     }
 
-
-
     int64_t numthreads(1);
 #if defined(_OPENMP)
 #pragma omp parallel
@@ -55,7 +53,6 @@ int tmain(int argc, char **argv, stype_t s) {
             numthreads = omp_get_num_threads();
         }
 #endif
-
 
     bint max;
 
@@ -66,7 +63,6 @@ int tmain(int argc, char **argv, stype_t s) {
         max = par_complement(prescb, k, s, verbose);
     }
     chrono.stop();
-
 
     std::clog << "#[Cpmt " << numthreads << "t] nmax: " << max
               << ' ' << chrono << std::endl;
