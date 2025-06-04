@@ -91,6 +91,8 @@ inline bint complement(std::vector<bint>& prescribed,
     bint bmax(_KCover(prescribed.begin(),prescribed.end(),s));
     const bint pc(bmax+__St_One);
     const bint amx( __GSTAMPS_AMX(prescribed.back(), bmax) );
+    if ( (prescribed.size()>=k) || (amx>pc) ) return bmax;
+
     if (verbose>0) {
         std::clog << "#[Cpmt(" << prescribed.size() << ")] amx: " << amx
                   << " bm: " << bmax << " pc: " << pc << " with prescribed: ";
@@ -98,31 +100,51 @@ inline bint complement(std::vector<bint>& prescribed,
         std::clog << std::endl;
     }
 
-    if ( (prescribed.size()>=k) || (amx>pc) ) return bmax;
-
     std::vector<bint> points; points.reserve(k);
     points.assign(prescribed.begin(), prescribed.end());
 
     std::vector<bint> bfound; bfound.reserve(k);
 
-    for(bint u(pc); u>=amx; --u) {
-        points.push_back(u);
-        const bint bu = complement(points, k, s, verbose-1);
-        if (bu > bmax) {
-            bfound.resize(0);
-            bfound.assign(points.begin(), points.end());
-            bmax = bu;
-            if (verbose>0) {
-                std::clog << "#[Cpmt(" << prescribed.size() << ")] max: "
-                          << bmax << " with basis: ";
-                for(const auto& it: points) std::clog << it << ' ';
-                std::clog << std::endl;
+    if (prescribed.size() != k-1) {
+        for(points.push_back(pc); points.back()>=amx; --(points.back())) {
+            const bint bu = complement(points, k, s, verbose-1);
+            if (bu > bmax) {
+                bfound.resize(0);
+                bfound.assign(points.begin(), points.end());
+                bmax = bu;
+                if (verbose>0) {
+                    std::clog << "#[Cpmt(" << prescribed.size() << ")] max: "
+                              << bmax << " with basis: ";
+                    for(const auto& it: points) std::clog << it << ' ';
+                    std::clog << std::endl;
+                }
             }
         }
-        points.resize(prescribed.size());
-        if (verbose>0) std::clog << "#[Cpmt(" << prescribed.size() << ")] "
-                                 << amx << " <= " << u << " <= " << pc
-                                 << " : " << bu << " <= " << bmax << std::endl;
+    } else {
+        bint us(s*pc);
+        for(points.push_back(pc); points.back()>=amx; --(points.back()), us-=s){
+            if (us<=bmax) {
+                if (verbose>0)
+                    std::clog << "#[Cpmt(" << prescribed.size()
+                              << ")] amx: " << amx
+                              << " bm: " << bmax << " pc: " << pc
+                              << " early terminated at: " << points.back()
+                              << std::endl;
+                break;
+            }
+            const bint bu = complement(points, k, s, verbose-1);
+            if (bu > bmax) {
+                bfound.resize(0);
+                bfound.assign(points.begin(), points.end());
+                bmax = bu;
+                if (verbose>0) {
+                    std::clog << "#[Cpmt(" << prescribed.size() << ")] max: "
+                              << bmax << " with basis: ";
+                    for(const auto& it: points) std::clog << it << ' ';
+                    std::clog << std::endl;
+                }
+            }
+        }
     }
 
     prescribed.resize(0);
@@ -144,8 +166,9 @@ inline bint par_complement(std::vector<bint>& prescribed,
     const bint pc(bmax + __St_One);
     const bint amx( __GSTAMPS_AMX(prescribed.back(), pc) );
 
-    std::clog << "#[PCt(" << prescribed.size() << ")]"
-              << " amx: " << amx << " pc: " << pc << std::endl;
+    if (verbose>0)
+        std::clog << "#[PCt(" << prescribed.size() << ")]"
+                  << " amx: " << amx << " pc: " << pc << std::endl;
 
     std::vector<bint> bfound; bfound.reserve(k);
 
@@ -153,11 +176,28 @@ inline bint par_complement(std::vector<bint>& prescribed,
 
     if (maxu>=0) {
 
-#pragma omp parallel for shared(prescribed,bfound,bmax,amx,pc,k,s,verbose) schedule(dynamic)
+        volatile bool earlyterminated=false;
+
+#pragma omp parallel for shared(prescribed,bfound,bmax,amx,pc,k,s,verbose,earlyterminated) schedule(dynamic)
         for(int64_t iu=maxu; iu>=0; --iu) {
+            if(earlyterminated) continue;
             std::vector<bint> points; points.reserve(k);
             points.assign(prescribed.begin(), prescribed.end());
             points.push_back(amx+bint(iu));
+
+        if ((prescribed.size() == k-1) && (s*points.back()<=bmax)) {
+#pragma omp critical
+            {
+                if (verbose>0)
+                    std::clog << "#[PCt(" << prescribed.size() << ")]"
+                              << " amx: " << amx << " pc: " << pc
+                              << " early terminated at: " << points.back()
+                              << std::endl;
+                earlyterminated = true;
+            }
+        }
+
+
             const bint bu = complement(points, k, s, verbose-1);
 #pragma omp critical
             {
