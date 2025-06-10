@@ -106,7 +106,8 @@ inline bint complement(std::vector<bint>& prescribed,
     std::vector<bint> bfound; bfound.reserve(k);
 
     if (prescribed.size() != k-1) {
-        for(points.push_back(pc); points.back()>=amx; --(points.back())) {
+        for(bint u(pc); u>=amx; --u) {
+            points.push_back(u);
             const bint bu = complement(points, k, s, verbose-1);
             if (bu > bmax) {
                 bfound.resize(0);
@@ -119,10 +120,11 @@ inline bint complement(std::vector<bint>& prescribed,
                     std::clog << std::endl;
                 }
             }
+            points.resize(prescribed.size());
         }
     } else {
         bint us(s*pc);
-        for(points.push_back(pc); points.back()>=amx; --(points.back()), us-=s){
+        for(bint u(pc); u>=amx; --u, us-=s){
             if (us<=bmax) {
                 if (verbose>0)
                     std::clog << "#[Cpmt(" << prescribed.size()
@@ -132,6 +134,7 @@ inline bint complement(std::vector<bint>& prescribed,
                               << std::endl;
                 break;
             }
+            points.push_back(u);
             const bint bu = complement(points, k, s, verbose-1);
             if (bu > bmax) {
                 bfound.resize(0);
@@ -144,6 +147,7 @@ inline bint complement(std::vector<bint>& prescribed,
                     std::clog << std::endl;
                 }
             }
+            points.resize(prescribed.size());
         }
     }
 
@@ -173,7 +177,6 @@ inline bint par_complement(std::vector<bint>& prescribed,
     std::vector<bint> bfound; bfound.reserve(k);
 
     const int64_t maxu(pc-amx); // Should not loop more than 2^63 anyway ...
-
     if (maxu>=0) {
 
         volatile bool earlyterminated=false;
@@ -185,39 +188,39 @@ inline bint par_complement(std::vector<bint>& prescribed,
             points.assign(prescribed.begin(), prescribed.end());
             points.push_back(amx+bint(iu));
 
-        if ((prescribed.size() == k-1) && (s*points.back()<=bmax)) {
+            if ((prescribed.size() == k-1) && (s*points.back()<=bmax)) {
 #pragma omp critical
-            {
-                if (verbose>0)
-                    std::clog << "#[PCt(" << prescribed.size() << ")]"
-                              << " amx: " << amx << " pc: " << pc
-                              << " early terminated at: " << points.back()
-                              << std::endl;
-                earlyterminated = true;
-            }
-        }
-
-
-            const bint bu = complement(points, k, s, verbose-1);
-#pragma omp critical
-            {
-                if (bu > bmax) {
-                    bfound.resize(0);
-                    bfound.assign(points.begin(), points.end());
-                    bmax = bu;
-                    if (verbose>0) {
-                        std::clog << "#[PCt(" << prescribed.size()
-                                  << ")] max: " << bmax << " with basis: ";
-                        for(const auto& it: points) std::clog << it << ' ';
-                        std::clog << std::endl;
-                    }
+                {
+                    if (verbose>0)
+                        std::clog << "#[PCt(" << prescribed.size() << ")]"
+                                  << " amx: " << amx << " pc: " << pc
+                                  << " early terminated at: " << points.back()
+                                  << std::endl;
+                    earlyterminated = true;
                 }
-                if (verbose>0)
-                    std::clog << "#[PCt(" << prescribed.size() << ")] " << amx
-                              << " <= " << points[prescribed.size()] << " <= "
-                              << pc << " : " << bu << " <= " << bmax
-                              << std::endl;
+            } else {
+                const bint bu = complement(points, k, s, verbose-1);
+#pragma omp critical
+                {
+                    if (bu > bmax) {
+                        bfound.resize(0);
+                        bfound.assign(points.begin(), points.end());
+                        bmax = bu;
+                        if (verbose>0) {
+                            std::clog << "#[PCt(" << prescribed.size()
+                                      << ")] max: " << bmax << " with basis: ";
+                            for(const auto& it: points) std::clog << it << ' ';
+                            std::clog << std::endl;
+                        }
+                    }
+                    if (verbose>0)
+                        std::clog << "#[PCt(" << prescribed.size() << ")] "
+                                  << amx << " <= " << points[prescribed.size()]
+                                  << " <= " << pc << " : " << bu
+                                  << " <= " << bmax << std::endl;
+                }
             }
+
         }
 
         prescribed.resize(0);
