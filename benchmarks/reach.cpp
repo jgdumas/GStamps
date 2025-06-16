@@ -56,14 +56,15 @@ inline bint _LReach(const Iterator& start, const Iterator& end, const stype_t s)
         maxs = (slocal>maxs?slocal:maxs);
         if ((maxs>mins) && (maxs<s) && (index > selmer[maxs])) {
                 // Find maxs-range
-            for(++index; (index<reached.size())
-                    && (reached[index] <= maxs)
-                    && (reached[index] > 0); ++index);
+            size_t i=index+1;
+            for(;(i<reached.size())&&(reached[i]>0)&&(reached[i]<=maxs); ++i);
+            if (i < reached.size()) {
                 // Complete s-range
-//             std::clog << "#[Selmer(" << (size_t)maxs << '|' << selmer[maxs]
-//                       << ")]: " << index << " -> " << (index-1+(s-maxs)*back)
-//                       << std::endl;
-            return --index += (s-maxs)*back;
+//                 std::clog << "#[ET(" << (size_t)maxs << '|' << selmer[maxs]
+//                           << ")]: " << i << " -> " << (i-1+(s-maxs)*back)
+//                           << std::endl;
+                return --i += (s-maxs)*back;
+            }
         }
 #endif
 

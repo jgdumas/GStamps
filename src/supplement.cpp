@@ -4,9 +4,9 @@
 //   L. Colisson, J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
 // ==========================================================================
 
-/****************************************************************
- * GStamps: Exhaust additional denominations one value at a time
- ****************************************************************/
+/**************************************************************************
+ * GStamps: Exhaust additional denominations one block of values at a time
+ **************************************************************************/
 
 // ============================================
 // By default, direct LPSP (no early termination whith multiple cover calls)

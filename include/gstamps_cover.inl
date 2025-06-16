@@ -146,19 +146,20 @@ inline bint _KCover(const Iterator& start, const Iterator& end,
         if ((maxs>mins) && (maxs<s) && (index > selmer[maxs])) {
                 // Find maxs_range
             stype_t vlocal(0u);
-            do {
-                ++index;
-                vlocal = reached[index & window];
-            } while( (vlocal <= maxs) && (vlocal > 0) );
+            for(bint i=1; i<=back; ++i) {
+                vlocal = reached[(index+i) & window];
                 // Complete s_range
-//             std::clog << "#[Selmer(" << (size_t)maxs << '|' << selmer[maxs]
-//                       << ")]: " << index << " -> " << (index-1+(s-maxs)*back)
-//                       << std::endl;
-            return --index += (s-maxs)*back;
+                if ((vlocal>maxs) || (vlocal ==0)) {
+                    index += i;
+//                     std::clog << "#[ET(" << (size_t)maxs << '|' <<selmer[maxs]
+//                               << ")<" << i << ">]: " << index << " -> "
+//                               << (index-1+(s-maxs)*back) << std::endl;
+                    return --index += (s-maxs)*back;
+                }
+            }
         }
-#else
-        slocal=0u;		// clean up sliding window
 #endif
+        slocal=0u;		// clean up sliding window
     }
 
     return --index;
