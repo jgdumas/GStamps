@@ -14,33 +14,33 @@ MOSS=./bin/scover
 BASI=./bin/basis
 
 
-MAXKpS=10
+MAXKpS=10	# K or Kmax: Denominations
 if [ "$#" -ge 1 ]; then
     MAXKpS=$1
 fi
 
-KBAS=15
+KBAS=15		# S or Smax: Stamps
 if [ "$#" -ge 2 ]; then
     KBAS=$2
 fi
 
-TDoS=1
+TDoS=1		# Loop over Denominations or Stamps
 if [ "$#" -ge 3 ]; then
     TDoS=$3
 fi
 
 
-NUMI=7
+NUMI=7		# Number of iterations from which take the median
 if [ "$#" -ge 4 ]; then
     NUMI=$4
 fi
 
-JSTR=1
+JSTR=1		# Start of loop (Kmin or Smin)
 if [ "$#" -ge 5 ]; then
     JSTR=$5
 fi
 
-PREC=6
+PREC=6		# Precision of the reported timings
 if [ "$#" -ge 6 ]; then
     PREC=$6
 fi
