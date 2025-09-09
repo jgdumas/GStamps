@@ -40,12 +40,16 @@ int tmain(int argc, char **argv, stype_t s) {
     }
 
     if (t2 > t1) {
-        std::clog << "#[Geom(" << q1 << ")] less: " << t1 << std::endl;
-        std::clog << "#[Geom(" << q2 << ")] nmax: " << t2 << std::endl;
+        if (verbose>=1) {
+            std::clog << "#[Geom(" << q1 << ")] less: " << t1 << std::endl;
+            std::clog << "#[Geom(" << q2 << ")] nmax: " << t2 << std::endl;
+        }
         for(const auto& it: p2) std::cout << it << ' '; std::cout << std::endl;
     } else {
-        std::clog << "#[Geom(" << q2 << ")] less: " << t2 << std::endl;
-        std::clog << "#[Geom(" << q1 << ")] nmax: " << t1 << std::endl;
+        if (verbose>=1) {
+            std::clog << "#[Geom(" << q2 << ")] less: " << t2 << std::endl;
+            std::clog << "#[Geom(" << q1 << ")] nmax: " << t1 << std::endl;
+        }
         for(const auto& it: p1) std::cout << it << ' '; std::cout << std::endl;
     }
 
