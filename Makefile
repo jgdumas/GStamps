@@ -27,6 +27,7 @@ PRG += search
 
 BEN  = fibo albe geom
 BEN += kcover reach scover
+BEN += depthcover
 
 #######
 

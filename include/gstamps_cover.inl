@@ -142,7 +142,6 @@ inline bint _KCover(const Iterator& start, const Iterator& end,
 #if __GSTAMPS_SELMER_LEMMA
             // Selmer's lemma
         maxs = (slocal>maxs?slocal:maxs);
-        slocal=0u;		// clean up sliding window
         if ((maxs>mins) && (maxs<s) && (index > selmer[maxs])) {
                 // Find maxs_range
             stype_t vlocal(0u);
@@ -151,9 +150,6 @@ inline bint _KCover(const Iterator& start, const Iterator& end,
                 // Complete s_range
                 if ((vlocal>maxs) || (vlocal ==0)) {
                     index += i;
-//                     std::clog << "#[ET(" << (size_t)maxs << '|' <<selmer[maxs]
-//                               << ")<" << i << ">]: " << index << " -> "
-//                               << (index-1+(s-maxs)*back) << std::endl;
                     return --index += (s-maxs)*back;
                 }
             }
@@ -172,8 +168,9 @@ inline bint Cover(const List& points, const stype_t s, const int verbose) {
         rangeprint(std::clog << "#[Cover] Basis: ", points) << std::endl;
 
     StTimer chrono; chrono.start();
-    const bint max( (s<6u) ? _SCover(points.begin(), points.end(), s)
-                    : _KCover(points.begin(), points.end(), s)
+    const bint max( ((s<6u) || (points.size()<6u)) ?
+                    _SCover(points.begin(), points.end(), s) :
+                    _KCover(points.begin(), points.end(), s)
                     );
     chrono.stop();
 
