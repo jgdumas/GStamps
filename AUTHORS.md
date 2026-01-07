@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
-# GStamps: C++ routines for the Global Postage Stamp Problem
+# GStamps: C++ routines for the Local & the Global Postage Stamp Problem
 --------------------------------------------------------------------------------
 
 **Authors**:

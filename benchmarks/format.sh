@@ -1,6 +1,6 @@
 #!/bin/bash
 #########################################################################
-# GStamps: C++ routines for the Global Postage Stamp Problem
+# GStamps: C++ routines for the Local & the Global Postage Stamp Problem
 # Authors:
 #   L. Colisson, J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
 #########################################################################

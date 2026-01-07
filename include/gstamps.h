@@ -1,6 +1,6 @@
 // ==========================================================================
-// GStamps: C++ routines for the Global Postage Stamp Problem
-// Authors: 
+// GStamps: C++ routines for the Local & the Global Postage Stamp Problem
+// Authors:
 //   L. Colisson, J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
 // ==========================================================================
 
@@ -216,10 +216,10 @@ bint par_complement(std::vector<bint>& prescribed,
 // Inline implementations
 
 #include <gstamps_print.inl>
-#include <gstamps_cover.inl>   
-#include <gstamps_extreme.inl> 
+#include <gstamps_cover.inl>
+#include <gstamps_extreme.inl>
 #include <gstamps_special.inl>
-#include <gstamps_exhaust.inl> 
+#include <gstamps_exhaust.inl>
 #include <gstamps_recursive.inl>
 
 // ============================================
