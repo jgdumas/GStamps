@@ -45,6 +45,11 @@ if [ "$#" -ge 6 ]; then
     PREC=$6
 fi
 
+SDEN=0		# Use large basis for constant denomination
+if [ "$#" -ge 7 ]; then
+    SDEN=$7
+fi
+
 export LC_NUMERIC="en_US.UTF-8" # decimal with '.'
 
 function Median() {
@@ -85,9 +90,9 @@ function Check () {
       vals+=(`($1 $2 $3 0 | $prg $4 1) 2> /dev/null`)
     done
     if [ "$(count_unique "${vals[@]}")" -eq 1 ] ; then
-	echo -e -n "${GRE}$4 $2 success${NC} "
+	echo -e -n "${GRE}$2 $4 success${NC} "
     else
-	echo -e -n "${RED}$4 $2 ERRORS:***${NC} ${vals[@]} ${RED}***${NC} "
+	echo -e -n "${RED}$2 $4 ERRORS:***${NC} ${vals[@]} ${RED}***${NC} "
     fi
 }
 
@@ -113,6 +118,9 @@ if [ "$TDoS" -gt 0 ]; then
       do
       JBAS=10
       if [ "$JBAS" -gt "$j" ]; then
+	  JBAS=$j
+      fi
+      if [ "$SDEN" -gt 0 ]; then
 	  JBAS=$j
       fi
       Check $BASI $KBAS $JBAS $j $REAC $COVE $MOSS 1>&2
