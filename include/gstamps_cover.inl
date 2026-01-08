@@ -109,7 +109,8 @@ inline bint _KCover(const Iterator& start, const Iterator& end,
     if (back == __St_One) return s;
 
     const bint window(upmask(back));	// highest 1-full mask gt
-    std::vector<stype_t> reached(window+1u, 0u);
+    const stype_t spu(s+1);				// s+1 is unreachable
+    std::vector<stype_t> reached(window+1u, spu);
 
     for(auto it=start; it!=end; ++it) reached[*it]=1u;
 
@@ -133,8 +134,7 @@ inline bint _KCover(const Iterator& start, const Iterator& end,
         const stype_t vlocal(slocal+1u);
         for(auto it=start; it!=end; ++it) {
             stype_t& starget(reached[ (index+(*it)) & window]);
-            const stype_t vtarget(starget);
-            if ( (vtarget == 0u) || (vtarget>vlocal) ) {
+            if (starget>vlocal) {
                 starget = vlocal;
             }
         }
@@ -155,7 +155,7 @@ inline bint _KCover(const Iterator& start, const Iterator& end,
             }
         }
 #endif
-        slocal=0u;		// clean up sliding window
+        slocal=spu;		// clean up sliding window
     }
 
     return --index;
