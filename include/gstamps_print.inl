@@ -44,22 +44,3 @@ inline std::ostream& rangeprint(std::ostream& out, const Cont& v) {
     }
     return out;
 }
-
-
-template<typename Cont>
-inline typename Cont::value_type firstrange(const Cont& v) {
-    typename Cont::value_type max(0);
-    for(const auto& it: v)
-	if (++max != it) break;
-    if (v.count(max) == 0) --max;
-    return max;
-}
-
-template<typename Cont>
-inline std::ostream& firstrangeprint(std::ostream& out,
-			      const Cont& v, const bint& max) {
-    if (max > 1) out << "1..";
-    out << max;
-    if (v.size() > max) out << " ...";
-    return out;
-}

@@ -56,14 +56,6 @@ using bint=int64_t;
 template<typename Cont>
 std::ostream& rangeprint(std::ostream& out, const Cont& v);
 
-template<typename Cont>
-typename Cont::value_type firstrange(const Cont& v);
-
-template<typename Cont>
-std::ostream& firstrangeprint(std::ostream& out,
-                              const Cont& v, const bint& max);
-
-
 // ============================================
 // Range: Local Postage Stamp Problem
 
