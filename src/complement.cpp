@@ -10,7 +10,7 @@
 
 #include <omp.h>
 // ============================================
-// By default, direct LPSP (no early termination whith multiple cover calls)
+// By default, direct LPSP (no early termination whith multiple range calls)
 #ifndef __GSTAMPS_SELMER_LEMMA
 #define __GSTAMPS_SELMER_LEMMA 0
 #endif
@@ -58,7 +58,7 @@ int tmain(int argc, char **argv, stype_t s) {
 
     StTimer chrono; chrono.start();
     if (prescb.size()>=k) {
-        max = Cover(prescb, s, verbose);
+        max = Range(prescb, s, verbose);
 	} else {
         max = par_complement(prescb, k, s, verbose);
     }

@@ -45,10 +45,10 @@ inline bint KloveMossige(List& points, const size_t k, const int verbose) {
 
     for(size_t i=0; i<xmu; ++i) points.push_back(xy+i);
 
-    bint u = Cover(points,2,verbose);
+    bint u = Range(points,2,verbose);
     for(size_t i=0; i<x; ++i) points.push_back(u+xmu*i);
 
-    bint v = Cover(points,2,verbose);
+    bint v = Range(points,2,verbose);
     for(size_t i=0; i<x; ++i) points.push_back(v+xmu*i);
 
     bint c(k<<1); c-=(7*x); c<<=1; c+=12; c*=x; c-=6;
@@ -57,11 +57,11 @@ inline bint KloveMossige(List& points, const size_t k, const int verbose) {
 
 
 
-// AlterBernett range computation sub-routine
+// AlterBernett sub-range computation sub-routine
 template<typename stype_t>
-inline std::vector<bint>& Range(std::vector<bint>& B,
-                                const size_t& q, const stype_t& s,
-                                const size_t& r) {
+inline std::vector<bint>& SubRange(std::vector<bint>& B,
+                                   const size_t& q, const stype_t& s,
+                                   const size_t& r) {
     assert(B.size()>=2);
     auto B1 = B.back();
     auto B0 = B.end()[-2];
@@ -98,7 +98,7 @@ inline bint AlterBernett(std::vector<bint>& points,
                              << ", q: " << q << ", r: " << r << std::endl;
 
     std::vector<bint> B(2); B[0]=__St_Zero; B[1]=q;
-    Range(B,q,s,r) ;
+    SubRange(B,q,s,r) ;
 
     if (verbose>0) {
         std::clog << "#[AlterBernett] B: ";
@@ -149,7 +149,7 @@ inline bint BalGreedy(std::vector<bint>& points,
                              << std::endl;
 
     std::vector<bint> B(2); B[0]=__St_Zero; B[1]=q0;
-    Range(B,q0,s0,0) ;
+    SubRange(B,q0,s0,0) ;
 //     std::clog << "B: "; for(const auto& it:B) std::clog << it << ' ';
 //     std::clog << std::endl;
     for(size_t j=1; j<=q0; ++j) points.push_back(j);
@@ -167,9 +167,9 @@ inline bint BalGreedy(std::vector<bint>& points,
     }
 
 //     for(const auto& it: points) std::clog <<it<< ' '; std::clog << std::endl;
-//     std::clog << "Cover B: "; Cover(points,s);
+//     std::clog << "Range B: "; Range(points,s);
 
-    Range(B,q1,s1+1,0);
+    SubRange(B,q1,s1+1,0);
 //     std::clog << "B: "; for(const auto& it:B) std::clog << it << ' ';
 //     std::clog << std::endl;
 

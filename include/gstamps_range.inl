@@ -40,12 +40,12 @@ uint64_t upmask(const uint64_t& w) {
 
 
 // ============================================
-// Cover: local postage stamp problem
+// Range: local postage stamp problem
 
 // Loop from 1 to s, with a binary vector
 template<typename Iterator, typename stype_t>
-inline bint _SCover(const Iterator& start, const Iterator& end, const stype_t s) {
-	// Binary cover
+inline bint _SRange(const Iterator& start, const Iterator& end, const stype_t s) {
+	// Binary range
     const bint& back(*std::prev(end));				// k>=1
     if (back == __St_One) return s;
     bint vs(back);
@@ -81,7 +81,7 @@ inline bint _SCover(const Iterator& start, const Iterator& end, const stype_t s)
             // Test Selmer's Lemma for early termination
         lb += penult;
         if ( (notin > back) && (notin > lb) ) {
-                    // Cover will now surely attain c+(s-d)ak
+                    // Range will now surely attain c+(s-d)ak
 //                 std::clog << "#[Selmer(" << (size_t)d << '|' << lb << ")]: "
 //                           << notin << " --> " << (notin-1+(s-d)*back)
 //                           << std::endl;
@@ -103,7 +103,7 @@ inline bint _SCover(const Iterator& start, const Iterator& end, const stype_t s)
 
 // Loop from 1 to n
 template<typename Iterator, typename stype_t>
-inline bint _KCover(const Iterator& start, const Iterator& end,
+inline bint _KRange(const Iterator& start, const Iterator& end,
                     const stype_t s) {
     const bint& back(*std::prev(end));	// k>=1
     if (back == __St_One) return s;
@@ -144,11 +144,11 @@ inline bint _KCover(const Iterator& start, const Iterator& end,
         maxs = (slocal>maxs?slocal:maxs);
         if ((maxs>mins) && (maxs<s) && (index > selmer[maxs])) {
                 // Find maxs_range
-            stype_t vlocal(0u);
+            stype_t vlocal(spu);
             for(bint i=1; i<=back; ++i) {
                 vlocal = reached[(index+i) & window];
                 // Complete s_range
-                if ((vlocal>maxs) || (vlocal ==0)) {
+                if (vlocal>maxs) {
                     index += i;
                     return --index += (s-maxs)*back;
                 }
@@ -163,23 +163,23 @@ inline bint _KCover(const Iterator& start, const Iterator& end,
 }
 
 template<typename List, typename stype_t>
-inline bint Cover(const List& points, const stype_t s, const int verbose) {
+inline bint Range(const List& points, const stype_t s, const int verbose) {
     if (verbose>1)
-        rangeprint(std::clog << "#[Cover] Basis: ", points) << std::endl;
+        rangeprint(std::clog << "#[Range] Basis: ", points) << std::endl;
 
     StTimer chrono; chrono.start();
     const bint max( (s<6u) ?
-                    _SCover(points.begin(), points.end(), s) :
-                    _KCover(points.begin(), points.end(), s)
+                    _SRange(points.begin(), points.end(), s) :
+                    _KRange(points.begin(), points.end(), s)
                     );
     chrono.stop();
 
     if (verbose>1) {
-        std::clog << "#[Cover(" << size_t(s) << ")]: 1.." << max
+        std::clog << "#[Range(" << size_t(s) << ")]: 1.." << max
                   << " ..." << std::endl;
     }
 
-    if (verbose>0) std::clog << "#[Cover(" << size_t(s) << ")]: " << max
+    if (verbose>0) std::clog << "#[Range(" << size_t(s) << ")]: " << max
                              << ' ' << chrono <<std::endl;
     return max;
 }

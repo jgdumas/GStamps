@@ -6,11 +6,11 @@
 #########################################################################
 
 
-# COVE=./bin/scover
-# REAC=./bin/cover
+# COVE=./bin/srange
+# REAC=./bin/range
 REAC=./bin/reach
-COVE=./bin/kcover
-MOSS=./bin/scover
+COVE=./bin/krange
+MOSS=./bin/srange
 BASI=./bin/basis
 
 
@@ -100,7 +100,7 @@ function Run () {
     local vals=()
     for i in $(seq 1 $NUMI)
       do
-      vals+=(`($1 $2 $3 0 | $4 $5 1 ) |& grep Cover | cut -d' ' -f3|sed 's/s//'`)
+      vals+=(`($1 $2 $3 0 | $4 $5 1 ) |& grep Range | cut -d' ' -f3|sed 's/s//'`)
     done
     local res=$(Median ${vals[*]})
     echo -n ' '$res

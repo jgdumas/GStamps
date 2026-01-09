@@ -11,6 +11,6 @@
 
 
 RES=(`$* | cut -d' ' -f1-$2`)
-MAX=`echo ${RES[@]} | ./bin/cover $3`
+MAX=`echo ${RES[@]} | ./bin/range $3`
 
 echo "${#RES[@]} $3 $MAX "`echo "${RES[@]}"|sed 's/ /,/g'` | ./benchmarks/awk.gb

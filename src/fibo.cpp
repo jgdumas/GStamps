@@ -5,7 +5,7 @@
 // ==========================================================================
 
 /**********************************************************************
- * GStamps: computes the Fibonacci basis and its associated cover
+ * GStamps: computes the Fibonacci basis and its associated range
  **********************************************************************/
 
 #include <gstamps.h>
@@ -22,7 +22,7 @@ int tmain(int argc, char **argv, stype_t s) {
                              << max << std::endl;
 
     std::clog << "#[Fibonacci(" << k << ',' << s << ")] nmax: "
-              << Cover(points,s, verbose-1) << std::endl;
+              << Range(points,s, verbose-1) << std::endl;
 
     for(const auto& it: points) std::cout << it << ' '; std::cout << std::endl;
 

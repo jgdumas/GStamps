@@ -9,7 +9,7 @@
  **************************************************************************/
 
 // ============================================
-// By default, direct LPSP (no early termination whith multiple cover calls)
+// By default, direct LPSP (no early termination whith multiple range calls)
 #ifndef __GSTAMPS_SELMER_LEMMA
 #define __GSTAMPS_SELMER_LEMMA 0
 #endif
@@ -45,7 +45,7 @@ int tmain(int argc, char **argv, stype_t s) {
     }
 
     StTimer chrono; chrono.start();
-    bint max(_KCover(prescb.begin(),prescb.end(),s));
+    bint max(_KRange(prescb.begin(),prescb.end(),s));
 
     std::vector<size_t> suppvec;
     for(int j = k; j > prescb.size(); j -= g) {

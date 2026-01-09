@@ -17,7 +17,7 @@
 #include <gstamps.h>
 
 // For k elements and s positions,
-// computes Alter & Barnett basis and its associated cover
+// computes Alter & Barnett basis and its associated range
 template<typename stype_t>
 int tmain(int argc, char **argv, stype_t s) {
     const size_t k(atoi(argv[1]));

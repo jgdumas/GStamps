@@ -11,7 +11,7 @@
 #include <gstamps.h>
 
 // For k elements and s positions,
-// computes a basis and its associated cover
+// computes a basis and its associated range
 // r governs the number of initial recursive levels searched
 template<typename stype_t>
 int tmain(int argc, char **argv, stype_t s) {

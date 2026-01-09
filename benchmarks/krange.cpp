@@ -11,8 +11,8 @@
 #include <gstamps.h>
 
 // Reads a basis from std::cin
-// Computes the cover of that basis with argv[1] stamps
-// Using _KCover algorithm
+// Computes the range of that basis with argv[1] stamps
+// Using _KRange algorithm
 
 template<typename stype_t>
 int tmain(int argc, char **argv, stype_t s) {
@@ -28,10 +28,10 @@ int tmain(int argc, char **argv, stype_t s) {
     rangeprint(std::clog << "# Basis: ", points) << std::endl;
 
     StTimer chrono; chrono.start();
-    const bint max( _KCover(points.begin(), points.end(), s) );
+    const bint max( _KRange(points.begin(), points.end(), s) );
     chrono.stop();
 
-    if (verbose>0) std::clog << "#[KCover(" << size_t(s) << ")]: " << max
+    if (verbose>0) std::clog << "#[KRange(" << size_t(s) << ")]: " << max
                              << ' ' << chrono <<std::endl;
 
     std::cout << max << std::endl;

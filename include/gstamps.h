@@ -65,19 +65,19 @@ std::ostream& firstrangeprint(std::ostream& out,
 
 
 // ============================================
-// Cover: Local Postage Stamp Problem
+// Range: Local Postage Stamp Problem
 
         // Fast small s
 template<typename Iterator, typename stype_t>
-bint _SCover(const Iterator& start, const Iterator& end, const stype_t s);
+bint _SRange(const Iterator& start, const Iterator& end, const stype_t s);
 
         // Fast large s
 template<typename Iterator, typename stype_t>
-bint _KCover(const Iterator& start, const Iterator& end, const stype_t s);
+bint _KRange(const Iterator& start, const Iterator& end, const stype_t s);
 
         // Fast with checks
 template<typename List, typename stype_t>
-bint Cover(const List& points, const stype_t s, const int verbose);
+bint Range(const List& points, const stype_t s, const int verbose);
 
 // ============================================
 // Exhaustive search
@@ -130,8 +130,8 @@ bint BalGreedy(std::vector<bint>& points, const size_t k, const stype_t s,
 
 bint kThree(std::vector<bint>& points, const size_t s, const int verbose = 0);
 
-//  approx:	if false the cover is computed (via an exponential algorithm)
-//			otherwise only a lower bound on the cover is returned
+//  approx:	if false the range is computed (via an exponential algorithm)
+//			otherwise only a lower bound on the range is returned
 bint kFour(std::vector<bint>& points, const size_t s, const bool approx,
            const int verbose = 0);
 
@@ -166,8 +166,8 @@ bint sSix(std::vector<bint>& points, const size_t k, const int verbose = 0);
 //	rlevel:	D&C splits (k,s) into (k1,s1) and (k-k1,s-s1) then
 //			for (rlevel) recursive levels: (k-1)*(s-1) possibilites explored
 //			then; midpoint (k1=k/2,s1=s/2) is chosen.
-//  approx:	if false the cover is computed (via an exponential algorithm)
-//			otherwise only a lower bound on the cover is returned
+//  approx:	if false the range is computed (via an exponential algorithm)
+//			otherwise only a lower bound on the range is returned
 //  verbose:controls the level of verbosity
 
 
@@ -216,7 +216,7 @@ bint par_complement(std::vector<bint>& prescribed,
 // Inline implementations
 
 #include <gstamps_print.inl>
-#include <gstamps_cover.inl>
+#include <gstamps_range.inl>
 #include <gstamps_extreme.inl>
 #include <gstamps_special.inl>
 #include <gstamps_exhaust.inl>

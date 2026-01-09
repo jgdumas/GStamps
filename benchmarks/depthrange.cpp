@@ -12,12 +12,12 @@
 
 // Loop from 1 to s, with a binary vector
 template<typename Iterator, typename stype_t>
-inline std::vector<size_t>& Depth_Cover(std::vector<size_t>& numreached,
+inline std::vector<size_t>& Depth_Range(std::vector<size_t>& numreached,
                                         const Iterator& start,
                                         const Iterator& end,
                                         const stype_t s, const bint maxc,
                                         const int verbose) {
-	// Binary cover
+	// Binary range
     const bint& back(*std::prev(end));						// k>1
     if (back == __St_One) {
         numreached.resize(0); numreached.push_back(1u);
@@ -90,10 +90,10 @@ int tmain(int argc, char **argv, stype_t s) {
 
     rangeprint(std::clog << "# Basis: ", points) << std::endl;
 
-    const bint cmax( Cover(points, s, verbose) );
+    const bint cmax( Range(points, s, verbose) );
 
     std::vector<size_t> numreached;
-    Depth_Cover(numreached, points.begin(), points.end(), s, cmax, verbose);
+    Depth_Range(numreached, points.begin(), points.end(), s, cmax, verbose);
 
     for(const auto& it: numreached) std::cout << it << ' ';
     std::cout << std::endl;

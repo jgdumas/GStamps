@@ -11,8 +11,8 @@
 #include <gstamps.h>
 
 // Reads a basis from std::cin
-// Computes the cover of that basis with argv[1] stamps
-// Using _KCover algorithm without the sliding window
+// Computes the range of that basis with argv[1] stamps
+// Using _KRange algorithm without the sliding window
 
 template<typename Iterator, typename stype_t>
 inline bint _LReach(const Iterator& start, const Iterator& end, const stype_t s) {
@@ -20,7 +20,8 @@ inline bint _LReach(const Iterator& start, const Iterator& end, const stype_t s)
     if (back == __St_One) return s;
 
     bint vs(back+1);
-    std::vector<stype_t> reached(vs,0u);
+    const stype_t spu(s+1);				// s+1 is unreachable
+    std::vector<stype_t> reached(vs,spu);
     for(auto it=start; it!=end; ++it) reached[*it]=1u;
 
 #if __GSTAMPS_SELMER_LEMMA
@@ -40,13 +41,12 @@ inline bint _LReach(const Iterator& start, const Iterator& end, const stype_t s)
 
     bint index(1);
     for(++vs; reached[index]<=s; ++index,++vs) {
-        reached.resize(vs);
+        reached.resize(vs,spu);
         stype_t& slocal(reached[index]);
         const stype_t vlocal(slocal+1u);
         for(auto right=start; right!=end; ++right) {
             stype_t& starget(reached[index+(*right)]);
-            const stype_t vtarget(starget);
-            if ( (vtarget == 0u) || (vtarget>vlocal) ) {
+            if (starget>vlocal) {
                 starget = vlocal;
             }
         }
@@ -79,7 +79,7 @@ inline bint LReach(const List& points, const stype_t s, const int verbose) {
     const bint max( _LReach(points.begin(), points.end(), s) );
     chrono.stop();
 
-    if (verbose>0) std::clog << "#[RCover(" << size_t(s) << ")]: " << max
+    if (verbose>0) std::clog << "#[RRange(" << size_t(s) << ")]: " << max
                              << ' ' << chrono <<std::endl;
 
     return max;
@@ -87,7 +87,7 @@ inline bint LReach(const List& points, const stype_t s, const int verbose) {
 
 
 // Reads a basis from std::cin
-// Computes the cover of that basis with argv[1] stamps
+// Computes the range of that basis with argv[1] stamps
 template<typename stype_t>
 int tmain(int argc, char **argv, stype_t s) {
     const int verbose(argc>2?atoi(argv[2]):0);

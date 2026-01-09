@@ -165,7 +165,7 @@ inline bint kFour(std::vector<bint>& points, const size_t s,
         for(const auto& it: points) std::clog << it << ' ';
         std::clog << std::endl;
     }
-    return (approx?max:Cover(points, s, verbose));
+    return (approx?max:Range(points, s, verbose));
 }
 
 

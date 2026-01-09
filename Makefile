@@ -20,14 +20,14 @@ LOADLIBES+= `pkg-config givaro --libs`
 
 #######
 
-PRG  = cover basis
+PRG  = range basis
 PRG += dynprg supplement complement
 PRG += brute
 PRG += search
 
 BEN  = fibo albe geom
-BEN += kcover reach scover
-BEN += depthcover
+BEN += krange reach srange
+BEN += depthrange
 
 #######
 
@@ -48,7 +48,7 @@ bin/%: %.cpp
 clean:
 	- \rm ${BIN}
 
-cover: FDTC.sh ${BIN}
+range: FDTC.sh ${BIN}
 	./$< 30 3 1 3 20 1
 	./$< 50 8 1 3 45 3
 	./$< 5 50 0 5 45 3
@@ -56,4 +56,4 @@ cover: FDTC.sh ${BIN}
 basis: FDTB.sh ${BIN}
 	./$< 15
 
-check: basis cover
+check: basis range
