@@ -165,7 +165,7 @@ inline bint _KRange(const Iterator& start, const Iterator& end,
 template<typename List, typename stype_t>
 inline bint Range(const List& points, const stype_t s, const int verbose) {
     if (verbose>1)
-        rangeprint(std::clog << "#[Range] Basis: ", points) << std::endl;
+        ScopePrint(std::clog << "#[Range] Basis: ", points) << std::endl;
 
     StTimer chrono; chrono.start();
     const bint max( (s<6u) ?

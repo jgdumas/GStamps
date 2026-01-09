@@ -25,7 +25,7 @@ int tmain(int argc, char **argv, stype_t s) {
         points.push_back(tmp);
     };
 
-    rangeprint(std::clog << "# Basis: ", points) << std::endl;
+    ScopePrint(std::clog << "# Basis: ", points) << std::endl;
 
     StTimer chrono; chrono.start();
     const bint max( _KRange(points.begin(), points.end(), s) );

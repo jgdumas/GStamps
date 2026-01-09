@@ -54,7 +54,7 @@ using bint=int64_t;
 // Printing Tools
 
 template<typename Cont>
-std::ostream& rangeprint(std::ostream& out, const Cont& v);
+std::ostream& ScopePrint(std::ostream& out, const Cont& v);
 
 // ============================================
 // Range: Local Postage Stamp Problem

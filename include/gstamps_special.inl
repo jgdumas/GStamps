@@ -22,7 +22,7 @@ inline bint Fibonacci(std::vector<bint>& points, const size_t k,
 	points.push_back(f2);
     }
     f1 += f2; --f1;
-    if (verbose>0) rangeprint(std::clog << "#[Fibonacci] max: " << f1
+    if (verbose>0) ScopePrint(std::clog << "#[Fibonacci] max: " << f1
 			      << ", points: ", points) << std::endl;
     return f1;
 }
@@ -85,7 +85,7 @@ inline bint AlterBernett(std::vector<bint>& points,
     if (k<=s) {
         const bint m1 ( Fibonacci(points,k,verbose-1) );
         bint max(s-k); max *= points.back(); max += m1;
-        if (verbose>0) rangeprint(std::clog << "#[AB] max: " << max
+        if (verbose>0) ScopePrint(std::clog << "#[AB] max: " << max
                                   << ", points: ", points) << std::endl;
         return max;
     }

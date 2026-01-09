@@ -12,7 +12,7 @@
 // Printing Tools
 
 template<typename Cont>
-inline std::ostream& rangeprint(std::ostream& out, const Cont& v) {
+inline std::ostream& ScopePrint(std::ostream& out, const Cont& v) {
     typename Cont::value_type prev(0), curr(0);
     bool ft(true); size_t pt(0);
     for(const auto& it: v) {

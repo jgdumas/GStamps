@@ -88,7 +88,7 @@ int tmain(int argc, char **argv, stype_t s) {
         points.push_back(tmp);
     };
 
-    rangeprint(std::clog << "# Basis: ", points) << std::endl;
+    ScopePrint(std::clog << "# Basis: ", points) << std::endl;
 
     const bint cmax( Range(points, s, verbose) );
 

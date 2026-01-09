@@ -24,7 +24,7 @@ inline bint CutSelect(List& points, const size_t k, const size_t kotwo,
 
     bint m1 = FSelect(points, kmo, smh, rlevel, approx, verbose-1);
     if (verbose>0)
-        rangeprint(std::clog << "#[CS] (" << k << ',' << size_t(s) << ")m1["
+        ScopePrint(std::clog << "#[CS] (" << k << ',' << size_t(s) << ")m1["
                    << kmo << ',' << size_t(smh) << "]:" << m1
                    << ", n: ", points) << std::endl;
 
@@ -41,7 +41,7 @@ inline bint CutSelect(List& points, const size_t k, const size_t kotwo,
         points.emplace_back( std::move( it *= m1 ) );
 
     if (verbose>0) {
-        rangeprint(std::clog << "#[CS] (" << k << ',' << size_t(s) << ")m2["
+        ScopePrint(std::clog << "#[CS] (" << k << ',' << size_t(s) << ")m2["
                    << kotwo << ',' << size_t(sotwo) << "]:" << m2
                    << ", n: ", p2) << std::endl;
         std::clog << "#[CS] >= " << max <<std::endl;
@@ -73,7 +73,7 @@ inline bint RecSelect(List& points, const size_t k, const stype_t s,
                 }
             }
         }
-        if (verbose>0) rangeprint(std::clog << "#[RS] max: " << max
+        if (verbose>0) ScopePrint(std::clog << "#[RS] max: " << max
                                   << ", points: ", points) << std::endl;
 
         if (! approx) {
@@ -131,7 +131,7 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const stype_t s,
 
     if (k == 3) {
 	const bint max = kThree(points,s,verbose-1);
-	if (verbose>0) rangeprint(std::clog << "#[Fk3] max: " << max
+	if (verbose>0) ScopePrint(std::clog << "#[Fk3] max: " << max
 				  << ", points: ", points) << std::endl;
 	return max;
     }
@@ -139,7 +139,7 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const stype_t s,
     bint max(0);
     if (k == 4) {
 	max = kFour(points,s,approx,verbose-1);
-	if (verbose>0) rangeprint(std::clog << "#[Fk4] max: " << max
+	if (verbose>0) ScopePrint(std::clog << "#[Fk4] max: " << max
 				  << ", points: ", points) << std::endl;
 	if (s <= __GSTAMPS_kFour_sKNOWN_) return max;
     }
@@ -147,13 +147,13 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const stype_t s,
     if ((s == 2) && (k>4)) {
 	if (k<=__GSTAMPS_sTwo_kMAX_) {
 	    max = sTwo(points,k,verbose-1);
-	    if (verbose>0) rangeprint(std::clog << "#[Fs2] max: " << max
+	    if (verbose>0) ScopePrint(std::clog << "#[Fs2] max: " << max
 				      << ", points: ", points) << std::endl;
 	    return max;
 	}
 	std::vector<bint> p2;
 	const bint ctwo = KloveMossige(p2,k,verbose-1);
-	if (verbose>0) rangeprint(std::clog << "#[FKloveMossige] max: "
+	if (verbose>0) ScopePrint(std::clog << "#[FKloveMossige] max: "
 				  << ctwo << ", points: ", p2) << std::endl;
 	if (ctwo>max) {
 	    points.swap(p2);
@@ -163,56 +163,56 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const stype_t s,
 
     if ((s == 3) && (k>4) && (k<=__GSTAMPS_sThree_kMAX_)) {
 	max = sThree(points,k,verbose-1);
-	if (verbose>0) rangeprint(std::clog << "#[Fs3] max: " << max
+	if (verbose>0) ScopePrint(std::clog << "#[Fs3] max: " << max
 				  << ", points: ", points) << std::endl;
 	return max;
     }
 
     if ((s == 4) && (k>4) && (k<=__GSTAMPS_sFour_kMAX_)) {
 	max = sFour(points,k,verbose-1);
-	if (verbose>0) rangeprint(std::clog << "#[Fs4] max: " << max
+	if (verbose>0) ScopePrint(std::clog << "#[Fs4] max: " << max
 				  << ", points: ", points) << std::endl;
 	return max;
     }
 
     if ((s == 5) && (k>4) && (k<=__GSTAMPS_sFive_kMAX_)) {
 	max = sFive(points,k,verbose-1);
-	if (verbose>0) rangeprint(std::clog << "#[Fs5] max: " << max
+	if (verbose>0) ScopePrint(std::clog << "#[Fs5] max: " << max
 				  << ", points: ", points) << std::endl;
 	return max;
     }
 
     if ((s == 6) && (k>4) && (k<=__GSTAMPS_sSix_kMAX_)) {
 	max = sSix(points,k,verbose-1);
-	if (verbose>0) rangeprint(std::clog << "#[Fs6] max: " << max
+	if (verbose>0) ScopePrint(std::clog << "#[Fs6] max: " << max
 				  << ", points: ", points) << std::endl;
 	return max;
     }
 
     if ((k == 5) && (s>6) && (s<=__GSTAMPS_kFive_sMAX_)) {
 	max = kFive(points,s,verbose-1);
-	if (verbose>0) rangeprint(std::clog << "#[Fk5] max: " << max
+	if (verbose>0) ScopePrint(std::clog << "#[Fk5] max: " << max
 				  << ", points: ", points) << std::endl;
 	return max;
     }
 
     if ((k == 6) && (s>6) && (s<=__GSTAMPS_kSix_sMAX_)) {
 	max = kSix(points,s,verbose-1);
-	if (verbose>0) rangeprint(std::clog << "#[Fk6] max: " << max
+	if (verbose>0) ScopePrint(std::clog << "#[Fk6] max: " << max
 				  << ", points: ", points) << std::endl;
 	return max;
     }
 
     if ((k == 7) && (s>6) && (s<=__GSTAMPS_kSeven_sMAX_)) {
 	max = kSeven(points,s,verbose-1);
-	if (verbose>0) rangeprint(std::clog << "#[Fk7] max: " << max
+	if (verbose>0) ScopePrint(std::clog << "#[Fk7] max: " << max
 				  << ", points: ", points) << std::endl;
 	return max;
     }
 
     if ((k == 8) && (s>6) && (s<=__GSTAMPS_kEight_sMAX_)) {
 	max = kEight(points,s,verbose-1);
-	if (verbose>0) rangeprint(std::clog << "#[Fk8] max: " << max
+	if (verbose>0) ScopePrint(std::clog << "#[Fk8] max: " << max
 				  << ", points: ", points) << std::endl;
 	return max;
     }
@@ -221,7 +221,7 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const stype_t s,
     if ((k<s) && (k>sot)) {
 	std::vector<bint> p2;
 	const bint mab = AlterBernett(p2,k,s,verbose-1);
-	if (verbose>0) rangeprint(std::clog << "#[FAlterBernett] max: " << mab
+	if (verbose>0) ScopePrint(std::clog << "#[FAlterBernett] max: " << mab
 				  << ", points: ", p2) << std::endl;
 	if (mab>max) {
 	    points.swap(p2);
@@ -232,7 +232,7 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const stype_t s,
     if (k>=s) {
 	std::vector<bint> p2;
 	const bint mdp = BalGreedy(p2,k,s,verbose-1);
-	if (verbose>0) rangeprint(std::clog << "#[FBalGreedy] max: " << mdp
+	if (verbose>0) ScopePrint(std::clog << "#[FBalGreedy] max: " << mdp
 				  << ", points: ", p2) << std::endl;
 	if (mdp>max) {
 	    points.swap(p2);
@@ -242,7 +242,7 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const stype_t s,
 
     std::vector<bint> p2;
     const bint mrs = RecSelect(p2,k,s,rlevel,approx,verbose-1);
-    if (verbose>0) rangeprint(std::clog << "#[FSRec] max: " << mrs
+    if (verbose>0) ScopePrint(std::clog << "#[FSRec] max: " << mrs
 			      << ", points: ", p2) << std::endl;
     if (mrs>max) {
 	points.swap(p2);
@@ -253,7 +253,7 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const stype_t s,
     const static StampDB _stampDB;
     std::vector<bint> pDB;
     if (_stampDB(std::pair<size_t,size_t>(k,s),pDB)) {
-	if (verbose>0) rangeprint(std::clog << "#[GoodBasis] : "
+	if (verbose>0) ScopePrint(std::clog << "#[GoodBasis] : "
 				  , pDB) << std::endl;
 	if (pDB.front()>max) {
 	    max = pDB.front();
@@ -281,7 +281,7 @@ inline bint FSelect(std::vector<bint>& points, const size_t k, const stype_t s,
         auto& vec(memoize[p].second);
         points.assign(vec.begin(),vec.end());
         if (verbose>0) {
-            rangeprint(std::clog << "#[FMM] (" << k << ',' << size_t(s) << "):"
+            ScopePrint(std::clog << "#[FMM] (" << k << ',' << size_t(s) << "):"
                        << max << ", n: ", points)<<std::endl;
         }
     } else {
