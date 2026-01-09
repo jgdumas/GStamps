@@ -57,7 +57,7 @@ inline bint KloveMossige(List& points, const size_t k, const int verbose) {
 
 
 
-// AlterBernett sub-range computation sub-routine
+// AlterBarnett sub-range computation sub-routine
 template<typename stype_t>
 inline std::vector<bint>& SubRange(std::vector<bint>& B,
                                    const size_t& q, const stype_t& s,
@@ -79,7 +79,7 @@ inline std::vector<bint>& SubRange(std::vector<bint>& B,
 uint64_t MSB(uint64_t v) { uint64_t r(0); for( ; v>>=1; ++r) {}; return r; }
 
 template<typename stype_t>
-inline bint AlterBernett(std::vector<bint>& points,
+inline bint AlterBarnett(std::vector<bint>& points,
 			 const size_t k, const stype_t s, const int verbose) {
     points.resize(0); points.reserve(k);
     if (k<=s) {
@@ -92,7 +92,7 @@ inline bint AlterBernett(std::vector<bint>& points,
 
     const size_t r(k%s), q( (k-r)/s );
 
-    if (verbose>0) std::clog << "#[AlterBernett] Precomp. : " << k
+    if (verbose>0) std::clog << "#[AlterBarnett] Precomp. : " << k
                              << ", Prof. : " << MSB(s)
                              << ", Stamps: " << size_t(s)
                              << ", q: " << q << ", r: " << r << std::endl;
@@ -101,7 +101,7 @@ inline bint AlterBernett(std::vector<bint>& points,
     SubRange(B,q,s,r) ;
 
     if (verbose>0) {
-        std::clog << "#[AlterBernett] B: ";
+        std::clog << "#[AlterBarnett] B: ";
         for(const auto& it:B) std::clog << it << ' ';
         std::clog << std::endl;
     }
@@ -139,7 +139,7 @@ inline bint BalGreedy(std::vector<bint>& points,
     const stype_t s1(k%s), s0(s-s1);
     const size_t q0( (k-s1)/s ), q1(q0+1);
 
-    if (s1 == 0) return AlterBernett(points,k,s,verbose-1);
+    if (s1 == 0) return AlterBarnett(points,k,s,verbose-1);
 
     if (verbose>0) std::clog << "#[BalGreedys] Precomp. : " << k
                              << ", Prof. : " << MSB(s)

@@ -104,7 +104,7 @@ bint KloveMossige(List& points, const size_t k, const int verbose = 0);
         // University of Kentucky. Department of Computer Science.
         // https://notatt.com/lsu-stamp.pdf
 template<typename stype_t>
-bint AlterBernett(std::vector<bint>& points, const size_t k, const stype_t s,
+bint AlterBarnett(std::vector<bint>& points, const size_t k, const stype_t s,
                   const int verbose = 0);
 
 

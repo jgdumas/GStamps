@@ -220,8 +220,8 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const stype_t s,
     const stype_t sot(s>>1);
     if ((k<s) && (k>sot)) {
 	std::vector<bint> p2;
-	const bint mab = AlterBernett(p2,k,s,verbose-1);
-	if (verbose>0) ScopePrint(std::clog << "#[FAlterBernett] max: " << mab
+	const bint mab = AlterBarnett(p2,k,s,verbose-1);
+	if (verbose>0) ScopePrint(std::clog << "#[FAlterBarnett] max: " << mab
 				  << ", points: ", p2) << std::endl;
 	if (mab>max) {
 	    points.swap(p2);

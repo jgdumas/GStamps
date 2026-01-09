@@ -24,8 +24,8 @@ int tmain(int argc, char **argv, stype_t s) {
     const int verbose(argc>3?atoi(argv[3]):0);
 
     std::vector<bint> points;
-    const bint max = AlterBernett(points, k,s, verbose);
-    std::clog << "#[AlterBernett] nmax: " << max << std::endl;
+    const bint max = AlterBarnett(points, k,s, verbose);
+    std::clog << "#[AlterBarnett] nmax: " << max << std::endl;
 
     for(const auto& it: points) std::cout << it << ' '; std::cout << std::endl;
 
