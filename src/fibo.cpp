@@ -18,7 +18,7 @@ int tmain(int argc, char **argv, stype_t s) {
     std::vector<bint> points;
     const bint max = Fibonacci(points, k);
 
-    if (verbose>0) std::clog << "#[Fibonacci(" << k << ',' << k << ")] nmax: "
+    if (verbose>0) std::clog << "#[Fibonacci(" << k << ',' << k << ")] max: "
                              << max << std::endl;
 
     std::clog << "#[Fibonacci(" << k << ',' << (size_t)s << ")] nmax: "

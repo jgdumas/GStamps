@@ -6,7 +6,7 @@
 #########################################################################
 
 
-PRGS="./bin/albe ./bin/fibo ./bin/geom ./bin/basis ./bin/dynprg"
+PRGS="./bin/alba ./bin/fibo ./bin/geom ./bin/basis ./bin/dynprg"
 MAXKpS=10
 
 MINS=2
@@ -41,7 +41,7 @@ for j in $(seq 1 $MAXKpS)
 	echo -n "$k $s"
 	for prg in ${PRGS}
 	  do
-	  echo -e -n "\t"`$prg $k $s|& grep nmax |cut -d' ' -f3`
+	  echo -e -n "\t"`$prg $k $s 1|& grep nmax |cut -d' ' -f3`
 	done
 	echo
     fi

@@ -56,7 +56,7 @@ Daniel S. Roche
 | :--------- | :------ |
 |`benchmarks/fibo`| Fibonacci basis |
 |`benchmarks/geom`| Geometric progression basis |
-|`benchmarks/albe`| Alter & Barnett basis |
+|`benchmarks/alba`| Alter & Barnett improved basis |
 |  |  |
 
 **Usage**:
