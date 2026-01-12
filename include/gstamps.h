@@ -61,11 +61,13 @@ std::ostream& ScopePrint(std::ostream& out, const Cont& v);
 
         // Fast small s
 template<typename Iterator, typename stype_t>
-bint _SRange(const Iterator& start, const Iterator& end, const stype_t s);
+bint _SRange(const Iterator& start, const Iterator& end,
+             const stype_t s, const int verbose=0);
 
         // Fast large s
 template<typename Iterator, typename stype_t>
-bint _KRange(const Iterator& start, const Iterator& end, const stype_t s);
+bint _KRange(const Iterator& start, const Iterator& end,
+             const stype_t s, const int verbose=0);
 
         // Fast with checks
 template<typename List, typename stype_t>

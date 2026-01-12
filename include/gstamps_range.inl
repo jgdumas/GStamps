@@ -44,7 +44,8 @@ uint64_t upmask(const uint64_t& w) {
 
 // Loop from 1 to s, with a binary vector
 template<typename Iterator, typename stype_t>
-inline bint _SRange(const Iterator& start, const Iterator& end, const stype_t s) {
+inline bint _SRange(const Iterator& start, const Iterator& end,
+                    const stype_t s, const int verbose) {
 	// Binary range
     const bint& back(*std::prev(end));				// k>=1
     if (back == __St_One) return s;
@@ -82,9 +83,9 @@ inline bint _SRange(const Iterator& start, const Iterator& end, const stype_t s)
         lb += penult;
         if ( (notin > back) && (notin > lb) ) {
                     // Range will now surely attain c+(s-d)ak
-//                 std::clog << "#[Selmer(" << (size_t)d << '|' << lb << ")]: "
-//                           << notin << " --> " << (notin-1+(s-d)*back)
-//                           << std::endl;
+            if (verbose>0) std::clog << "#[ET(" << (size_t)d << '|' << lb
+                                     << ")]: " << notin << " --> "
+                                     << (notin-1+(s-d)*back) << std::endl;
             return --notin += (s-d)*back;
         }
 #endif
@@ -104,7 +105,7 @@ inline bint _SRange(const Iterator& start, const Iterator& end, const stype_t s)
 // Loop from 1 to n
 template<typename Iterator, typename stype_t>
 inline bint _KRange(const Iterator& start, const Iterator& end,
-                    const stype_t s) {
+                    const stype_t s, const int verbose) {
     const bint& back(*std::prev(end));	// k>=1
     if (back == __St_One) return s;
 
@@ -144,11 +145,14 @@ inline bint _KRange(const Iterator& start, const Iterator& end,
         maxs = (slocal>maxs?slocal:maxs);
         if ((maxs>mins) && (maxs<s) && (index > selmer[maxs])) {
                 // Find maxs_range
-            stype_t vlocal(spu);
             for(bint i=1; i<=back; ++i) {
-                vlocal = reached[(index+i) & window];
                 // Complete s_range
-                if (vlocal>maxs) {
+                if (reached[(index+i) & window]>maxs) {
+                    if (verbose>0) std::clog << "#[ET(" << (size_t)maxs << '|'
+                                             << selmer[maxs] << ")]: " << i
+                                             << " -> "
+                                             << (index+i-1+(s-maxs)*back)
+                                             << std::endl;
                     index += i;
                     return --index += (s-maxs)*back;
                 }
@@ -169,8 +173,8 @@ inline bint Range(const List& points, const stype_t s, const int verbose) {
 
     StTimer chrono; chrono.start();
     const bint max( (s<6u) ?
-                    _SRange(points.begin(), points.end(), s) :
-                    _KRange(points.begin(), points.end(), s)
+                    _SRange(points.begin(), points.end(), s, verbose) :
+                    _KRange(points.begin(), points.end(), s, verbose)
                     );
     chrono.stop();
 

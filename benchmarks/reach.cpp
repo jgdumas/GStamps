@@ -14,15 +14,18 @@
 // Using _KRange algorithm without the sliding window
 
 template<typename Iterator, typename stype_t>
-inline bint _LReach(const Iterator& start, const Iterator& end, const stype_t s) {
+inline bint _LReach(const Iterator& start, const Iterator& end,
+                    const stype_t s, const int verbose) {
     const bint& back(*std::prev(end));				// k>=1
     if (back == __St_One) return s;
 
     const stype_t spu(s+1);				// s+1 is unreachable
     std::vector<stype_t> reached(s*back+2,spu);
+
     for(auto it=start; it!=end; ++it) reached[*it]=1u;
 
 #if __GSTAMPS_SELMER_LEMMA
+    bint vs(back+2);
     const bint& penult(*std::prev(std::prev(end))); // back>1 => k>=2
     std::vector<bint> selmer(s+1);
     std::iota(selmer.begin(), selmer.end(), 1);
@@ -53,15 +56,17 @@ inline bint _LReach(const Iterator& start, const Iterator& end, const stype_t s)
         if ((maxs>mins) && (maxs<s) && (index > selmer[maxs])) {
                 // Find maxs-range
             size_t i=index+1;
-            for(;(i<reached.size())&&(reached[i]>0)&&(reached[i]<=maxs); ++i);
-            if (i < reached.size()) {
+            for(;(i<vs)&&(reached[i]<=maxs); ++i);
+            if (i < vs) {
                 // Complete s-range
-//                 std::clog << "#[ET(" << (size_t)maxs << '|' << selmer[maxs]
-//                           << ")]: " << i << " -> " << (i-1+(s-maxs)*back)
-//                           << std::endl;
+                if (verbose>0) std::clog << "#[ET(" << (size_t)maxs << '|'
+                                         << selmer[maxs] << ")]: " << i
+                                         << " -> " << (i-1+(s-maxs)*back)
+                                         << std::endl;
                 return --i += (s-maxs)*back;
             }
         }
+        ++vs;
 #endif
 
     }
@@ -72,7 +77,7 @@ inline bint _LReach(const Iterator& start, const Iterator& end, const stype_t s)
 template<typename List, typename stype_t>
 inline bint LReach(const List& points, const stype_t s, const int verbose) {
     StTimer chrono; chrono.start();
-    const bint max( _LReach(points.begin(), points.end(), s) );
+    const bint max( _LReach(points.begin(), points.end(), s, verbose) );
     chrono.stop();
 
     if (verbose>0) std::clog << "#[RRange(" << size_t(s) << ")]: " << max
