@@ -7,7 +7,6 @@
 /**********************************************************************
  * GStamps: Local Postage Stamp Problem
  **********************************************************************/
-
 #include <gstamps.h>
 
 // Reads a basis from std::cin
@@ -19,9 +18,8 @@ inline bint _LReach(const Iterator& start, const Iterator& end, const stype_t s)
     const bint& back(*std::prev(end));				// k>=1
     if (back == __St_One) return s;
 
-    bint vs(back+1);
     const stype_t spu(s+1);				// s+1 is unreachable
-    std::vector<stype_t> reached(vs,spu);
+    std::vector<stype_t> reached(s*back+1,spu);
     for(auto it=start; it!=end; ++it) reached[*it]=1u;
 
 #if __GSTAMPS_SELMER_LEMMA
@@ -40,8 +38,7 @@ inline bint _LReach(const Iterator& start, const Iterator& end, const stype_t s)
 
 
     bint index(1);
-    for(++vs; reached[index]<=s; ++index,++vs) {
-        reached.resize(vs,spu);
+    for(; reached[index]<=s; ++index) {
         stype_t& slocal(reached[index]);
         const stype_t vlocal(slocal+1u);
         for(auto right=start; right!=end; ++right) {
