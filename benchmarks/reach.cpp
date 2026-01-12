@@ -19,7 +19,7 @@ inline bint _LReach(const Iterator& start, const Iterator& end, const stype_t s)
     if (back == __St_One) return s;
 
     const stype_t spu(s+1);				// s+1 is unreachable
-    std::vector<stype_t> reached(s*back+1,spu);
+    std::vector<stype_t> reached(s*back+2,spu);
     for(auto it=start; it!=end; ++it) reached[*it]=1u;
 
 #if __GSTAMPS_SELMER_LEMMA
@@ -35,7 +35,6 @@ inline bint _LReach(const Iterator& start, const Iterator& end, const stype_t s)
         is -= back;
     }
 #endif
-
 
     bint index(1);
     for(; reached[index]<=s; ++index) {
