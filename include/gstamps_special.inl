@@ -113,7 +113,7 @@ inline bint AlterBarnett(std::vector<bint>& points,
         Fi = (B[i-1]<<1)-B[i-2]+1;
         Di = B[i-1]+1;
         for(size_t j=0; j<q; ++j) points.push_back(Fi+Di*j);
-        if (verbose>0)
+        if (verbose>1)
             std::clog << "#[AB] F[" << i << "]: " << Fi << '\t'
                       << "D[" << i << "]: " << Di << '\t'
                       << "B[-1]: " << B[i-1] << '\t'
@@ -122,7 +122,7 @@ inline bint AlterBarnett(std::vector<bint>& points,
     }
 
     const bint Fs = Fi+Di*q;
-    if (verbose>0)
+    if (verbose>1)
         std::clog << "#[AB] F[" << size_t(s) << "]: " << Fs  << '\t'
                   << "D[" << size_t(s) << "]: " << Di << std::endl;
 
@@ -136,6 +136,13 @@ inline bint BalGreedy(std::vector<bint>& points,
                       const size_t k, const stype_t s, const int verbose) {
     assert(k>=s);
     points.resize(0); points.reserve(k);
+    if (k<=s) {
+        const bint m1 ( Fibonacci(points,k,verbose-1) );
+        bint max(s-k); max *= points.back(); max += m1;
+        if (verbose>0) ScopePrint(std::clog << "#[BG] max: " << max
+                                  << ", points: ", points) << std::endl;
+        return max;
+    }
     const stype_t s1(k%s), s0(s-s1);
     const size_t q0( (k-s1)/s ), q1(q0+1);
 
@@ -159,11 +166,12 @@ inline bint BalGreedy(std::vector<bint>& points,
         Fi = (B[i-1]<<1)-B[i-2]+1;
         Di = B[i-1]+1;
         for(size_t j=0; j<q0; ++j) points.push_back(Fi+Di*j);
-// std::clog << "F[" << i << "]: " << Fi << '\t'
-//           << "D[" << i << "]: " << Di << '\t'
-//           << ", B[-1]: " << B[i-1] << '\t'
-//           << ", B[-2]: " << B[i-2] << '\t'
-//           << std::endl;
+        if (verbose>1)
+            std::clog << "#[BG " << q0 << "] F[" << i << "]: " << Fi << '\t'
+                      << "D[" << i << "]: " << Di << '\t'
+                      << ", B[-1]: " << B[i-1] << '\t'
+                      << ", B[-2]: " << B[i-2] << '\t'
+                      << std::endl;
     }
 
 //     for(const auto& it: points) std::clog <<it<< ' '; std::clog << std::endl;
@@ -177,17 +185,14 @@ inline bint BalGreedy(std::vector<bint>& points,
         Fi = (B[s0+i]<<1)-B[s0+i-1]+1;
         Di = B[s0+i]+1;
         for(size_t j=0; j<q1; ++j) points.push_back(Fi+Di*j);
-// std::clog << "F[" << i << "]: " << Fi << '\t'
-//           << "D[" << i << "]: " << Di  << '\t'
-//           << ", B[" << (s0+i) << "]: " << B[s0+i] << '\t'
-//           << ", B[" << (s0+i-1) << "]: " << B[s0+i-1] << '\t'
-//           << std::endl;
+        if (verbose>1)
+            std::clog << "#[BG " << q1 << "] F[" << i << "]: " << Fi << '\t'
+                      << "D[" << i << "]: " << Di  << '\t'
+                      << ", B[" << (s0+i) << "]: " << B[s0+i] << '\t'
+                      << ", B[" << (s0+i-1) << "]: " << B[s0+i-1] << '\t'
+                      << std::endl;
     }
 
-//     const bint Fs = Fi+Di*q0;
-// // std::clog << "L[" << size_t(s) << "]: " << Fs << std::endl;
-// // std::clog << "D[" << size_t(s) << "]: " << Di << std::endl;
-//     for(size_t j=0; j<r; ++j) points.push_back(Fs+Di*j);
 
     return B.back();
 }

@@ -25,7 +25,7 @@ PRG += dynprg supplement complement
 PRG += brute
 PRG += search
 
-BEN  = fibo alba geom
+BEN  = fibo alba geom greedy
 BEN += krange reach srange
 BEN += depthrange
 
