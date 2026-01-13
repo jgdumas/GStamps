@@ -59,19 +59,24 @@ std::ostream& ScopePrint(std::ostream& out, const Cont& v);
 // ============================================
 // Range: Local Postage Stamp Problem
 
-        // Fast small s
-template<typename Iterator, typename stype_t>
-bint _SRange(const Iterator& start, const Iterator& end,
-             const stype_t s, const int verbose=0);
+        // Fast with checks
+template<typename List, typename stype_t>
+bint Range(const List& points, const stype_t s, const int verbose);
 
         // Fast large s
 template<typename Iterator, typename stype_t>
 bint _KRange(const Iterator& start, const Iterator& end,
              const stype_t s, const int verbose=0);
 
-        // Fast with checks
-template<typename List, typename stype_t>
-bint Range(const List& points, const stype_t s, const int verbose);
+        // Simpler variant for not so large s
+template<typename Iterator, typename stype_t>
+bint _WRange(const Iterator& start, const Iterator& end,
+             const stype_t s, const int verbose=0);
+
+        // Fast very small s
+template<typename Iterator, typename stype_t>
+bint _SRange(const Iterator& start, const Iterator& end,
+             const stype_t s, const int verbose=0);
 
 // ============================================
 // Exhaustive search
