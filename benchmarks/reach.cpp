@@ -20,7 +20,11 @@ inline bint _LReach(const Iterator& start, const Iterator& end,
     if (back == __St_One) return s;
 
     const stype_t spu(s+1);				// s+1 is unreachable
-    std::vector<stype_t> reached(s*back+2,spu);
+        // Maximal valid index is s*back
+        //   thus maximal tested in loop is s*back+1
+        //   and maximal starget is at s*back+back=spu*back>=s*back+1
+        //   with 0 indexing this gives a table of size: spu*back+1
+    std::vector<stype_t> reached(spu*back+1,spu);
 
     for(auto it=start; it!=end; ++it) reached[*it]=1u;
 
