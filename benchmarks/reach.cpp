@@ -45,7 +45,7 @@ inline bint _LReach(const Iterator& start, const Iterator& end,
 
     bint index(1);
     for(; reached[index]<=s; ++index) {
-        stype_t& slocal(reached[index]);
+        const stype_t& slocal(reached[index]);
         const stype_t vlocal(slocal+1u);
         for(auto right=start; right!=end; ++right) {
             stype_t& starget(reached[index+(*right)]);
