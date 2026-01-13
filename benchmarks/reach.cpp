@@ -13,6 +13,7 @@
 // Computes the range of that basis with argv[1] stamps
 // Using _KRange algorithm without the sliding window
 
+
 template<typename Iterator, typename stype_t>
 inline bint _LReach(const Iterator& start, const Iterator& end,
                     const stype_t s, const int verbose) {
@@ -20,13 +21,14 @@ inline bint _LReach(const Iterator& start, const Iterator& end,
     if (back == __St_One) return s;
 
     const stype_t spu(s+1);				// s+1 is unreachable
+    const auto spustart(std::make_pair(spu,start));
         // Maximal valid index is s*back
         //   thus maximal tested in loop is s*back+1
         //   and maximal starget is at s*back+back=spu*back>=s*back+1
         //   with 0 indexing this gives a table of size: spu*back+1
-    std::vector<stype_t> reached(spu*back+1,spu);
+    std::vector<std::pair<stype_t,Iterator>> reached(spu*back+1,spustart);
 
-    for(auto it=start; it!=end; ++it) reached[*it]=1u;
+    for(auto it=start; it!=end; ++it) reached[*it]=std::make_pair(1u,it);
 
 #if __GSTAMPS_SELMER_LEMMA
     bint vs(back+2);
@@ -44,23 +46,25 @@ inline bint _LReach(const Iterator& start, const Iterator& end,
 #endif
 
     bint index(1);
-    for(; reached[index]<=s; ++index) {
-        const stype_t& slocal(reached[index]);
-        const stype_t vlocal(slocal+1u);
-        for(auto right=start; right!=end; ++right) {
-            stype_t& starget(reached[index+(*right)]);
-            if (starget>vlocal) {
-                starget = vlocal;
+    for(; reached[index].first<=s; ++index) {
+        const auto& slocal(reached[index]);
+        const stype_t slfirst(slocal.first);
+        const stype_t vlocal(slfirst+1u);
+        for(auto right=slocal.second; right!=end; ++right) {
+            auto& starget(reached[index+(*right)]);
+            if (starget.first>vlocal) {
+                starget.first = vlocal;
+                starget.second = right;
             }
         }
 
 #if __GSTAMPS_SELMER_LEMMA
             // Selmer's lemma
-        maxs = (slocal>maxs?slocal:maxs);
+        maxs = (slfirst>maxs?slfirst:maxs);
         if ((maxs>mins) && (maxs<s) && (index > selmer[maxs])) {
                 // Find maxs-range
             size_t i=index+1;
-            for(;(i<vs)&&(reached[i]<=maxs); ++i);
+            for(;(i<vs)&&(reached[i].first<=maxs); ++i);
             if (i < vs) {
                 // Complete s-range
                 if (verbose>0) std::clog << "#[ET(" << (size_t)maxs << '|'
@@ -72,7 +76,6 @@ inline bint _LReach(const Iterator& start, const Iterator& end,
         }
         ++vs;
 #endif
-
     }
 
     return --index;

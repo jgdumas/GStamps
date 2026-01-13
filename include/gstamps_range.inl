@@ -102,6 +102,7 @@ inline bint _SRange(const Iterator& start, const Iterator& end,
     return max;
 }
 
+
 // Loop from 1 to n
 template<typename Iterator, typename stype_t>
 inline bint _KRange(const Iterator& start, const Iterator& end,
@@ -111,9 +112,10 @@ inline bint _KRange(const Iterator& start, const Iterator& end,
 
     const bint window(upmask(back));	// highest 1-full mask gt
     const stype_t spu(s+1);				// s+1 is unreachable
-    std::vector<stype_t> reached(window+1u, spu);
+    const auto spustart(std::make_pair(spu,start));
+    std::vector<std::pair<stype_t,Iterator>> reached(window+1u, spustart);
 
-    for(auto it=start; it!=end; ++it) reached[*it]=1u;
+    for(auto it=start; it!=end; ++it) reached[*it]=std::make_pair(1u,it);
 
 #if __GSTAMPS_SELMER_LEMMA > 1
     const bint& penult(*std::prev(std::prev(end))); // back>1 => k>=2
@@ -130,24 +132,26 @@ inline bint _KRange(const Iterator& start, const Iterator& end,
 #endif
 
     bint index(1);
-    for(; reached[index & window]<=s; ++index) {
-        stype_t& slocal(reached[index & window]);
-        const stype_t vlocal(slocal+1u);
-        for(auto it=start; it!=end; ++it) {
-            stype_t& starget(reached[ (index+(*it)) & window]);
-            if (starget>vlocal) {
-                starget = vlocal;
+    for(; reached[index & window].first<=s; ++index) {
+        auto& slocal(reached[index & window]);
+        const stype_t slfirst(slocal.first);
+        const stype_t vlocal(slfirst+1u);
+        for(auto right=slocal.second; right!=end; ++right) {
+            auto& starget(reached[ (index+(*right)) & window]);
+            if (starget.first>vlocal) {
+                starget.first = vlocal;
+                starget.second = right;
             }
         }
 
 #if __GSTAMPS_SELMER_LEMMA > 1
             // Selmer's lemma
-        maxs = (slocal>maxs?slocal:maxs);
+        maxs = (slfirst>maxs?slfirst:maxs);
         if ((maxs>mins) && (maxs<s) && (index > selmer[maxs])) {
                 // Find maxs_range
             for(bint i=1; i<=back; ++i) {
                 // Complete s_range
-                if (reached[(index+i) & window]>maxs) {
+                if (reached[(index+i) & window].first>maxs) {
                     if (verbose>0) std::clog << "#[ET(" << (size_t)maxs << '|'
                                              << selmer[maxs] << ")]: " << i
                                              << " -> "
@@ -159,6 +163,38 @@ inline bint _KRange(const Iterator& start, const Iterator& end,
             }
         }
 #endif
+
+        slocal=spustart;		// clean up sliding window
+    }
+
+    return --index;
+
+}
+
+
+// Simpler version, when enumerating small basis
+template<typename Iterator, typename stype_t>
+inline bint _WRange(const Iterator& start, const Iterator& end,
+                    const stype_t s, const int verbose) {
+    const bint& back(*std::prev(end));	// k>=1
+    if (back == __St_One) return s;
+
+    const bint window(upmask(back));	// highest 1-full mask gt
+    const stype_t spu(s+1);				// s+1 is unreachable
+    std::vector<stype_t> reached(window+1u, spu);
+
+    for(auto it=start; it!=end; ++it) reached[*it]=1u;
+
+    bint index(1);
+    for(; reached[index & window]<=s; ++index) {
+        stype_t& slocal(reached[index & window]);
+        const stype_t vlocal(slocal+1u);
+        for(auto it=start; it!=end; ++it) {
+            stype_t& starget(reached[ (index+(*it)) & window]);
+            if (starget>vlocal) {
+                starget = vlocal;
+            }
+        }
         slocal=spu;		// clean up sliding window
     }
 

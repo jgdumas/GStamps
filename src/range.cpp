@@ -12,7 +12,7 @@
 
 // Reads a basis from std::cin
 // Computes the range of that basis with argv[1] stamps
-// Using and hybrid _SRange/_KRange algorithm
+// Using an hybrid _SRange/_KRange algorithm
 
 template<typename stype_t>
 int tmain(int argc, char **argv, stype_t s) {
