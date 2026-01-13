@@ -28,7 +28,7 @@ int tmain(int argc, char **argv, stype_t s) {
     ScopePrint(std::clog << "# Basis: ", points) << std::endl;
 
     StTimer chrono; chrono.start();
-    const bint max( _SRange(points.begin(), points.end(), s) );
+    const bint max( _SRange(points.begin(), points.end(), s, verbose) );
     chrono.stop();
 
     if (verbose>0) std::clog << "#[SRange(" << size_t(s) << ")]: " << max
