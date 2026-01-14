@@ -28,7 +28,8 @@ Daniel S. Roche
 **Installation**:
 - Requires some distribution packages like:
            `sudo apt install git make g++ libboost-dev`
-           (and optionally `sudo apt install pkg-config libgmp-dev libgivaro-dev`).
+- If arbitrary precision is needed, add:
+           `sudo apt install pkg-config libgmp-dev libgivaro-dev`
 - Then just run `make`, in order to produce the following executable programs
 - See also [`bin/auto-docker.run`](https://github.com/jgdumas/gstamps/blob/main/bin/auto-docker.run)
 
@@ -36,8 +37,8 @@ Daniel S. Roche
 **Programs**:
 |  |  |
 | :--------- | :------ |
-|`bin/cover`| LPSP: Computes the cover of a basis with s stamps |
-|`bin/basis`| GPSP: Divide & Conquer basis computation of k denominations and s stamps |
+|`bin/range`| LPSP: Computes the range of a basis with s stamps |
+|`bin/basis`| GPSP: Divide & Conquer basis polynomial-time computation of k denominations and s stamps |
 |`bin/dynprg`| GPSP: Dynamic programming search of best Divide & Conquer cut |
 |  |  |
 
@@ -51,12 +52,22 @@ Daniel S. Roche
 |`bin/brute`| Exhaustive search of an extremal basis |
 |  |  |
 
-**Other basis**:
+**Benchmarking other basis**:
 |  |  |
 | :--------- | :------ |
-|`benchmarks/fibo`| Fibonacci basis |
-|`benchmarks/geom`| Geometric progression basis |
-|`benchmarks/alba`| Alter & Barnett improved basis |
+|`bin/fibo`| Fibonacci basis |
+|`bin/geom`| Geometric progression basis |
+|`bin/alba`| Alter & Barnett basis |
+|`bin/greedy`| Alter & Barnett improved basis |
+|  |  |
+
+**Benchmarking other range determination**:
+|  |  |
+| :--------- | :------ |
+|`bin/krange`| Sliding window denomination-range |
+|`bin/reach`| Full table denomonation-range |
+|`bin/srange`| Mossige stamp-range |
+|`bin/depthrange`| counts reached integers per additive depth |
 |  |  |
 
 **Usage**:
@@ -64,12 +75,12 @@ Daniel S. Roche
 - #s: the basis is for s stamps
 - #v: verbosisty level
 - #r: after r recursive levels (rlevel), stops searching for the best cut, just use the midpoint
-- #a: if true provides only a lower bound on the cover of the basis (approximate), otherwise computes the cover exactly
+- #a: if true provides only a lower bound on the range of the basis (approximate), otherwise computes the range exactly
 
 **Examples**:
 - `./bin/basis 4 2`: produces a basis of 4 denominations for 2 stamps (1 3 5 6, attaining all integers 1..12)
-- `echo '1 3 5 6' | ./bin/cover 2`: the basis can cover (all integers up to 12) with 2 stamps
-- `./bin/search 4 1024 1`: produces a basis (with 14 denominations), that can cover at least all integers up to 1024 with 4 stamps
+- `echo '1 3 5 6' | ./bin/range 2`: the basis can range (all integers up to 12) with 2 stamps
+- `./bin/search 4 1024 1`: produces a basis (with 14 denominations), that can range at least all integers up to 1024 with 4 stamps
 
 **Nix support**:
 
