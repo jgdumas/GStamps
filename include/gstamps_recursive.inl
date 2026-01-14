@@ -81,7 +81,7 @@ inline bint RecSelect(List& points, const size_t k, const stype_t s,
             std::vector<bint> pm;
             bint mpm = FSelect(pm,k-1,s,rlevel-1,approx,verbose-1);
             pm.push_back(mpm+1);
-            mpm = _KRange(pm.begin(), pm.end(), s);
+            mpm = _KRange(pm, s);
             if (verbose>0)
                 std::clog << "#[FPM] (" << k-1 << ',' << size_t(s) << "): "
                           << mpm << std::endl;

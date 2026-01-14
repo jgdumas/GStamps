@@ -14,25 +14,25 @@
 // Using _KRange algorithm without the sliding window
 
 
-template<typename Iterator, typename stype_t>
-inline bint _LReach(const Iterator& start, const Iterator& end,
-                    const stype_t s, const int verbose) {
-    const bint& back(*std::prev(end));				// k>=1
+template<typename List, typename stype_t>
+inline bint _LReach(const List& points, const stype_t s, const int verbose) {
+    const auto& back(points.back());				// k>=1
     if (back == __St_One) return s;
 
     const stype_t spu(s+1);				// s+1 is unreachable
-    const auto spustart(std::make_pair(spu,start));
+    const auto spustart(std::make_pair(spu,0u));
         // Maximal valid index is s*back
         //   thus maximal tested in loop is s*back+1
         //   and maximal starget is at s*back+back=spu*back>=s*back+1
         //   with 0 indexing this gives a table of size: spu*back+1
-    std::vector<std::pair<stype_t,Iterator>> reached(spu*back+1,spustart);
+    std::vector<std::pair<stype_t,stype_t>> reached(spu*back+1,spustart);
 
-    for(auto it=start; it!=end; ++it) reached[*it]=std::make_pair(1u,it);
+    for(stype_t i=0; i<points.size(); ++i)
+        reached[points[i]]=std::make_pair(1u,i);
 
 #if __GSTAMPS_SELMER_LEMMA
     bint vs(back+2);
-    const bint& penult(*std::prev(std::prev(end))); // back>1 => k>=2
+    const auto& penult(points[points.size()-2]); // back>1 => k>=2
     std::vector<bint> selmer(s+1);
     std::iota(selmer.begin(), selmer.end(), 1);
     stype_t maxs(0), mins(0);
@@ -50,8 +50,8 @@ inline bint _LReach(const Iterator& start, const Iterator& end,
         const auto& slocal(reached[index]);
         const stype_t slfirst(slocal.first);
         const stype_t vlocal(slfirst+1u);
-        for(auto right=slocal.second; right!=end; ++right) {
-            auto& starget(reached[index+(*right)]);
+        for(auto right=slocal.second; right<points.size(); ++right) {
+            auto& starget(reached[index+points[right]]);
             if (starget.first>vlocal) {
                 starget.first = vlocal;
                 starget.second = right;
@@ -84,7 +84,7 @@ inline bint _LReach(const Iterator& start, const Iterator& end,
 template<typename List, typename stype_t>
 inline bint LReach(const List& points, const stype_t s, const int verbose) {
     StTimer chrono; chrono.start();
-    const bint max( _LReach(points.begin(), points.end(), s, verbose) );
+    const bint max( _LReach(points, s, verbose) );
     chrono.stop();
 
     if (verbose>0) std::clog << "#[RRange(" << size_t(s) << ")]: " << max

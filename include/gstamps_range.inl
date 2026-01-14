@@ -104,21 +104,21 @@ inline bint _SRange(const Iterator& start, const Iterator& end,
 
 
 // Loop from 1 to n
-template<typename Iterator, typename stype_t>
-inline bint _KRange(const Iterator& start, const Iterator& end,
-                    const stype_t s, const int verbose) {
-    const bint& back(*std::prev(end));	// k>=1
+template<typename List, typename stype_t>
+inline bint _KRange(const List& points, const stype_t s, const int verbose) {
+    const auto& back(points.back());				// k>=1
     if (back == __St_One) return s;
 
     const bint window(upmask(back));	// highest 1-full mask gt
     const stype_t spu(s+1);				// s+1 is unreachable
-    const auto spustart(std::make_pair(spu,start));
-    std::vector<std::pair<stype_t,Iterator>> reached(window+1u, spustart);
+    const auto spustart(std::make_pair(spu,0u));
+    std::vector<std::pair<stype_t,stype_t>> reached(window+1u, spustart);
 
-    for(auto it=start; it!=end; ++it) reached[*it]=std::make_pair(1u,it);
+    for(stype_t i=0; i<points.size(); ++i)
+        reached[points[i]]=std::make_pair(1u,i);
 
 #if __GSTAMPS_SELMER_LEMMA > 1
-    const bint& penult(*std::prev(std::prev(end))); // back>1 => k>=2
+    const auto& penult(points[points.size()-2]); // back>1 => k>=2
     std::vector<bint> selmer(s+1);
     std::iota(selmer.begin(), selmer.end(), 1);
     stype_t maxs(0), mins(0);
@@ -136,8 +136,8 @@ inline bint _KRange(const Iterator& start, const Iterator& end,
         auto& slocal(reached[index & window]);
         const stype_t slfirst(slocal.first);
         const stype_t vlocal(slfirst+1u);
-        for(auto right=slocal.second; right!=end; ++right) {
-            auto& starget(reached[ (index+(*right)) & window]);
+        for(auto right=slocal.second; right<points.size(); ++right) {
+            auto& starget(reached[ (index+points[right]) & window]);
             if (starget.first>vlocal) {
                 starget.first = vlocal;
                 starget.second = right;
@@ -170,7 +170,6 @@ inline bint _KRange(const Iterator& start, const Iterator& end,
     return --index;
 
 }
-
 
 // Simpler version, when enumerating small basis
 template<typename Iterator, typename stype_t>
@@ -210,7 +209,7 @@ inline bint Range(const List& points, const stype_t s, const int verbose) {
     StTimer chrono; chrono.start();
     const bint max( (s<6u) ?
                     _SRange(points.begin(), points.end(), s, verbose) :
-                    _KRange(points.begin(), points.end(), s, verbose)
+                    _KRange(points, s, verbose)
                     );
     chrono.stop();
 
