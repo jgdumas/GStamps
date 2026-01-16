@@ -11,8 +11,7 @@
 REAC=./bin/reach
 COVE=./bin/krange
 MOSS=./bin/srange
-BASI=./bin/greedy
-
+BASI=./bin/basis
 
 MAXKpS=10	# K or Kmax: Denominations
 if [ "$#" -ge 1 ]; then

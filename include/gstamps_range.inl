@@ -105,29 +105,29 @@ inline bint _SRange(const Iterator& start, const Iterator& end,
 
 // Loop from 1 to n
 template<typename List, typename stype_t>
-inline bint _KRange(const List& points, const stype_t s, const int verbose) {
+inline bint _KRange(const List& points, const size_t k, const stype_t s,
+                    const int verbose) {
+    assert( (k>=1) && (k<=points.size()) );
     const auto& back(points.back());				// k>=1
     if (back == __St_One) return s;
 
     const bint window(upmask(back));	// highest 1-full mask gt
     const stype_t spu(s+1);				// s+1 is unreachable
-    const auto spustart(std::make_pair(spu,0u));
-    std::vector<std::pair<stype_t,stype_t>> reached(window+1u, spustart);
+    std::vector<std::pair<stype_t,stype_t>> reached(window+1u,
+                                                    std::make_pair(spu,0u));
 
-    for(stype_t i=0; i<points.size(); ++i)
+    for(stype_t i=0; i<k; ++i)
         reached[points[i]]=std::make_pair(1u,i);
 
 #if __GSTAMPS_SELMER_LEMMA > 1
-    const auto& penult(points[points.size()-2]); // back>1 => k>=2
+    const auto& penult(points[k-2]); // back>1 => k>=2
     std::vector<bint> selmer(s+1);
     std::iota(selmer.begin(), selmer.end(), 1);
     stype_t maxs(0), mins(0);
     for(auto& is: selmer) {
         is *= penult;
         is -= back;
-        if (is <= back) {
-            ++mins;
-        }
+        if (is <= back) ++mins;
     }
 #endif
 
@@ -136,7 +136,7 @@ inline bint _KRange(const List& points, const stype_t s, const int verbose) {
         auto& slocal(reached[index & window]);
         const stype_t slfirst(slocal.first);
         const stype_t vlocal(slfirst+1u);
-        for(auto right=slocal.second; right<points.size(); ++right) {
+        for(auto right=slocal.second; right<k; ++right) {
             auto& starget(reached[ (index+points[right]) & window]);
             if (starget.first>vlocal) {
                 starget.first = vlocal;
@@ -146,7 +146,7 @@ inline bint _KRange(const List& points, const stype_t s, const int verbose) {
 
 #if __GSTAMPS_SELMER_LEMMA > 1
             // Selmer's lemma
-        maxs = (slfirst>maxs?slfirst:maxs);
+        if (slfirst>maxs) maxs=slfirst;
         if ((maxs>mins) && (maxs<s) && (index > selmer[maxs])) {
                 // Find maxs_range
             for(bint i=1; i<=back; ++i) {
@@ -164,42 +164,19 @@ inline bint _KRange(const List& points, const stype_t s, const int verbose) {
         }
 #endif
 
-        slocal=spustart;		// clean up sliding window
+        slocal.first=spu;		// clean up sliding window
     }
 
     return --index;
 
 }
 
-// Simpler version, when enumerating small basis
-template<typename Iterator, typename stype_t>
-inline bint _WRange(const Iterator& start, const Iterator& end,
-                    const stype_t s, const int verbose) {
-    const bint& back(*std::prev(end));	// k>=1
-    if (back == __St_One) return s;
-
-    const bint window(upmask(back));	// highest 1-full mask gt
-    const stype_t spu(s+1);				// s+1 is unreachable
-    std::vector<stype_t> reached(window+1u, spu);
-
-    for(auto it=start; it!=end; ++it) reached[*it]=1u;
-
-    bint index(1);
-    for(; reached[index & window]<=s; ++index) {
-        stype_t& slocal(reached[index & window]);
-        const stype_t vlocal(slocal+1u);
-        for(auto it=start; it!=end; ++it) {
-            stype_t& starget(reached[ (index+(*it)) & window]);
-            if (starget>vlocal) {
-                starget = vlocal;
-            }
-        }
-        slocal=spu;		// clean up sliding window
-    }
-
-    return --index;
-
+template<typename List, typename stype_t>
+inline bint _KRange(const List& points, const stype_t s,
+                    const int verbose) {
+    return _KRange(points,points.size(),s,verbose);
 }
+
 
 template<typename List, typename stype_t>
 inline bint Range(const List& points, const stype_t s, const int verbose) {

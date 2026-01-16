@@ -13,11 +13,11 @@
 // Exhaustive search
 
 template<typename List, typename stype_t>
-inline bint FixedPoints(List& pmax,
-			const List& points, const stype_t s, const size_t i) {
+inline bint FixedPoints(List& pmax, const List& points, 
+                        const stype_t s, const size_t i, const int verbose) {
     pmax.resize(i); pmax.reserve(points.size());
-    for(auto it=points.begin()+i; it!=points.end(); ++it) {
-        pmax.push_back( _WRange(points.begin(), std::next(it), s) );
+    for(auto it=points.begin()+i; it!=points.end(); ) {
+        pmax.push_back( _KRange(points, ++it-points.begin(), s, verbose) );
     }
     return pmax.back();
 }
@@ -35,7 +35,7 @@ inline bint BruteForce(List& points, size_t k, stype_t s, const int verbose) {
     List pointsmax(points);
 
     List covsmax;
-    bint max( FixedPoints(covsmax, points, s) );
+    bint max( FixedPoints(covsmax, points, s, 0, verbose) );
 
         // Next set of points
     while (true){
@@ -53,7 +53,7 @@ inline bint BruteForce(List& points, size_t k, stype_t s, const int verbose) {
         std::iota(points.begin()+i,points.end(),points[i]+1);
 
             // Compute new maxima for the denominations after i
-        const bint max2 = FixedPoints(covsmax, points, s, i-1);
+        const bint max2 = FixedPoints(covsmax, points, s, i-1, verbose);
 
             // Save new points if better
         if (max2 > max) {
@@ -88,7 +88,7 @@ inline bint complement(std::vector<bint>& prescribed,
     assert(prescribed.size()>=1);
     assert(prescribed.size()<=k);
 
-    bint bmax(_WRange(prescribed.begin(),prescribed.end(),s));
+    bint bmax(_KRange(prescribed,s,verbose));
     const bint pc(bmax+__St_One);
     const bint amx( __GSTAMPS_AMX(prescribed.back(), bmax) );
     if ( (prescribed.size()>=k) || (amx>pc) ) return bmax;
@@ -166,7 +166,7 @@ inline bint par_complement(std::vector<bint>& prescribed,
     assert(prescribed.size()>=1);
     assert(prescribed.size()<k);
 
-    bint bmax(_WRange(prescribed.begin(),prescribed.end(),s));
+    bint bmax(_KRange(prescribed,s,verbose));
     const bint pc(bmax + __St_One);
     const bint amx( __GSTAMPS_AMX(prescribed.back(), pc) );
 

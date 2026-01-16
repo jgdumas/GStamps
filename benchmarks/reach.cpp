@@ -30,7 +30,7 @@ inline bint _LReach(const List& points, const stype_t s, const int verbose) {
     for(stype_t i=0; i<points.size(); ++i)
         reached[points[i]]=std::make_pair(1u,i);
 
-#if __GSTAMPS_SELMER_LEMMA
+#if __GSTAMPS_SELMER_LEMMA > 1
     bint vs(back+2);
     const auto& penult(points[points.size()-2]); // back>1 => k>=2
     std::vector<bint> selmer(s+1);
@@ -58,7 +58,7 @@ inline bint _LReach(const List& points, const stype_t s, const int verbose) {
             }
         }
 
-#if __GSTAMPS_SELMER_LEMMA
+#if __GSTAMPS_SELMER_LEMMA > 1
             // Selmer's lemma
         maxs = (slfirst>maxs?slfirst:maxs);
         if ((maxs>mins) && (maxs<s) && (index > selmer[maxs])) {

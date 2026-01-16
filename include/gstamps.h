@@ -65,12 +65,11 @@ bint Range(const List& points, const stype_t s, const int verbose);
 
         // Fast large s
 template<typename List, typename stype_t>
+bint _KRange(const List& points, const size_t k, const stype_t s,
+             const int verbose);
+        // Defaults to k==points.size()
+template<typename List, typename stype_t>
 bint _KRange(const List& points, const stype_t s, const int verbose=0);
-
-        // Simpler variant for not so large s
-template<typename Iterator, typename stype_t>
-bint _WRange(const Iterator& start, const Iterator& end,
-             const stype_t s, const int verbose=0);
 
         // Fast very small s
 template<typename Iterator, typename stype_t>
@@ -81,8 +80,8 @@ bint _SRange(const Iterator& start, const Iterator& end,
 // Exhaustive search
 
 template<typename List, typename stype_t>
-bint FixedPoints(List& pmax,
-                 const List& points, const stype_t s, const size_t i=0);
+bint FixedPoints(List& pmax, const List& points, const stype_t s, 
+                 const size_t i, const int verbose=0);
 
 template<typename List, typename stype_t>
 bint BruteForce(List& points, size_t k, stype_t s, const int verbose=0);

@@ -58,4 +58,7 @@ range: FDTC.sh ${BIN}
 basis: FDTB.sh ${BIN}
 	./$< 15
 
-check: basis range
+brute: FDTA.sh ${BIN}
+	./$< 10
+
+check: brute basis range
