@@ -6,7 +6,7 @@
 #########################################################################
 
 
-PRGS="./bin/fibo ./bin/alba ./bin/greedy ./bin/geom ./bin/basis ./bin/dynprg"
+PRGS="./bin/fibo ./bin/geom ./bin/alba ./bin/greedy ./bin/basis ./bin/dynprg"
 MAXKpS=10
 
 MINS=2

@@ -143,16 +143,16 @@ inline bint BalGreedy(std::vector<bint>& points,
                                   << ", points: ", points) << std::endl;
         return max;
     }
-    const stype_t s1(k%s), s0(s-s1);
-    const size_t q0( (k-s1)/s ), q1(q0+1);
+    const stype_t s0(k%s), s1(s-s0);
+    const size_t q1( (k-s0)/s ), q0(q1+1);
 
-    if (s1 == 0) return AlterBarnett(points,k,s,verbose-1);
+    if (s0 == 0) return AlterBarnett(points,k,s,verbose-1);
 
     if (verbose>0) std::clog << "#[BalGreedys] Precomp. : " << k
                              << ", Prof. : " << MSB(s)
                              << ", Stamps: " << size_t(s)
-                             << ", q0: " << q0 << ", s0: " << s0
-                             << ", q1: " << q1 << ", s1: " << s1
+                             << ", q0: " << q0 << ", s0: " << (size_t)s0
+                             << ", q1: " << q1 << ", s1: " << (size_t)s1
                              << std::endl;
 
     std::vector<bint> B(2); B[0]=__St_Zero; B[1]=q0;
@@ -168,10 +168,9 @@ inline bint BalGreedy(std::vector<bint>& points,
         for(size_t j=0; j<q0; ++j) points.push_back(Fi+Di*j);
         if (verbose>1)
             std::clog << "#[BG " << q0 << "] F[" << i << "]: " << Fi << '\t'
-                      << "D[" << i << "]: " << Di << '\t'
+                      << ", D[" << i << "]: " << Di << '\t'
                       << ", B[-1]: " << B[i-1] << '\t'
-                      << ", B[-2]: " << B[i-2] << '\t'
-                      << std::endl;
+                      << ", B[-2]: " << B[i-2] << std::endl;
     }
 
 //     for(const auto& it: points) std::clog <<it<< ' '; std::clog << std::endl;
@@ -187,9 +186,9 @@ inline bint BalGreedy(std::vector<bint>& points,
         for(size_t j=0; j<q1; ++j) points.push_back(Fi+Di*j);
         if (verbose>1)
             std::clog << "#[BG " << q1 << "] F[" << i << "]: " << Fi << '\t'
-                      << "D[" << i << "]: " << Di  << '\t'
-                      << ", B[" << (s0+i) << "]: " << B[s0+i] << '\t'
-                      << ", B[" << (s0+i-1) << "]: " << B[s0+i-1] << '\t'
+                      << ", D[" << i << "]: " << Di  << '\t'
+                      << ", B[" << (size_t)(s0+i) << "]: " << B[s0+i] << '\t'
+                      << ", B[" << (size_t)(s0+i-1) << "]: " << B[s0+i-1]
                       << std::endl;
     }
 

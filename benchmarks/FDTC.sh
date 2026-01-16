@@ -11,7 +11,7 @@
 REAC=./bin/reach
 COVE=./bin/krange
 MOSS=./bin/srange
-BASI=./bin/basis
+BASI=./bin/greedy
 
 
 MAXKpS=10	# K or Kmax: Denominations
