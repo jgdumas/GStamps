@@ -31,21 +31,19 @@ inline bint _LReach(const List& points, const stype_t s, const int verbose) {
         reached[points[i]]=std::make_pair(1u,i);
 
 #if __GSTAMPS_SELMER_LEMMA > 1
-    bint vs(back+2);
+    const size_t vsinit(back+2);
     const auto& penult(points[points.size()-2]); // back>1 => k>=2
-    std::vector<bint> selmer(s+1);
+    std::vector<size_t> selmer(s+1);
     std::iota(selmer.begin(), selmer.end(), 1);
     stype_t maxs(0), mins(0);
     for(auto& is: selmer) {
         is *= penult;
-        if (is <= back) {
-            ++mins;
-        }
+        if (is <= back) ++mins;
         is -= back;
     }
 #endif
 
-    bint index(1);
+    size_t index(1);
     for(; reached[index].first<=s; ++index) {
         const auto& slocal(reached[index]);
         const stype_t slfirst(slocal.first);
@@ -59,22 +57,24 @@ inline bint _LReach(const List& points, const stype_t s, const int verbose) {
         }
 
 #if __GSTAMPS_SELMER_LEMMA > 1
-            // Selmer's lemma
         maxs = (slfirst>maxs?slfirst:maxs);
-        if ((maxs>mins) && (maxs<s) && (index > selmer[maxs])) {
-                // Find maxs-range
-            size_t i=index+1;
-            for(;(i<vs)&&(reached[i].first<=maxs); ++i);
-            if (i < vs) {
-                // Complete s-range
-                if (verbose>0) std::clog << "#[ET(" << (size_t)maxs << '|'
-                                         << selmer[maxs] << ")]: " << i
-                                         << " -> " << (i-1+(s-maxs)*back)
-                                         << std::endl;
-                return --i += (s-maxs)*back;
+        if ( (index & 1023) == 1023) { // Reduce overhead
+                // Selmer's lemma
+            if ((maxs>mins) && (maxs<s) && (index > selmer[maxs])) {
+                    // Find maxs-range
+                size_t i=index+1;
+                const size_t vs(vsinit+index);
+                for( ; (i < vs) && (reached[i].first<=maxs); ++i);
+                if (i < vs) {
+                        // Complete s-range
+                    if (verbose>0) std::clog << "#[ET(" << (size_t)maxs << '|'
+                                             << selmer[maxs] << ")]: " << i
+                                             << " -> " << (i-1+(s-maxs)*back)
+                                             << std::endl;
+                    return --i += (s-maxs)*back;
+                }
             }
         }
-        ++vs;
 #endif
     }
 

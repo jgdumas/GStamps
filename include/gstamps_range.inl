@@ -111,7 +111,7 @@ inline bint _KRange(const List& points, const size_t k, const stype_t s,
     const auto& back(points.back());				// k>=1
     if (back == __St_One) return s;
 
-    const bint window(upmask(back));	// highest 1-full mask gt
+    const size_t window(upmask(back));	// highest 1-full mask gt
     const stype_t spu(s+1);				// s+1 is unreachable
     std::vector<std::pair<stype_t,stype_t>> reached(window+1u,
                                                     std::make_pair(spu,0u));
@@ -121,49 +121,50 @@ inline bint _KRange(const List& points, const size_t k, const stype_t s,
 
 #if __GSTAMPS_SELMER_LEMMA > 1
     const auto& penult(points[k-2]); // back>1 => k>=2
-    std::vector<bint> selmer(s+1);
+    std::vector<size_t> selmer(s+1);
     std::iota(selmer.begin(), selmer.end(), 1);
     stype_t maxs(0), mins(0);
     for(auto& is: selmer) {
         is *= penult;
-        is -= back;
         if (is <= back) ++mins;
+        is -= back;
     }
 #endif
 
-    bint index(1);
+    size_t index(1);
     for(; reached[index & window].first<=s; ++index) {
         auto& slocal(reached[index & window]);
         const stype_t slfirst(slocal.first);
         const stype_t vlocal(slfirst+1u);
         for(auto right=slocal.second; right<k; ++right) {
             auto& starget(reached[ (index+points[right]) & window]);
-            if (starget.first>vlocal) {
+            if (starget.first > vlocal) {
                 starget.first = vlocal;
                 starget.second = right;
             }
         }
 
 #if __GSTAMPS_SELMER_LEMMA > 1
-            // Selmer's lemma
-        if (slfirst>maxs) maxs=slfirst;
-        if ((maxs>mins) && (maxs<s) && (index > selmer[maxs])) {
-                // Find maxs_range
-            for(bint i=1; i<=back; ++i) {
-                // Complete s_range
-                if (reached[(index+i) & window].first>maxs) {
-                    if (verbose>0) std::clog << "#[ET(" << (size_t)maxs << '|'
-                                             << selmer[maxs] << ")]: " << i
-                                             << " -> "
-                                             << (index+i-1+(s-maxs)*back)
-                                             << std::endl;
-                    index += i;
-                    return --index += (s-maxs)*back;
+        maxs = (slfirst>maxs?slfirst:maxs);
+        if ( (index & 1048575u) == 1048575u) { // Reduce overhead
+                // Selmer's lemma
+            if ((maxs>mins) && (maxs<s) && (index > selmer[maxs])) {
+                    // Find maxs_range
+                for(size_t i=1; i<=back; ++i) {
+                        // Complete s_range
+                    if (reached[(index+i) & window].first>maxs) {
+                        if (verbose>0) std::clog << "#[ET(" << (size_t)maxs
+                                                 << '|' << selmer[maxs] << ")]: "
+                                                 << i << " -> "
+                                                 << (index+i-1+(s-maxs)*back)
+                                                 << std::endl;
+                        index += i;
+                        return --index += (s-maxs)*back;
+                    }
                 }
             }
         }
 #endif
-
         slocal.first=spu;		// clean up sliding window
     }
 

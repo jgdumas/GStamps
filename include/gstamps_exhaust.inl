@@ -13,7 +13,7 @@
 // Exhaustive search
 
 template<typename List, typename stype_t>
-inline bint FixedPoints(List& pmax, const List& points, 
+inline bint FixedPoints(List& pmax, const List& points,
                         const stype_t s, const size_t i, const int verbose) {
     pmax.resize(i); pmax.reserve(points.size());
     for(auto it=points.begin()+i; it!=points.end(); ) {

@@ -80,7 +80,7 @@ bint _SRange(const Iterator& start, const Iterator& end,
 // Exhaustive search
 
 template<typename List, typename stype_t>
-bint FixedPoints(List& pmax, const List& points, const stype_t s, 
+bint FixedPoints(List& pmax, const List& points, const stype_t s,
                  const size_t i, const int verbose=0);
 
 template<typename List, typename stype_t>
