@@ -102,163 +102,163 @@ inline bint RecSelect(List& points, const size_t k, const stype_t s,
 // Switching among different solutions, known extremal first
 template<typename stype_t>
 inline bint DSelect(std::vector<bint>& points, const size_t k, const stype_t s,
-		    const int rlevel, const bool approx, const int verbose) {
+                    const int rlevel, const bool approx, const int verbose) {
     points.resize(0); points.reserve(k);
 
     if (k == 1) {
-	points.push_back(__St_One);
-	return bint(s);
+        points.push_back(__St_One);
+        return bint(s);
     }
 
     if (s == 1) {
-	for(size_t e(1); e<=k; ++e) {
-	    points.emplace_back(e);
-	}
-	return bint(k);
+        for(size_t e(1); e<=k; ++e) {
+            points.emplace_back(e);
+        }
+        return bint(k);
     }
 
     if (k == 2) {
-	points.push_back(__St_One);
-	const bint t(s>>1);
-	if (s & 0x1) {
-	    points.push_back(t+2);
-	    return (t*(t+4)+2);
-	} else {
-	    points.push_back(t+1); // t+2 could workd also ...
-	    return t*(t+3);
-	}
+        points.push_back(__St_One);
+        const bint t(s>>1);
+        if (s & 0x1) {
+            points.push_back(t+2);
+            return (t*(t+4)+2);
+        } else {
+            points.push_back(t+1); // t+2 could workd also ...
+            return t*(t+3);
+        }
     }
 
     if (k == 3) {
-	const bint max = kThree(points,s,verbose-1);
-	if (verbose>0) ScopePrint(std::clog << "#[Fk3] max: " << max
-				  << ", points: ", points) << std::endl;
-	return max;
+        const bint max = kThree(points,s,verbose-1);
+        if (verbose>0) ScopePrint(std::clog << "#[Fk3] max: " << max
+                                  << ", points: ", points) << std::endl;
+        return max;
     }
 
     bint max(0);
     if (k == 4) {
-	max = kFour(points,s,approx,verbose-1);
-	if (verbose>0) ScopePrint(std::clog << "#[Fk4] max: " << max
-				  << ", points: ", points) << std::endl;
-	if (s <= __GSTAMPS_kFour_sKNOWN_) return max;
+        max = kFour(points,s,approx,verbose-1);
+        if (verbose>0) ScopePrint(std::clog << "#[Fk4] max: " << max
+                                  << ", points: ", points) << std::endl;
+        if (s <= __GSTAMPS_kFour_sKNOWN_) return max;
     }
 
     if ((s == 2) && (k>4)) {
-	if (k<=__GSTAMPS_sTwo_kMAX_) {
-	    max = sTwo(points,k,verbose-1);
-	    if (verbose>0) ScopePrint(std::clog << "#[Fs2] max: " << max
-				      << ", points: ", points) << std::endl;
-	    return max;
-	}
-	std::vector<bint> p2;
-	const bint ctwo = KloveMossige(p2,k,verbose-1);
-	if (verbose>0) ScopePrint(std::clog << "#[FKloveMossige] max: "
-				  << ctwo << ", points: ", p2) << std::endl;
-	if (ctwo>max) {
-	    points.swap(p2);
-	    max = ctwo;
-	}
+        if (k<=__GSTAMPS_sTwo_kMAX_) {
+            max = sTwo(points,k,verbose-1);
+            if (verbose>0) ScopePrint(std::clog << "#[Fs2] max: " << max
+                                      << ", points: ", points) << std::endl;
+            return max;
+        }
+        std::vector<bint> p2;
+        const bint ctwo = KloveMossige(p2,k,verbose-1);
+        if (verbose>0) ScopePrint(std::clog << "#[FKloveMossige] max: "
+                                  << ctwo << ", points: ", p2) << std::endl;
+        if (ctwo>max) {
+            points.swap(p2);
+            max = ctwo;
+        }
     }
 
     if ((s == 3) && (k>4) && (k<=__GSTAMPS_sThree_kMAX_)) {
-	max = sThree(points,k,verbose-1);
-	if (verbose>0) ScopePrint(std::clog << "#[Fs3] max: " << max
-				  << ", points: ", points) << std::endl;
-	return max;
+        max = sThree(points,k,verbose-1);
+        if (verbose>0) ScopePrint(std::clog << "#[Fs3] max: " << max
+                                  << ", points: ", points) << std::endl;
+        return max;
     }
 
     if ((s == 4) && (k>4) && (k<=__GSTAMPS_sFour_kMAX_)) {
-	max = sFour(points,k,verbose-1);
-	if (verbose>0) ScopePrint(std::clog << "#[Fs4] max: " << max
-				  << ", points: ", points) << std::endl;
-	return max;
+        max = sFour(points,k,verbose-1);
+        if (verbose>0) ScopePrint(std::clog << "#[Fs4] max: " << max
+                                  << ", points: ", points) << std::endl;
+        return max;
     }
 
     if ((s == 5) && (k>4) && (k<=__GSTAMPS_sFive_kMAX_)) {
-	max = sFive(points,k,verbose-1);
-	if (verbose>0) ScopePrint(std::clog << "#[Fs5] max: " << max
-				  << ", points: ", points) << std::endl;
-	return max;
+        max = sFive(points,k,verbose-1);
+        if (verbose>0) ScopePrint(std::clog << "#[Fs5] max: " << max
+                                  << ", points: ", points) << std::endl;
+        return max;
     }
 
     if ((s == 6) && (k>4) && (k<=__GSTAMPS_sSix_kMAX_)) {
-	max = sSix(points,k,verbose-1);
-	if (verbose>0) ScopePrint(std::clog << "#[Fs6] max: " << max
-				  << ", points: ", points) << std::endl;
-	return max;
+        max = sSix(points,k,verbose-1);
+        if (verbose>0) ScopePrint(std::clog << "#[Fs6] max: " << max
+                                  << ", points: ", points) << std::endl;
+        return max;
     }
 
     if ((k == 5) && (s>6) && (s<=__GSTAMPS_kFive_sMAX_)) {
-	max = kFive(points,s,verbose-1);
-	if (verbose>0) ScopePrint(std::clog << "#[Fk5] max: " << max
-				  << ", points: ", points) << std::endl;
-	return max;
+        max = kFive(points,s,verbose-1);
+        if (verbose>0) ScopePrint(std::clog << "#[Fk5] max: " << max
+                                  << ", points: ", points) << std::endl;
+        return max;
     }
 
     if ((k == 6) && (s>6) && (s<=__GSTAMPS_kSix_sMAX_)) {
-	max = kSix(points,s,verbose-1);
-	if (verbose>0) ScopePrint(std::clog << "#[Fk6] max: " << max
-				  << ", points: ", points) << std::endl;
-	return max;
+        max = kSix(points,s,verbose-1);
+        if (verbose>0) ScopePrint(std::clog << "#[Fk6] max: " << max
+                                  << ", points: ", points) << std::endl;
+        return max;
     }
 
     if ((k == 7) && (s>6) && (s<=__GSTAMPS_kSeven_sMAX_)) {
-	max = kSeven(points,s,verbose-1);
-	if (verbose>0) ScopePrint(std::clog << "#[Fk7] max: " << max
-				  << ", points: ", points) << std::endl;
-	return max;
+        max = kSeven(points,s,verbose-1);
+        if (verbose>0) ScopePrint(std::clog << "#[Fk7] max: " << max
+                                  << ", points: ", points) << std::endl;
+        return max;
     }
 
     if ((k == 8) && (s>6) && (s<=__GSTAMPS_kEight_sMAX_)) {
-	max = kEight(points,s,verbose-1);
-	if (verbose>0) ScopePrint(std::clog << "#[Fk8] max: " << max
-				  << ", points: ", points) << std::endl;
-	return max;
+        max = kEight(points,s,verbose-1);
+        if (verbose>0) ScopePrint(std::clog << "#[Fk8] max: " << max
+                                  << ", points: ", points) << std::endl;
+        return max;
     }
 
     const stype_t sot(s>>1);
     if ((k<s) && (k>sot)) {
-	std::vector<bint> p2;
-	const bint mab = AlterBarnett(p2,k,s,verbose-1);
-	if (verbose>0) ScopePrint(std::clog << "#[FAlterBarnett] max: " << mab
-				  << ", points: ", p2) << std::endl;
-	if (mab>max) {
-	    points.swap(p2);
-	    max = mab;
-	}
+        std::vector<bint> p2;
+        const bint mab = AlterBarnett(p2,k,s,verbose-1);
+        if (verbose>0) ScopePrint(std::clog << "#[FAlterBarnett] max: " << mab
+                                  << ", points: ", p2) << std::endl;
+        if (mab>max) {
+            points.swap(p2);
+            max = mab;
+        }
     }
 
     if (k>=s) {
-	std::vector<bint> p2;
-	const bint mdp = BalGreedy(p2,k,s,verbose-1);
-	if (verbose>0) ScopePrint(std::clog << "#[FBalGreedy] max: " << mdp
-				  << ", points: ", p2) << std::endl;
-	if (mdp>max) {
-	    points.swap(p2);
-	    max = mdp;
-	}
+        std::vector<bint> p2;
+        const bint mdp = BalGreedy(p2,k,s,verbose-1);
+        if (verbose>0) ScopePrint(std::clog << "#[FBalGreedy] max: " << mdp
+                                  << ", points: ", p2) << std::endl;
+        if (mdp>max) {
+            points.swap(p2);
+            max = mdp;
+        }
     }
 
     std::vector<bint> p2;
     const bint mrs = RecSelect(p2,k,s,rlevel,approx,verbose-1);
     if (verbose>0) ScopePrint(std::clog << "#[FSRec] max: " << mrs
-			      << ", points: ", p2) << std::endl;
+                              << ", points: ", p2) << std::endl;
     if (mrs>max) {
-	points.swap(p2);
-	max = mrs;
+        points.swap(p2);
+        max = mrs;
     }
 
 
     const static StampDB _stampDB;
     std::vector<bint> pDB;
     if (_stampDB(std::pair<size_t,size_t>(k,s),pDB)) {
-	if (verbose>0) ScopePrint(std::clog << "#[GoodBasis] : "
-				  , pDB) << std::endl;
-	if (pDB.front()>max) {
-	    max = pDB.front();
-	    points.assign(std::next(pDB.begin()), pDB.end());
-	}
+        if (verbose>0) ScopePrint(std::clog << "#[GoodBasis] : "
+                                  , pDB) << std::endl;
+        if (pDB.front()>max) {
+            max = pDB.front();
+            points.assign(std::next(pDB.begin()), pDB.end());
+        }
     }
 
 

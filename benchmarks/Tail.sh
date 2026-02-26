@@ -58,11 +58,13 @@ echo "#======================================#"| tee -a $RESF
 for j in $(seq 1 $G)
   do
   js=$(( $S - $j ))
-  mk=$(( $K - $G ))
-  SEQ=`$DYNP $K $js 1 | awk -v max=$mk '{out=$1; for(i=2;i<=max;i++) {out=out" "$i}; print out}'`
-  echo "# $K $js $mk : $SEQ | $CMD" |& tee -a $RESF
-  echo "## $0 $1 $2: `date`: $j s: $CMD 0" |& tee -a $RESF
-  (echo "$SEQ" | $CMD ) &>> $RESF
+  if [ "$js" -gt 0 ]; then
+      mk=$(( $K - $G ))
+      SEQ=`$DYNP $K $js 1 | awk -v max=$mk '{out=$1; for(i=2;i<=max;i++) {out=out" "$i}; print out}'`
+      echo "# $K $js $mk : $SEQ | $CMD" |& tee -a $RESF
+      echo "## $0 $1 $2: `date`: $j s: $CMD 0" |& tee -a $RESF
+      (echo "$SEQ" | $CMD ) &>> $RESF
+  fi
 done
 
 
