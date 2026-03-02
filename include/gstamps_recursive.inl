@@ -159,6 +159,16 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const stype_t s,
             points.swap(p2);
             max = ctwo;
         }
+
+        if (k>29) {
+            const bint cpas = PreambleAmble(p2,k,verbose-1);
+            if (verbose>0) ScopePrint(std::clog << "#[FPreambleAmble] max: "
+                                      << cpas << ", points: ", p2) << std::endl;
+            if (cpas>max) {
+                points.swap(p2);
+                max = cpas;
+            }
+        }
     }
 
     if ((s == 3) && (k>4) && (k<=__GSTAMPS_sThree_kMAX_)) {
