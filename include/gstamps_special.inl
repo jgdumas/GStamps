@@ -247,7 +247,7 @@ inline bint PreambleAmble(std::vector<bint>& points,
         if (verbose>0) std::clog << "#[PA] pa[" << i << "], n: " << nk << std::endl;
         if (nk>max) {
             for(size_t j=cand.size()+1;j<k;++j) {
-                cand.push_back(ak-cand[k-j-1]);
+                cand.push_back(ak-cand[k-j-1]);	// Symmetric base
             }
             cand.push_back(ak);
             points.assign(cand.begin(), cand.end());
