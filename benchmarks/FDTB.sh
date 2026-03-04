@@ -27,7 +27,7 @@ fi
 echo -n "k s"
 for prg in ${PRGS}
   do
-  echo -n " `basename $prg`"
+  echo -e -n '\t'`basename $prg`
 done
 echo
 
