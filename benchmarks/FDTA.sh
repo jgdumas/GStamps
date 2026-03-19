@@ -6,7 +6,7 @@
 #########################################################################
 
 
-PRGS="./bin/greedy ./bin/basis ./bin/brute"
+PRGS="./bin/bala ./bin/basis ./bin/brute"
 MAXKpS=10
 
 MINS=2

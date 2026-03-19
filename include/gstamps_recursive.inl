@@ -241,8 +241,8 @@ inline bint DSelect(std::vector<bint>& points, const size_t k, const stype_t s,
 
     if (k>=s) {
         std::vector<bint> p2;
-        const bint mdp = BalGreedy(p2,k,s,verbose-1);
-        if (verbose>0) ScopePrint(std::clog << "#[FBalGreedy] max: " << mdp
+        const bint mdp = Balanced(p2,k,s,verbose-1);
+        if (verbose>0) ScopePrint(std::clog << "#[FBalanced] max: " << mdp
                                   << ", points: ", p2) << std::endl;
         if (mdp>max) {
             points.swap(p2);

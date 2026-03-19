@@ -6,7 +6,7 @@
 
 /****************************************************************
  * GStamps Library
- * Alter & Barnett basis
+ * Imrroved Alter & Barnett with balanced basis
  ****************************************************************/
 
 // Alter, R., & Barnett, J. A. (1977).
@@ -24,8 +24,8 @@ int tmain(int argc, char **argv, stype_t s) {
     const int verbose(argc>3?atoi(argv[3]):0);
 
     std::vector<bint> points;
-    const bint max = BalGreedy(points, k,s, verbose);
-    std::clog << "#[Greedy] nmax: " << max << std::endl;
+    const bint max = Balanced(points, k,s, verbose);
+    std::clog << "#[Balanced] nmax: " << max << std::endl;
 
     for(const auto& it: points) std::cout << it << ' '; std::cout << std::endl;
 

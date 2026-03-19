@@ -145,9 +145,9 @@ inline bint AlterBarnett(std::vector<bint>& points,
 
 
 // ============================================
-// Improvement over Alter & Barnett
+// Improvement over Alter & Barnett, with balanced basis
 template<typename stype_t>
-inline bint BalGreedy(std::vector<bint>& points,
+inline bint Balanced(std::vector<bint>& points,
                       const size_t k, const stype_t s, const int verbose) {
     assert(k>=s);
     points.resize(0); points.reserve(k);
@@ -163,7 +163,7 @@ inline bint BalGreedy(std::vector<bint>& points,
 
     if (s0 == 0) return AlterBarnett(points,k,s,verbose-1);
 
-    if (verbose>0) std::clog << "#[BalGreedys] Precomp. : " << k
+    if (verbose>0) std::clog << "#[Balanced] Precomp. : " << k
                              << ", Prof. : " << MSB(s)
                              << ", Stamps: " << size_t(s)
                              << ", q0: " << q0 << ", s0: " << (size_t)s0

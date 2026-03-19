@@ -18,7 +18,7 @@ Alexis Galan,
 Bruno Grenet,
 Aude Maignan,
 Daniel S. Roche
-
+[ Algorithms for the local and the global postage stamp problem. https://hal.science/hal-05479676](https://hal.science/hal-05479676)
 
 **Requirements**:
 - C++
@@ -58,7 +58,7 @@ Daniel S. Roche
 |`bin/fibo`| Fibonacci basis |
 |`bin/geom`| Geometric progression basis |
 |`bin/alba`| Alter & Barnett basis |
-|`bin/greedy`| Alter & Barnett improved basis |
+|`bin/bala`| Improved Alter & Barnett with balanced basis |
 |  |  |
 
 **Benchmarking other range determination**:

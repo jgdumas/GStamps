@@ -115,8 +115,8 @@ bint AlterBarnett(std::vector<bint>& points, const size_t k, const stype_t s,
 
         // AlterBarnett improvement with balanced ranges
 template<typename stype_t>
-bint BalGreedy(std::vector<bint>& points, const size_t k, const stype_t s,
-               const int verbose = 0);
+bint Balanced(std::vector<bint>& points, const size_t k, const stype_t s,
+              const int verbose = 0);
 
 
 // ============================================
