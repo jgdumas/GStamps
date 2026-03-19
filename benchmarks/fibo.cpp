@@ -31,13 +31,13 @@ int tmain(int argc, char **argv, stype_t s) {
 }
 
 int main(int argc, char **argv) {
-    if (argc<=2) {
+    if (argc<=1) {
         std::cerr << "usage: " << argv[0]
-                  << " #k(dim.) #s(stamps) [#](verbosity).\n";
+                  << " #k(dim.) [#s(stamps)] [#](verbosity).\n";
         exit(1);
     }
 
-    const size_t s(atoi(argv[2]));
+    const size_t s(argc>2?atoi(argv[2]):atoi(argv[1]));
 
     if (std::numeric_limits<uint8_t>::max()>s)
         return tmain(argc,argv,uint8_t(s));
