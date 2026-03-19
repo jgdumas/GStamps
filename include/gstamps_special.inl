@@ -20,9 +20,9 @@ inline bint Fibonacci(std::vector<bint>& points, const size_t k,
     points.resize(0); points.reserve(k);
     bint f1(1), f2(1); points.push_back(f2);
     for(size_t i=1; i<k; ++i) {
-	f1 += f2;
-	f2 += f1;
-	points.push_back(f2);
+        f1 += f2;
+        f2 += f1;
+        points.push_back(f2);
     }
     f1 += f2; --f1;
     if (verbose>0) ScopePrint(std::clog << "#[Fibonacci] max: " << f1
