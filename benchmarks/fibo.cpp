@@ -21,8 +21,8 @@ int tmain(int argc, char **argv, stype_t s) {
     if (verbose>0) std::clog << "#[Fibonacci(" << k << ',' << k << ")] max: "
                              << max << std::endl;
 
-    const auto r(Range(points,s,verbose-1));
-    std::clog << "#[Fibonacci(" << k << ',' << (size_t)s << ")] nmax: "
+    const auto r(max+(s-k)*points.back());
+    std::clog << "#[Fibonacci(" << k << ',' << (size_t)s << ")] nmax>= "
               << r << std::endl;
 
     for(const auto& it: points) std::cout << it << ' '; std::cout << std::endl;
