@@ -91,8 +91,9 @@ bint BruteForce(List& points, size_t k, stype_t s, const int verbose=0);
 // Special cases
 
         // Every two Fibonnaci numbers
+template<typename stype_t>
 bint Fibonacci(std::vector<bint>& points, const size_t k,
-               const int verbose = 0);
+               const stype_t& s, const int verbose = 0);
 
 
         // S. Mossige Algorithms for Computing the $h$-Range

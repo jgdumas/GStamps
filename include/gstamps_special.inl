@@ -15,19 +15,29 @@
 
 // ============================================
 // Fibonacci sequence
+template<typename stype_t>
 inline bint Fibonacci(std::vector<bint>& points, const size_t k,
-	       const int verbose) {
+                      const stype_t& s, const int verbose) {
     points.resize(0); points.reserve(k);
     bint f1(1), f2(1); points.push_back(f2);
+    bint max(0);
     for(size_t i=1; i<k; ++i) {
         f1 += f2;
         f2 += f1;
         points.push_back(f2);
+        if (i == s) {
+            max=f1-1;
+        }
     }
-    f1 += f2; --f1;
-    if (verbose>0) ScopePrint(std::clog << "#[Fibonacci] max: " << f1
-			      << ", points: ", points) << std::endl;
-    return f1;
+    if (k<=s) {
+        max=f1+f2-1;				// f(2k+1)-1
+        max += (s-k)*points.back();	// f(2k+1)-1 + (s-k)f(2k)
+    }
+
+    if (verbose>0) ScopePrint(std::clog << "#[Fibonacci(" << k << ','
+                              << (size_t)s << ")] max: " << max
+                              << ", points: ", points) << std::endl;
+    return max;
 }
 // ============================================
 
@@ -94,8 +104,7 @@ inline bint AlterBarnett(std::vector<bint>& points,
 			 const size_t k, const stype_t s, const int verbose) {
     points.resize(0); points.reserve(k);
     if (k<=s) {
-        const bint m1 ( Fibonacci(points,k,verbose-1) );
-        bint max(s-k); max *= points.back(); max += m1;
+        const bint max ( Fibonacci(points,k,s,verbose-1) );
         if (verbose>0) ScopePrint(std::clog << "#[AB] max: " << max
                                   << ", points: ", points) << std::endl;
         return max;
@@ -152,8 +161,7 @@ inline bint Balanced(std::vector<bint>& points,
     assert(k>=s);
     points.resize(0); points.reserve(k);
     if (k<=s) {
-        const bint m1 ( Fibonacci(points,k,verbose-1) );
-        bint max(s-k); max *= points.back(); max += m1;
+        const bint max ( Fibonacci(points,k,s,verbose-1) );
         if (verbose>0) ScopePrint(std::clog << "#[BG] max: " << max
                                   << ", points: ", points) << std::endl;
         return max;

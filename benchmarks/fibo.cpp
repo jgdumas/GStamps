@@ -16,14 +16,10 @@ int tmain(int argc, char **argv, stype_t s) {
     const int verbose(argc>3?atoi(argv[3]):0);
 
     std::vector<bint> points;
-    const bint max = Fibonacci(points, k);
+    const bint max = Fibonacci(points, k, s, verbose-1);
 
-    if (verbose>0) std::clog << "#[Fibonacci(" << k << ',' << k << ")] max: "
-                             << max << std::endl;
-
-    const auto r(max+(s-k)*points.back());
-    std::clog << "#[Fibonacci(" << k << ',' << (size_t)s << ")] nmax>= "
-              << r << std::endl;
+    std::clog << "#[Fibonacci(" << k << ',' << (size_t)s << ")] nmax"
+              << (k>=s?": ":">= ") << max << std::endl;
 
     for(const auto& it: points) std::cout << it << ' '; std::cout << std::endl;
 
