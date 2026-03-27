@@ -13,9 +13,12 @@ if [ "$#" -ge 3 ]; then
     G=$3
 fi
 
-SUPP=./bin/supplement
-COMP=./bin/complement
-DYNP=./bin/dynprg
+BEN=`dirname $0`
+BIN=`echo ${BEN} | sed 's/benchmarks/bin/'`
+
+SUPP=${BIN}/supplement
+COMP=${BIN}/complement
+DYNP=${BIN}/dynprg
 RESF=/tmp/res_Tail.$$
 
 ##### 

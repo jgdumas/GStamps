@@ -5,8 +5,10 @@
 #   L. Colisson, J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
 #########################################################################
 
+BEN=`dirname $0`
+BIN=`echo ${BEN} | sed 's/benchmarks/bin/'`
 
-PRGS="./bin/bala ./bin/basis ./bin/brute"
+PRGS="${BIN}/bala ${BIN}/basis ${BIN}/brute"
 MAXKpS=10
 
 MINS=2

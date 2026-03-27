@@ -12,6 +12,7 @@ OPTFLAGS = -O3 -ffast-math
 OPTFLAGS += -fopenmp
 OPTFLAGS += -fprefetch-loop-arrays -funroll-all-loops
 OPTFLAGS += -UDEBUG -DNDEBUG
+#OPTFLAGS +=  -D__GSTAMPS_EXTENDED_PRECISION
 #######
 
 

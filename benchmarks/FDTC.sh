@@ -5,13 +5,15 @@
 #   L. Colisson, J-G. Dumas, A. Galan, B. Grenet, A. Maignan, D. S. Roche
 #########################################################################
 
+BEN=`dirname $0`
+BIN=`echo ${BEN} | sed 's/benchmarks/bin/'`
 
-# COVE=./bin/srange
-# REAC=./bin/range
-REAC=./bin/reach
-COVE=./bin/krange
-MOSS=./bin/srange
-BASI=./bin/basis
+# COVE=${BIN}/srange
+# REAC=${BIN}/range
+REAC=${BIN}/reach
+COVE=${BIN}/krange
+MOSS=${BIN}/srange
+BASI=${BIN}/basis
 
 MAXKpS=10	# K or Kmax: Denominations
 if [ "$#" -ge 1 ]; then

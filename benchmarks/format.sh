@@ -9,8 +9,10 @@
 # Example (with /tmp/t echoing 1 6 7):
 # > ./benchmarks/format.sh /tmp/t 3 5
 
+BEN=`dirname $0`
+BIN=`echo ${BEN} | sed 's/benchmarks/bin/'`
 
 RES=(`$* | cut -d' ' -f1-$2`)
-MAX=`echo ${RES[@]} | ./bin/range $3`
+MAX=`echo ${RES[@]} | ${BIN}/range $3`
 
-echo "${#RES[@]} $3 $MAX "`echo "${RES[@]}"|sed 's/ /,/g'` | ./benchmarks/awk.gb
+echo "${#RES[@]} $3 $MAX "`echo "${RES[@]}"|sed 's/ /,/g'` | ${BEN}/awk.gb

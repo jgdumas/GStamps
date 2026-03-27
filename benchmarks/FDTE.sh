@@ -8,44 +8,40 @@
 BEN=`dirname $0`
 BIN=`echo ${BEN} | sed 's/benchmarks/bin/'`
 
-PRGS="${BIN}/fibo ${BIN}/geom ${BIN}/alba ${BIN}/bala ${BIN}/basis ${BIN}/dynprg"
-MAXKpS=10
+PRGS="${BIN}/fibo ${BIN}/basis"
 
-MINS=2
-MINK=2
-
+MAX=10
+MIN=1
+RAN=0
 
 if [ "$#" -ge 1 ]; then
-    MAXKpS=$1
+    MAX=$1
 fi
 if [ "$#" -ge 2 ]; then
-    MINK=$2
+    MIN=$2
 fi
 if [ "$#" -ge 3 ]; then
-    MINS=$3
+    RAN=$3
 fi
 
 
-echo -n "k s"
-for prg in ${PRGS}
-  do
-  echo -e -n '\t'`basename $prg`
-done
-echo
+# echo -n "k"
+# for prg in ${PRGS}
+#   do
+#   echo -e -n '\t'`basename $prg`
+# done
+# echo
 
-for j in $(seq 1 $MAXKpS)
+for j in $(seq 1 $MAX)
   do
-  for k in $(seq $MINK $(( $j - 1 )))
+  echo -n "$j"
+  for prg in ${PRGS}
     do
-    s=$(( $j - $k ))
-    if [[ $s -ge $MINS ]]
-	then
-	echo -n "$k $s"
-	for prg in ${PRGS}
-	  do
-	  echo -e -n "\t"`$prg $k $s 1|& grep nmax |cut -d' ' -f3`
-	done
-	echo
+    if [ "$RAN" -eq 0 ]; then
+	echo -e -n "\t"`$prg $j $j 1|& grep nmax |cut -d' ' -f3`
+    else
+	echo -e -n "\t"`($prg $j $j| ${BIN}/range $j) 2> /dev/null`
     fi
   done
+  echo
 done
