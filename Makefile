@@ -28,7 +28,7 @@ PRG += search
 
 BEN  = fibo alba geom bala
 BEN += krange reach srange
-BEN += depthrange
+BEN += depthrange decompositions
 
 #######
 
@@ -62,4 +62,7 @@ basis: FDTB.sh ${BIN}
 brute: FDTA.sh ${BIN}
 	./$< 10
 
-check: brute basis range
+decompositions: FDTF.sh ${BEN}
+	./$< 9 9
+
+check: brute basis decompositions range

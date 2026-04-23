@@ -68,6 +68,7 @@ Daniel S. Roche
 |`bin/reach`| Full table denomonation-range |
 |`bin/srange`| Mossige stamp-range |
 |`bin/depthrange`| counts reached integers per additive depth |
+|`bin/decompositions`| shows all additive chains up to range |
 |  |  |
 
 **Usage**:
@@ -81,6 +82,7 @@ Daniel S. Roche
 - `./bin/basis 4 2`: produces a basis of 4 denominations for 2 stamps (1 3 5 6, attaining all integers 1..12)
 - `echo '1 3 5 6' | ./bin/range 2`: the basis can range (all integers up to 12) with 2 stamps
 - `./bin/search 4 1024 1`: produces a basis (with 14 denominations), that can range at least all integers up to 1024 with 4 stamps
+- `./bin/basis 3 4 | ./bin/decompositions 4 1`: shows the additive chains from that basis with 4 stamps
 
 **Nix support**:
 
