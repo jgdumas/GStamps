@@ -211,6 +211,14 @@ bint par_complement(std::vector<bint>& prescribed,
 
 
 // ============================================
+// Decompositions (addition chains) of a basis
+template<typename stype_t> using PsVs=std::pair<stype_t, std::vector<stype_t> >;
+template<typename List, typename stype_t>
+std::vector<PsVs<stype_t>> _Decompose(const List& points, const stype_t s,
+                                      const int verbose);
+
+
+// ============================================
 // Inline implementations
 
 #include <gstamps_print.inl>
